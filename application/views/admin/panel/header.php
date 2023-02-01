@@ -78,6 +78,10 @@
                             <a href="<?php echo base_url('admin/exercisefolders/generalroutinesfolder'); ?>">
                                 <i class="fa fa-list"></i><span>Routines</span></a>
                         </li>
+                        <li <?php if ($active_class == 'appointment') echo 'class="active"'; ?>>
+                            <a href="<?php echo base_url('admin/appointment'); ?>">
+                                <i class="fa fa-list"></i><span>Appointment</span></a>
+                        </li>
                         <!--<li <?php if ($active_class == 'calender') echo 'class="active"'; ?>>-->
                         <!--    <a href="<?php echo base_url('admin/calender'); ?>">-->
                         <!--        <i class="fa fa-calendar-o"></i><span>Calendar</span></a>-->
@@ -142,6 +146,10 @@
                         <li <?php if ($active_class == 'exercise') echo 'class="active"'; ?>>
                             <a href="<?php echo base_url('admin/exercisefolders/generalroutinesfolder'); ?>">
                                 <i class="fa fa-list"></i><span>Routines</span></a>
+                        </li>
+                        <li <?php if ($active_class == 'appointment') echo 'class="active"'; ?>>
+                            <a href="<?php echo base_url('admin/appointment'); ?>">
+                                <i class="fa fa-list"></i><span>Appointment</span></a>
                         </li>
                         <!--<li <?php if ($active_class == 'calender') echo 'class="active"'; ?>>-->
                         <!--    <a href="<?php echo base_url('admin/calender'); ?>">-->

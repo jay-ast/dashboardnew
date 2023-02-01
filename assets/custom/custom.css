@@ -172,4 +172,10 @@
     text-decoration: none;
 }
 
+.client-portal-button:hover {
+    background-color: #f3f3f3;
+    text-decoration: none;
+    color: black;
+}
+
 

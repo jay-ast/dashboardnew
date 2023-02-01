@@ -122,6 +122,7 @@
                 <?php echo form_open(base_url('admin/patients/updatePatient'), array("class" => "patientForm")); ?>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
+                    <a style="float: right; margin-right: 20px;" href="<?php echo base_url('admin/patients'); ?>">Return to client portal</a>
                     <h3 class="modal-title">Client Details</h3>
                 </div>
 
@@ -1358,8 +1359,7 @@
             $('#objective').val('');
             $('#assessment').val('');
             $('#plan').val('');
-            $('#notePortal').modal('toggle');
-            $('#notePortal').modal('toggle');
+            $('#notePortal').modal('toggle');            
         });
 
         $(document).on('click', '#addNoteDetails', function() {

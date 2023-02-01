@@ -1097,18 +1097,24 @@ class Patients extends My_Controller
         $client_data_next_event = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
-                                `users`.`lastname`
+                                `users`.`lastname`,                                
+                                `provider_user`.`firstname` as `provider_first_name`,
+                                `provider_user`.`lastname` as `provider_last_name`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
                         WHERE client_id = $client_id  AND `events`.`schedule_date` >= '" . $today_date . "'";
         $client_data['client_data_next_event'] = $this->db->query($client_data_next_event)->result();        
         
         $client_data_past_event = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
-                                `users`.`lastname`
+                                `users`.`lastname`,
+                                `provider_user`.`firstname` as `provider_first_name`,
+                                `provider_user`.`lastname` as `provider_last_name`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
                         WHERE client_id = $client_id  AND `events`.`schedule_date` < '" . $today_date . "'";
         $client_data['client_data_past_event'] = $this->db->query($client_data_past_event)->result();
         
