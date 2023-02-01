@@ -123,4 +123,53 @@
     float: none;
 }
 
+.client-portal-button {
+    line-height: 1.50;
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 0px 25px;
+    text-decoration: none;
+    font-size: 20px;
+    margin-top: 15px;
+    background-color: #0395E2;
+    color: white;
+}
+
+.client-detail-button {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.appointment-card {
+    background-color: #fafafa;
+    border: #e3e3e3 solid 1px;
+    border-radius: 5px;
+    padding: 15px 10px;
+    margin: 10px;
+}
+
+.btn-mail {
+    margin-right: 5px;
+}
+
+.error {
+    color: #a94442;
+}
+
+.new-routine {
+    line-height: 1.75;
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 0px 15px;
+    text-decoration: none;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-right: 5px;
+}
+
+.send-mail:hover {
+    background-color: #f3f3f3;
+    text-decoration: none;
+}
+
 

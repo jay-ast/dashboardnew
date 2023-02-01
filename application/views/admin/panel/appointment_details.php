@@ -8,7 +8,7 @@
             foreach ($client_data['client_name'] as $name) {
                 $client_id = $name->id;
             ?>
-                <h4 class="modal-title">Client Name: <?php echo $name->firstname . ' ' . $name->lastname ?></h4>
+                <h4 class="modal-title"><b>Name: <?php echo $name->firstname . ' ' . $name->lastname ?></b></h4>
             <?php
             }
             ?>

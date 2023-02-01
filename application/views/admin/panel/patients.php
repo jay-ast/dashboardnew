@@ -322,13 +322,8 @@
                             </div>
                         </div> -->
                     </div>
-                    <div class="col-md-12" style="display: flex; justify-content: center;">
-                        <!-- <div v-if="activeItem.fullname" class="routinelist">
-                            <button style="margin-right: 3px;" type="button" class="btn btn-success btnaddselectex new-routine"><i class="fa fa-arrow-circle-o-down"></i> Assign Selected Routine</button>
-                        </div> -->
-                        <button type="submit" class="btn btn-success btnsaveclientuser new-routine" name="btnsaveclientuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add and create new routine</button>
-                        <!-- <a style="margin-left: 3px;" type="submit" class="btn btn-success btnupdateclientuser new-routine" href="">Create New Routine</a> -->
-                        <!-- <a class="send-mail" id="mailto" href="#" target="_top"><i class="fa fa-envelope" style="margin-right:7px"></i>Send e-mail</a> -->
+                    <div class="col-md-12" style="display: flex; justify-content: center;">                        
+                        <button type="submit" class="btn btn-success btnsaveclientuser new-routine" name="btnsaveclientuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add and create new routine</button>                    
                         <button type="submit" class="btn btn-success btnsaveuser save-client" name="btnsaveuser" formaction="patients/addNewPatient">Add Client</button>
                     </div>
 
@@ -405,7 +400,7 @@
                             </div>
 
                             <div class="row margin-top-10 userdetails col-md-12">
-                                <a data-toggle="modal" class="client-detail-button btnPatientDetails" style="float: right;" href="#responsiveUserdetails" target="_top">Client Details</a>
+                                <a data-toggle="modal" class="client-detail-button btnPatientDetails" style="float: right;" href="#responsiveUserdetails" target="_top">Client Detail</a>
                             </div>
                         </div>
                     </div>
@@ -1461,54 +1456,5 @@
         font-size: 20px;
         margin-top: 20px;
         margin-left: 10px
-    }
-
-    .send-mail:hover {
-        background-color: #f3f3f3;
-        text-decoration: none;
-    }
-
-    .new-routine {
-        line-height: 1.75;
-        border: 1px solid;
-        border-radius: 5px;
-        padding: 0px 15px;
-        text-decoration: none;
-        font-size: 20px;
-        margin-top: 20px;
-        margin-right: 5px;
-    }
-
-    .client-portal-button {
-        line-height: 1.50;
-        border: 1px solid;
-        border-radius: 5px;
-        padding: 0px 25px;
-        text-decoration: none;
-        font-size: 20px;
-        margin-top: 15px;
-        background-color: #0395E2;
-        color: white;
-    }
-
-    .client-detail-button {
-        margin-top: 20px;
-        font-size: 18px;
-    }
-
-    .appointment-card {
-        background-color: #fafafa;
-        border: #e3e3e3 solid 1px;
-        border-radius: 5px;
-        padding: 15px 10px;
-        margin: 10px;
-    }
-
-    .btn-mail {
-        margin-right: 5px;
-    }
-    
-    .error {
-        color: #a94442;
     }
 </style>
