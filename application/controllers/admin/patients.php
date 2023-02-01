@@ -1300,8 +1300,8 @@ class Patients extends My_Controller
                     $validateEmail->get();
 
                     if (!$validateEmail->exists()) {
-                        $updatePatient->email = default_value($this->input->post("email"));
-                        $updatePatient->save();
+                        // $updatePatient->email = default_value($this->input->post("email"));
+                        // $updatePatient->save();
                         my_alert_message("success", "Client details updated successfully");
                         redirect('admin/patients');
                     } else {
