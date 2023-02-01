@@ -93,14 +93,12 @@
                                 ?>
                             </div>
                         </div>
-                    </div>
-
-                    <a class="btn btn-mail client-portal-button" href="<?php echo base_url("admin/home?id=".$client_id); ?>" target="_top" id="">Past Appointment</a>
-
+                    </div>                    
                 </div>
             </div>
         </div>
         <div class="modal-footer">
+            <a class="btn btn-mail client-portal-button" style="float: left;" href="<?php echo base_url("admin/appointment"); ?>" target="_top" id="">Appointment List</a>
             <a class="btn btn-mail client-portal-button" href="<?php echo base_url("admin/home?id=".$client_id); ?>" target="_top" id="">Schedule new appointment</a>
         </div>
     </div>
