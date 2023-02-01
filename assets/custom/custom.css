@@ -1,0 +1,126 @@
+.sidebar>.sidebarMenuWrapper {
+    overflow-y: scroll;
+    position: absolute;
+    top: 0px !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.selected {
+	background-color: #0395E2 !important;
+}
+.error {
+	border: solid 1px red;
+}
+.sidebar.sidebar-default {
+    //border-right: 1px solid #e5e5e5;
+    background: #636363 !important;
+}
+.sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active, .sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active:hover>a {
+    background-color: #636363 !important;
+    color: #000000 !important;
+}
+.sidebar.sidebar-inverse {
+    border-right: 1px solid #2c2c2c;
+    background: #636363 !important;
+}
+.navbar.main.navbar-primary{
+    border-bottom-color:#9e2b2b; 
+    background-color:#eae9e7 !important;
+}
+.navbar.main.navbar-primary .navbar-brand {
+    border-right:none !important;
+}
+.navbar.main.navbar-primary .dropdown-toggle {
+    background: #636363 !important;
+    color: #fff !important;
+}
+.navbar.main.navbar-primary .nav .open>a {
+    background-color: #0395e2 !important;
+}
+.sidebar.sidebar-inverse>.sidebarMenuWrapper>ul li.active, .sidebar.sidebar-inverse>.sidebarMenuWrapper>ul li.active:hover>a {
+    background-color: #0395e2 !important;
+    color: #fff;
+}
+.sidebar.sidebar-default>.sidebarMenuWrapper>ul ul {
+    border-top: 1px solid #0395e2 !important;
+}
+.sidebar.sidebar-default>.sidebarMenuWrapper>ul li {
+    border-bottom: 1px solid #0395e2 !important;
+}
+.sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active, .sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active:hover>a {
+    background-color: #636363 !important;
+    color: #fff;
+}
+
+.sidebar.sidebar-inverse .user-profile{
+    border-bottom:1px solid #eae9e7 !important;
+}
+.sidebar.sidebar-inverse
+{
+    background: #636363 !important;
+}
+.modal-dialog { 
+    width: 70%;
+}
+.new-modal-dialog { 
+    width: 40% !important;
+}
+.col-md-3.routineselector.selected .widget{
+	border: 3px solid #cb4040;
+	height: 320px;
+	}
+.spacing-x2 .widget, .spacing-x2 .filter-bar{margin-bottom: calc();}
+.col-md-3.routineselector{max-height: 340px;}
+#videos-container .widget .widget-head{
+    height:60px !important;
+    cursor: pointer;
+}
+#videos-container .widget .widget-head .heading
+{
+    line-height: normal !important;
+    text-align: center;
+}
+/* validation */
+
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline {
+    color: #a94442;
+}
+
+.mapstyle{
+    position: relative;
+    padding-bottom: 75%; 
+    height: 0;
+    overflow: hidden;
+}
+
+/* actual model css override on google auto location suggestion
+//use this z-index value for send back the modal */
+
+.pac-container {
+    background-color: #FFF;
+    z-index: 20;
+    position: fixed;
+    display: inline-block;
+    float: left;
+}
+.modal{
+    z-index: 1200;   
+}
+.modal-backdrop{
+    z-index: 10;        
+}
+.brief-info {
+    font-size: 1.3em;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    float: none;
+}
+
+

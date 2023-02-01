@@ -322,19 +322,13 @@
                             </div>
                         </div> -->
                     </div>
-                    <div class="col-md-12" style="display: flex; justify-content: center;">
-                        <!-- <div v-if="activeItem.fullname" class="routinelist">
-                            <button style="margin-right: 3px;" type="button" class="btn btn-success btnaddselectex new-routine"><i class="fa fa-arrow-circle-o-down"></i> Assign Selected Routine</button>
-                        </div> -->
-                        <button type="submit" class="btn btn-success btnsaveclientuser new-routine" name="btnsaveclientuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add and create new routine</button>
-                        <!-- <a style="margin-left: 3px;" type="submit" class="btn btn-success btnupdateclientuser new-routine" href="">Create New Routine</a> -->
-                        <!-- <a class="send-mail" id="mailto" href="#" target="_top"><i class="fa fa-envelope" style="margin-right:7px"></i>Send e-mail</a> -->
+                    <div class="col-md-12" style="display: flex; justify-content: center;">                        
+                        <button type="submit" class="btn btn-success btnsaveclientuser new-routine" name="btnsaveclientuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add and create new routine</button>                        
                         <button type="submit" class="btn btn-success btnsaveuser save-client" name="btnsaveuser" formaction="patients/addNewPatient">Add Client</button>
                     </div>
 
                     <div class="clearfix"></div>
-                    <div class="modal-footer">
-                        <!-- <button type="submit" class="btn btn-success btnsaveclientuser" name="btnsaveclientuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add and create new routine</button> -->
+                    <div class="modal-footer">                        
                         <a class="send-mail" id="mailto" href="#" style="float: left;" target="_top">Send e-mail</a>
                         <button type="submit" class="btn btn-success btnupdateuser" formaction="<?php echo base_url('admin/patients/updatePatient'); ?>">Update</button>
                         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>

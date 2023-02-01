@@ -1,0 +1,93 @@
+body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+    font-size: 14px;
+}
+
+.fc th {
+    padding: 10px 0px;
+    vertical-align: middle;
+    background: #F2F2F2;
+}
+
+.fc-day-grid-event>.fc-content {
+    padding: 4px;
+}
+
+#calendar {
+    /* max-width: 900px; */
+    margin: 0 auto;
+}
+
+.error {
+    color: #ac2925;
+    margin-bottom: 15px;
+}
+
+.event-tooltip {
+    width: 150px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #FFF;
+    padding: 10px;
+    position: absolute;
+    z-index: 10001;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+
+}
+
+.modal-header {
+    background-color: #3A87AD;
+    color: #fff;
+}
+
+.select2-container{
+    width: 100%!important;
+}
+
+.lds-dual-ring.hidden {
+    display: none;
+}
+
+/*Add an overlay to the entire page blocking any further presses to buttons or other elements.*/
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.8);
+    z-index: 999;
+    opacity: 1;
+    transition: all 0.5s;
+}
+
+/*Spinner Styles*/
+.lds-dual-ring {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 5% auto;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
