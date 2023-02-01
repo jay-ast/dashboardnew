@@ -1,0 +1,40 @@
+array(2) {
+  [0]=>
+  object(stdClass)#23 (8) {
+    ["id"]=>
+    string(3) "669"
+    ["client_id"]=>
+    string(3) "669"
+    ["schedule_date"]=>
+    string(10) "2023-01-24"
+    ["start_time"]=>
+    string(8) "17:47:00"
+    ["end_time"]=>
+    string(8) "18:32:00"
+    ["email"]=>
+    string(23) "alan.hayakawa@gmail.com"
+    ["firstname"]=>
+    string(4) "Alan"
+    ["lastname"]=>
+    string(8) "Hayakawa"
+  }
+  [1]=>
+  object(stdClass)#24 (8) {
+    ["id"]=>
+    string(4) "1123"
+    ["client_id"]=>
+    string(4) "1123"
+    ["schedule_date"]=>
+    string(10) "2023-01-24"
+    ["start_time"]=>
+    string(8) "15:16:00"
+    ["end_time"]=>
+    string(8) "16:16:00"
+    ["email"]=>
+    string(36) "developers.shabbir+2@arsenaltech.com"
+    ["firstname"]=>
+    string(4) "Test"
+    ["lastname"]=>
+    string(7) "Shabbir"
+  }
+}

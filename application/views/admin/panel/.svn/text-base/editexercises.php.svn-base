@@ -1,0 +1,421 @@
+<?php include 'header.php'; ?>
+<div id="content">
+    <h1 class="bg-white content-heading border-bottom">Routines</h1>
+
+    <div class="innerAll spacing-x2">
+        <!-- Widget -->
+        <div class="extraCustomMessage">
+            <?php if ($this->session->flashdata('message') != '') { ?>
+                <div class="alert alert-<?php echo $this->session->flashdata('message')['classname']; ?>">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <?php echo $this->session->flashdata('message')['data']; ?> 
+                </div> 
+            <?php } ?>
+        </div>
+        <div class="alert alert-info displaymessage hidden">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <p></p>
+        </div>
+        <div class="widget widget-inverse">
+            <div class="widget-body padding-bottom-none">
+                <!-- Table -->
+                <div class="row">
+                    <?php echo form_open(base_url('admin/exercises'), array('class' => 'crud_ex_video')); ?>                   
+                    <div class="col-md-4"><input type="text" class="form-control" placeholder="<?php
+                        if (isset($exercise_name)) {
+                            echo $exercise_name;
+                        } else {
+                            echo 'Routine Name';
+                        }
+                        ?>" name="exercise_name" /></div>
+
+                    <div class="col-md-3">
+                        <button class="btn btn-info btn-stroke">Search</button> 
+                        <a class="btn btn-success btnAddExercise" data-toggle="modal" href="#responsiveExercisedetails"> <i class="fa fa-plus"></i> Add</a>
+                    </div>                    
+                    <?php echo form_close(); ?>
+                    <table class="dynamicTable tableTools table table-striped checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                            <tr class=" text-center">                              
+                                <th>Routine Name</th>
+                                <th>No. of Videos</th>                                
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody> 
+                            <?php
+                            if (isset($exerciselist)) {
+                                foreach ($exerciselist as $exercisedatalist) {
+                                    $exc_name = $exercisedatalist['name'];
+                                    ?>
+                                    <tr class="gradeX " id="exercise-<?php echo $exercisedatalist['id']; ?>">      
+
+                                        <td><a data-toggle="modal" href="#"                                               
+                                               data-objectid="<?php echo $exercisedatalist['id']; ?>"                                                           
+                                               class="btnExerciseDetails">
+                                                   <?php echo $exc_name; ?>
+                                            </a>  
+                                        </td>
+                                        <td><?php echo $exercisedatalist['total_videos']; ?></td>                                                                             
+                                        <td class="center">                                           
+                                            <a class="deleteBtn" data-objectid="<?php echo $exercisedatalist['id']; ?>" 
+                                               data-objectname="<?php echo $exc_name; ?>"
+                                               data-action="delete" data-toggle="modal" href="#deleteWarning" >
+                                                <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete Routine?"></i></a></td>
+                                    </tr>
+                                    <?php
+                                }
+                            } else {
+                                echo '<tr class="gradeX"><td colspan="5" class="text-center">No Routines available.</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                    <div class="jquery-bootpag-pagination pull-right">
+                        <ul class="bootpag pagination">
+
+                            <!-- Show pagination links -->
+                            <?php
+                            if (isset($exerciselist)) {
+                                foreach ($links as $link) {
+                                    echo "<li>" . $link . "</li>";
+                                }
+                            }
+                            ?>
+                        </ul>
+                    </div>
+                </div>                
+            </div>
+        </div>       
+
+    </div>
+    <!--Model user details-->
+    <div id="responsiveExercisedetails" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content ">
+                <?php echo form_open(base_url('admin/exercises/addNewExercise'), array("class" => "exerciseForm")); ?>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h3 class="modal-title">Routine Details</h3>
+                </div>
+                <div class="modal-body modelform ">
+                    <div class="form-body clearfix col-md-12">
+                        <div class="col-md-12">
+                            <div class="row margin-top-10">
+                                <div class="form-group col-md-2">
+                                    <label>Name</label>
+                                </div>
+                                <div class="form-group col-md-10">                                            
+                                    <input type="text" class="form-control exercise_name" maxlength="100" name="name" placeholder="Routine Name"/>
+                                    <input type="hidden" class="form-control exerciseid" name="exerciseid" value="">
+                                </div>
+                            </div>
+                            <div class="row margin-top-10">
+                                <div class="form-group col-md-2">
+                                    <label>Description</label>
+                                </div>
+                                <div class="form-group col-md-10">
+                                    <textarea placeholder="Routine Description" class="form-control exercise_description col-md-12" rows="4" name="description">                                        
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="row margin-top-10">
+                                <div class="form-group col-md-2 field">
+                                    <label>Routine Videos</label>
+                                    <br>or<br>
+                                    <a class="link" href="<?php echo base_url('admin/videos'); ?>"> <i class="fa fa-plus"></i> Add Videos</a>
+                                </div>
+                                <div class="form-group col-md-10 field">
+                                    <div class="form-group col-md-4">
+                                        <label>Assign Videos</label> 
+                                        <input type="text" id="videosearch" placeholder="Search Video" autocomplete="off" maxlength="100" class="form-control">
+                                        <select multiple class="form-control ex_list_to" id="ex_list_to">                                     
+
+                                        </select>                                        
+                                    </div>   
+                                    <div class="col-md-1">
+                                        <div class="row margin-top-10">
+                                            <br><br><br>
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-success btnaddselectex" data-toggle="tooltip" data-title="Assign selected Videos"><i class="fa fa-arrow-circle-o-right"></i></button>                                    
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="col-md-12">
+                                            <label>Assigned Videos</label>
+                                            <div class="assignes_ex_div">
+
+                                            </div>
+
+                                        </div>
+                                    </div> 
+                                </div>                 
+
+                            </div>                        
+                        </div>                   
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer">                    
+                        <button  type="submit" class="btn btn-success btnSaveExercise" >Add</button>
+                        <button  type="submit" class="btn btn-success btnupdateuser" formaction="<?php echo base_url('admin/exercises/updateExercise'); ?>">Update</button>                                                            
+                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>
+                    <?php echo form_close(); ?>
+                </div>
+                <!-- /.modal-content --> 
+            </div>                   
+
+        </div>
+
+    </div>
+    <div id="exercise-list" class="hidden"></div>
+    <!-- /.modal-dialog --> 
+    <div id="deleteWarning"  class="modal fade">
+        <div class="modal-dialog new-modal-dialog">
+            <div class="modal-content">
+                <!-- dialog body -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Alert!!</h4>
+                </div>
+                <div class="modal-body alert-message">
+                    <p></p>
+                </div>
+                <!-- dialog buttons -->
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-danger modeldeleteyes" data-action="" data-objectid data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-success no" data-dismiss="modal">No</button>
+                </div>                  
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<?php include 'footer.php'; ?>   
+<script>
+    $exercise_videos = [];
+<?php
+if (!empty($exercise_videos)) {
+    foreach ($exercise_videos as $exc) {
+        ?>
+            $('.ex_list_to').append('<option value="<?php echo $exc['id']; ?>"> <?php echo  str_replace("'", "", $exc['title']); ?></option>');
+            $exercise_videos.push({'id':<?php echo $exc['id']; ?>, 'name': '<?php echo  str_replace("'", "", $exc['title']); ?>', 'title': '<?php echo $exc['name']; ?>'});
+        <?php
+    }
+}
+?>
+
+    $order = 1;
+    var base_url = '<?php echo base_url(); ?>';
+    var base_url_Plimageupload = '<?php echo base_url('admin/exercises/Pluploader'); ?>';
+    // delete warning model
+    $(document).on('click', '.deleteBtn', function () {
+        var objectid = $(this).attr('data-objectid');
+        var object_name = $(this).attr('data-objectname');
+        var action = $(this).data('action');
+        $(".modeldeleteyes").attr('data-objectid', objectid);
+        $(".modeldeleteyes").attr('data-objectname', object_name);
+        $(".modeldeleteyes").attr('data-action', action);
+        $("#deleteWarning p").html("Do you realy want to delete this Routine <strong>" + object_name + "</strong>?");
+        $("#deleteWarning").modal('show');
+        return false;
+    });
+    
+    
+    
+    
+    $("#videosearch").on('input',function(e){
+    var value = this.value.toLowerCase().trim();
+    var assignedexe = new Array();
+    
+   $('.assignes_ex_div').find('input').each(function(){
+        assignedexe.push($(this).val()); 
+    });
+         $('#ex_list_to').html('')
+         for (var key in $exercise_videos) {
+            var id = $exercise_videos[key]['id'];
+            var text = $exercise_videos[key]['name'];
+            if (jQuery.inArray(id.toString(), assignedexe)=='-1') {
+            if(value==''){
+                $('#ex_list_to').append('<option value="' + id + '">' + text + '</option>');
+            }else{
+                $val=text.toLowerCase().trim();
+                var not_found = ($val.indexOf(value) == -1);
+           
+                if(!not_found){
+                     $('#ex_list_to').append('<option value="' + id + '">' + text + '</option>');
+                }
+          }
+         }
+            
+           
+        }
+         
+});
+    //if user accept to delete park from model then process request
+    $(document).on('click', '.modeldeleteyes', function () {
+        var objectid = $('.modeldeleteyes').attr('data-objectid');
+        var object_name = $('.modeldeleteyes').attr('data-objectname');
+        var action = $('.modeldeleteyes').attr('data-action');
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/exercises/deleteExercise/' + objectid,
+            success: function (deleteAction) {
+                var deleteuserdata = JSON.parse(deleteAction);
+                var extraMessageHtml = "";
+                if (deleteuserdata['status'] == true) {
+                    extraMessageHtml = '<div class="alert alert-success">Routine <strong>' + object_name + '</strong> deleted successfully<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                } else {
+                    extraMessageHtml = '<div class="alert alert-danger">Error while deleting Routine <strong>' + object_name + '</strong> <button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                }
+                $('.extraCustomMessage').html(extraMessageHtml);
+                $('#exercise-' + objectid).fadeOut(1500);
+                return false;
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    });
+    $(document).on('click', '.btnAddExercise', function () {
+        $('.btnSaveExercise').removeClass('hidden');
+         
+        $('.btnupdateuser').addClass('hidden');
+        //reset field values
+        $('.exerciseid').val("");
+        $('.exercise_name').val("");
+        $('.exercise_description').val("");
+        $('.uploadedVideosDisplayArea').html('');
+        $('.btnAddNewVideo').removeAttr('data-exerciseid');
+        $('.selectNewVideo').val("");
+        $('.assignes_ex_div').html('');
+        $order = 1;
+        $('#ex_list_to').find('option').remove();
+        for (var key in $exercise_videos) {
+            var id = $exercise_videos[key]['id'];
+            var text = $exercise_videos[key]['name'];
+            $('#ex_list_to').append('<option value="' + id + '">' + text + '</option>');
+        }
+
+    });
+    $('#videoUploadModal').on('shown.bs.modal', function () {
+        $('.has-error').children('p').remove('p');
+        $('.has-error').removeClass('has-error');
+    });
+
+    //btn get exercise details
+    $(document).on('click', '.btnExerciseDetails', function () {
+        $('.fullscreendiv').removeClass('hidden');
+        var objectid = $(this).attr('data-objectid');
+        $('.btnSaveExercise').addClass('hidden');
+        $('.btnupdateuser').removeClass('hidden');
+
+        $('#ex_list_to').find('option').remove();
+        for (var key in $exercise_videos) {
+            var id = $exercise_videos[key]['id'];
+            var text = $exercise_videos[key]['name'];
+            $('#ex_list_to').append('<option value="' + id + '">' + text + '</option>');
+        }
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/exercises/getExerciseDetails/' + objectid,
+            success: function (actionResponse) {
+                var exerciseData = JSON.parse(actionResponse);
+                $('.uploadedVideosDisplayArea').html('');
+                $('.exerciseid').val(objectid);
+                $('.exercise_name').val(exerciseData['data']['details']['name']);
+                $('.exercise_description').val(exerciseData['data']['details']['description']);
+                $('.btnAddNewVideo').attr('data-exerciseid', objectid);
+                var ex_videos = exerciseData['data']['videos'];
+                var ex_videos_len = ex_videos.length;
+                $order = 1;
+                $('.assignes_ex_div').html('');
+                for (var i = 0; i < ex_videos_len; i++) {
+                    var id = ex_videos[i]['id'];
+                    //var name = ex_videos[i]['name'];
+                    var title = ex_videos[i]['title'];
+                    var orderno = ex_videos[i]['order'];
+
+                    var appen_html = '<label class="label label-info" style=" margin-right:5px">' +
+                            '<button type="button" style="padding-left:5px;" class="close btnRemoveExc" data-id="' + id + '" data-text="' + title + '">&times;</button>' +
+                            '<span style="line-height: 30px;">' + title + '</span>' +
+                            '<input type="hidden" name="assigned_video[]" class="assigned_video" value="' + id + '"/>' +
+                            '<input type="hidden" name="assigned_video_order[]" class="assigned_video_order" value="' + orderno + '"/>' +
+                            '</label></div>';
+                    $('.assignes_ex_div').append(appen_html);
+
+                    $('#ex_list_to option[value=' + id + ']').remove();
+                    $order = orderno;
+                }
+                $('.fullscreendiv').addClass('hidden');
+                $('#responsiveExercisedetails').modal('show');
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    });
+    $('#responsiveExercisedetails').on('hidden.bs.modal', function () {
+        $('.has-error').children('p').remove('p');
+        $('.has-error').removeClass('has-error')
+    });
+
+
+    //perform validation..
+    $(document).on('ready', function () {
+        $('.exerciseForm').validate({
+            rules: {
+                name: "required",
+            },
+            messages: {
+                name: "Exercise name should not be blank"
+            }
+        });
+        $('.crud_add_video').validate({
+            rules: {
+                title: "required",
+                modal_video_name: "required"
+            },
+            messages: {
+                title: "Routine name should not be blank",
+                modal_video_name: "Please select Routine video"
+            }
+        });
+    })
+
+    $(document).on('click', '.btnaddselectex', function () {
+        $(".ex_list_to option:selected").each(function () {
+            var optionValue = $(this).val();
+            var optionText = $(this).text();
+            console.log("optionText", optionText);
+            // collect all values
+            var appen_html = '<label class="label label-info" style=" margin-right:5px">' +
+                    '<button type="button" style="padding-left:5px;" class="close btnRemoveExc" data-id="' + optionValue + '" data-text="' + optionText + '">&times;</button>' +
+                    '<span style="line-height: 30px;">' + optionText + '</span>' +
+                    '<input type="hidden" name="assigned_video[]" class="assigned_video" value="' + optionValue + '"/>' +
+                    '<input type="hidden" name="assigned_video_order[]" class="assigned_video_order" value="' + $order + '"/>' +
+                    '</label></div>';
+            $('.assignes_ex_div').append(appen_html);
+            $order++;
+            //remove this option
+            $(this).remove();
+        });
+
+    });
+
+    $(document).on('click', '.btnRemoveExc', function () {
+        $(this).parent('label').remove();
+        //append this value and caption to list box
+        var id = $(this).attr('data-id');
+        var text = $(this).attr('data-text');
+        $('.ex_list_to').append('<option value="' + id + '">' + text + '</option>');
+
+    });
+</script>    

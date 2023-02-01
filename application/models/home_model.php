@@ -1,0 +1,344 @@
+<?php
+
+use Carbon\Carbon;
+
+class Home_Model extends CI_Model
+{
+
+	public function __construct($id = NULL)
+	{
+		parent::__construct($id);
+		$this->load->library('session');
+		//  $this->load->helper('form');
+	}
+	var $table = "events";
+	/**
+	 * <p>Returns all recoreds with all fields</p>
+	 * @param no prarameters
+	 * @return Object Class
+	 */
+
+	public function getEvents($id = null)
+	{
+		$types = [
+			'pilates' => '#5baff0',
+			'physical_therapy' => '#909090',
+			'fitness' => '#57acab',
+			'consultation' => '#bca1e5',
+			'other' => '#f90',
+		];
+		// $logged_user_id = $this->session->userdata('userid');
+		$logged_user_role_id = $this->session->userdata('roleid');
+		if ($logged_user_role_id == 1) {
+			if ($id) {
+				$logged_user_id = $id;
+				$data = $this->queryFunction($logged_user_id);
+			} else {
+				$data = $this->queryFunction();
+			}
+		} else {
+			$logged_user_id = $this->session->userdata('userid');
+			$data = $this->queryFunction($logged_user_id);
+		}
+
+		$records = [];
+		foreach ($data as $res) {
+			$result['id'] = $res->event_id;
+			$result['client_id'] = $res->client_id;
+			$result['color'] = $types[$res->appointment_type];
+			$result['title'] = $res->firstname . " " . $res->lastname;
+			$result['start'] = $res->schedule_date . ' ' . $res->start_time;
+			$result['end'] = $res->schedule_date . ' ' . $res->end_time;
+			$result['start_time'] = $res->start_time;
+			$result['end_time'] = $res->end_time;
+			$result['appointment_type'] = $res->appointment_type;
+			$result['repeating_weeks'] = $res->weekly_repeating_options;
+			$result['brief_note'] = $res->brief_note;
+			$result['meeting_duration'] = $res->meeting_duration;
+			$result['all_day'] = false;
+			$result['recurrence'] = $res->recurrence;
+			$records[] = $result;
+		}
+
+		return $records;
+	}
+
+	public function queryFunction($logged_user_id = '')
+	{
+		if ($logged_user_id) {
+			$sql = "SELECT `events`.`id` as `event_id`,
+    				`events`.`client_id`,
+    				`events`.`schedule_date`,
+     				`events`.`start_time`,
+					`events`.`end_time`,
+					`events`.`appointment_type`,
+					`events`.`weekly_repeating_options`,
+					`events`.`brief_note`,		
+					`events`.`meeting_duration`,
+					`events`.`recurrence`,
+					`events`.`created_by`,
+    				`users`.`id`,
+    				`users`.`email`,
+    				`users`.`firstname`,
+    				`users`.`lastname`
+				FROM (`events`)				
+				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				WHERE `events`.`created_by` = $logged_user_id ";
+			// $data = $this->db->query($sql)->result();
+		} else {
+			$sql = "SELECT `events`.`id` as `event_id`,
+    				`events`.`client_id`,
+    				`events`.`schedule_date`,
+     				`events`.`start_time`,
+					`events`.`end_time`,
+					`events`.`appointment_type`,
+					`events`.`weekly_repeating_options`,
+					`events`.`brief_note`,		
+					`events`.`meeting_duration`,
+					`events`.`recurrence`,
+					`events`.`created_by`,
+    				`users`.`id`,
+    				`users`.`email`,
+    				`users`.`firstname`,
+    				`users`.`lastname`
+				FROM (`events`)
+				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`";
+			// $data = $this->db->query($sql)->result();
+		}
+		$data = $this->db->query($sql)->result();
+		return $data;
+	}
+
+	public function addEvent()
+	{
+		// var_dump($_POST);
+		// die;
+		// $mail = Kernal::send_mail();
+		// var_dump($mail);die;
+		$logged_user_id = $this->session->userdata('userid');
+		if ($_POST['repeating_weeks'] > 0) {
+			$date = date_create($_POST['schedule_date']);
+			$schedule_date = date_format($date, "Y/m/d");
+			$date = date_create($_POST['start_time']);
+			$start_time = date_format($date, "H:i:s");
+			$date = date_create($_POST['end_time']);
+			$end_time = date_format($date, "H:i:s");
+
+			$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+			$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+
+			if ($_POST['recurrence'] == 'weekly') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				}
+			} elseif ($_POST['recurrence'] == 'daily') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				}
+			} elseif ($_POST['recurrence'] == 'monthly') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				}
+			}
+			// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
+			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+			if ($_POST['notify_mail'] == 'true') {
+				$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
+			}
+		} else {
+			$repeating_weeks = !empty($_POST['repeating_weeks']) ?? 0;
+			$date = date_create($_POST['schedule_date']);
+			$schedule_date = date_format($date, "Y/m/d");
+			$date = date_create($_POST['start_time']);
+			$start_time = date_format($date, "H:i:s");
+			$date = date_create($_POST['end_time']);
+			$end_time = date_format($date, "H:i:s");
+
+			$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options,brief_note,meeting_duration,recurrence,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+			$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $repeating_weeks, $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+
+			// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
+			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+			if ($_POST['notify_mail'] == 'true') {
+				$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
+			}
+		}
+
+		return ($this->db->affected_rows() != 1) ? false : true;
+	}
+
+	public function updateEvent()
+	{
+		// var_dump($_POST);die;		
+		$date = date_create($_POST['schedule_date']);
+		$schedule_date = date_format($date, "Y/m/d");
+		$date = date_create($_POST['start_time']);
+		$start_time = date_format($date, "H:i:s");
+		$date = date_create($_POST['end_time']);
+		$end_time = date_format($date, "H:i:s");
+
+		$sql = "UPDATE events SET client_id = ?, schedule_date = ?, start_time = ?, end_time = ? ,appointment_type = ? ,brief_note = ? ,meeting_duration = ? ,recurrence = ? WHERE id = ?";
+		$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $_POST['id']));
+
+		// $subject = 'Your scheduled meeting has been updated on'. ' ' . $schedule_date. '.';
+		$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+
+		if ($_POST['notify_mail'] == 'true') {
+			$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
+		}
+
+		return ($this->db->affected_rows() != 1) ? false : true;
+	}
+
+	/*Delete event */
+
+	public function deleteEvent()
+	{
+		$sql = "DELETE FROM events WHERE id = ?";
+		$this->db->query($sql, array($_GET['id']));
+		return ($this->db->affected_rows() != 1) ? false : true;
+	}
+
+	public function sendMail()
+	{
+		$start_date = date('Y-m-d H:i:s');
+		// $start_date = date('2022-11-30 10:36:00');
+		$end_date = date('Y-m-d H:i:s', strtotime($start_date) + (60 * 30));
+		// var_dump($start_date, $end_date);die;
+
+		$query = "SELECT `events`.`id`, `events`.`client_id`, `events`.`schedule_date`,`users`.`id`, `users`.`email`, 
+					`users`.`firstname`, `users`.`lastname` FROM (`events`) 
+					LEFT JOIN `users` ON `users`.`id`=`events`.`client_id`
+					WHERE schedule_date BETWEEN '" . $start_date . "' AND '" . $end_date . "'";
+
+		$data = $this->db->query($query)->result();
+		$msg_data = null;
+		if (!empty($data)) {
+			foreach ($data as $client_data) {
+				$msg_data .= 'Client Name : ' . $client_data->firstname . ' ' . $client_data->lastname . ' Date and Time : ' . $client_data->schedule_date . '<br/>';
+
+				$from_email = "developers.shabbir+1@arsenaltech.com";
+				$to_email = $client_data->email;
+
+				//Load email library 
+				$this->load->library('email');
+
+				$this->email->from($from_email, 'Test mail');
+				$this->email->to($to_email);
+				$this->email->subject('Notify For Schedule Meeting');
+				$this->email->message('Your meeting have schedule at ' . $client_data->schedule_date . ' With ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname'));
+
+				//Send mail
+				if ($this->email->send()) {
+					$this->session->set_flashdata("email_sent", "Email sent successfully.");
+				} else {
+					$this->session->set_flashdata("email_sent", "Error in sending Email.");
+					//    $this->load->view('email_form'); 
+				}
+			}
+
+			$from_email = "developers.shabbir+1@arsenaltech.com";
+			$to_email = "zeina@synergyptpilates.com";
+
+			//Load email library 
+			$this->load->library('email');
+
+			$this->email->from($from_email, 'Test mail');
+			$this->email->to($to_email);
+			$this->email->subject('Notify For Schedule Meeting with Client');
+			$this->email->message('Your meeting have schedule with ' . $msg_data);
+
+			//Send mail
+			if ($this->email->send()) {
+				$this->session->set_flashdata("email_sent", "Email sent successfully.");
+			} else {
+				$this->session->set_flashdata("email_sent", "Error in sending Email.");
+				//    $this->load->view('email_form'); 
+			}
+		}
+	}
+
+	public function notifyWithMail($client_id = '', $details = '', $subject = '')
+	{
+
+		$query = "SELECT * FROM `users` WHERE `id` = '" . $client_id . "'";
+		$data = $this->db->query($query)->result();
+		$msg_data = null;
+
+		foreach ($data as $client_data) {
+			// if ($details['repeating_weeks'] > 0) {
+			// 	if ($details['recurrence'] == "weekly") {
+			// 		$msg_data .= 'Hi ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= 'your meeting is schedule with ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') .
+			// 			' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . ' for next '
+			// 			. $details['repeating_weeks'] . ' weeks. ' . '<br/>';
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= ' Thanks you!';
+			// 	}else if($details['recurrence'] == "daily"){
+			// 		$msg_data .= 'Hi ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= 'your meeting is schedule with ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') .
+			// 			' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . ' for next '
+			// 			. $details['repeating_weeks'] . ' days. ' . '<br/>';
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= ' Thanks you!';
+			// 	}else if($details['recurrence'] == "monthly"){
+			// 		$msg_data .= 'Hi ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= 'your meeting is schedule with ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') .
+			// 			' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . ' for next '
+			// 			. $details['repeating_weeks'] . ' months. ' . '<br/>';
+			// 		$msg_data .= '<br/>';
+			// 		$msg_data .= ' Thanks you!';
+			// 	}
+			// } else {
+			// $msg_data .= 'Hi ' . $client_data->firstname . ' ' . $client_data->lastname . ', ';
+			// $msg_data .= '<br/>';
+			// $msg_data .= '<br/>';
+			// $msg_data .= 'your meeting is schedule with ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') .
+			// 	' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . '.';
+			// $msg_data .= '<br/>';
+			// $msg_data .= '<br/>';
+			// $msg_data .= ' Thanks you!';
+
+			$msg_data .= 'Hello ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
+			$msg_data .= '<br/>';
+			$msg_data .= 'Your ' . ucwords(str_replace('_', ' ', $details['appointment_type'])) . ' appointment is scheduled with ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') .
+				' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . '.' . '<br/><br/>';
+			$msg_data .= '<p>Please contact us at for appointment changes or cancellations 24 hours in advance to avoid being charged the cost of the session.</p>';
+			// $msg_data .= '<br/>';
+
+			$msg_data .= '<p>California: 704 Mission Avenue, San Rafael CA 94901.<br/>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;415-924-2228 or <a href="mailto:synergy@synergyptpilates.com">synergy@synergyptpilates.com</a><br/>
+
+                                     Switzerland: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
+									 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+41 (0) 78 422 71 25 or <a href="mailto:zeina@synergyptpilates.com">zeina@synergyptpilates.com<br/><br/>
+                                </p>';
+			$msg_data .= ' <br/>Thanks you and we look forward to seeing you very soon! <br/><br/>';
+
+			$msg_data .= ' In health and strength, <br/> 
+                                   Synergy+ team';
+
+			// }
+
+			$from_email = $this->session->userdata('email');
+			$to_email = $client_data->email;
+			$to = $to_email;
+			$body = $msg_data;
+			// Always set content-type when sending HTML email
+			$headers = "MIME-Version: 1.0" . "\r\n";
+			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+			// More headers
+			$headers .= 'From: <' . $from_email . '>' . "\r\n";
+			$result = my_email_send($to, $subject, "event", array('msg_data' => $body), 'support@perfect-forms.net');
+			return $result;
+		}
+	}
+}

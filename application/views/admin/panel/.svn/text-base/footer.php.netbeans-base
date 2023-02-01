@@ -1,0 +1,190 @@
+<div class="fullscreendiv hidden">
+    <div class="middleloader">
+        <div class='sp btn btn-xs sp-circle'></div>            
+    </div>            
+</div>
+<div class="clearfix"></div><!-- // Sidebar menu & content wrapper END -->
+<div id="footer" class="hidden-print">
+    <!--  Copyright Line -->
+    <div class="copy">&copy; 2015 - 2016 - <a href="#">Synergy+</a> - All Rights Reserved. </div>
+    <!--  End Copyright Line -->
+</div><!-- // Footer END -->    
+
+</body>
+</html>
+
+<!-- Global -->
+<script>
+    var basePath = '',
+            commonPath = '../assets/',
+            rootPath = '../',
+            DEV = false,
+            componentsPath = '../assets/components/';
+
+    var primaryColor = '#cb4040',
+            dangerColor = '#b55151',
+            infoColor = '#466baf',
+            successColor = '#8baf46',
+            warningColor = '#ab7a4b',
+            inverseColor = '#45484d';
+
+    var themerPrimaryColor = primaryColor;
+</script>
+
+<script src="<?php echo base_url('assets/components/library/bootstrap/js/bootstrap.min.js?v=v1.2.3'); ?>"></script>
+<script src="<?php echo base_url('assets/components/plugins/nicescroll/jquery.nicescroll.min.js?v=v1.2.3'); ?>"></script>
+<script src="<?php echo base_url('assets/components/plugins/breakpoints/breakpoints.js?v=v1.2.3'); ?>"></script>
+<script src="<?php echo base_url('assets/components/core/js/animations.init.js?v=v1.2.3'); ?>"></script>    
+
+
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/gallery/gridalicious/assets/lib/jquery.gridalicious.min.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/gallery/gridalicious/assets/custom/gridalicious.init.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/gallery/prettyphoto/assets/lib/js/jquery.prettyPhoto.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/gallery/prettyphoto/assets/custom/prettyphoto.init.js?v=v1.2.3"></script>
+
+<script src="<?php echo base_url(); ?>assets/components/plugins/holder/holder.js?v=v1.2.3"></script>
+
+
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/forms/editors/wysihtml5/assets/lib/js/wysihtml5-0.3.0_rc2.min.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/forms/editors/wysihtml5/assets/lib/js/bootstrap-wysihtml5-0.0.2.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/modules/admin/forms/editors/wysihtml5/assets/custom/wysihtml5.init.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/core/js/sidebar.main.init.js?v=v1.2.3"></script>
+<script src="<?php echo base_url(); ?>assets/components/core/js/sidebar.collapse.init.js?v=v1.2.3"></script>
+
+<!--<script src="<?php echo base_url(); ?>assets/components/helpers/themer/assets/plugins/cookie/jquery.cookie.js?v=v1.2.3"></script>-->
+<script src="<?php echo base_url(); ?>assets/components/core/js/core.init.js?v=v1.2.3"></script>
+
+<!--PlUpluad libraries--> 
+<script type="text/javascript" src="<?php echo base_url('assets/custom/plupload/js/plupload.full.min.js'); ?>"></script>
+
+<!--jquery validation-->
+<script src="<?php echo base_url('assets/custom/jquery.validate.js'); ?>"></script>
+<script src="<?php echo base_url('assets/custom/form-validator.init.js'); ?>" type="text/javascript"></script>
+
+<script>
+    //Jquery validation
+    $('.adminDetailForm').validate({
+        rules: {
+            a_firstname: "required",
+            a_password: {
+                minlength: 5
+            }
+        },
+        messages: {
+            a_firstname: "Enter your First Name",
+            a_password: {
+                required: "Enter Password",
+                minlength: "Password must be 5 characters long"
+            }
+        }
+    });
+    //update Admin details
+    $(document).on('click', '.btnsaveadmin', function () {
+        if (!$('.adminDetailForm').valid()) {
+            return false;
+        }
+        var userid = $(this).attr('data-userid');
+        var firstname_val = $('#respinsiveAdminSettings .a_firstname').val();
+        var lastname_val = $('#respinsiveAdminSettings .a_lastname').val();
+        var password_val = $('#respinsiveAdminSettings .a_password').val();
+        if (userid != '') {
+            //update admin data
+            $url=$('.adminDetailForm').attr('action');
+            $.ajax({
+                type: 'POST',
+                url: $url,
+                data: {'user_id': userid, 'firstname': firstname_val, 'lastname': lastname_val, 'password': password_val},
+                success: function (actionResponse) {
+                    var response = JSON.parse(actionResponse);
+                    if (response['status'] == true) {
+                        var extraMessageHtml = '<div class="alert alert-success">' + response['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        $('.extraCustomMessage').html(extraMessageHtml);
+                    } else {
+                        var extraMessageHtml = '<div class="alert alert-danger">' + response['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        $('.extraCustomMessage').html(extraMessageHtml);
+                    }
+                    $("#respinsiveAdminSettings").modal('hide');
+                },
+                error: function (errorData) {
+                }
+            });
+        }
+        return false;
+    });
+</script>
+<style>
+
+    .middleloader{
+        position:absolute;
+        width:70px;
+        height:70px;
+        left:50%;
+        top:50%;
+        margin-left:-50px;
+        margin-top:-50px;
+        border:1px dotted gray;
+    }
+    .fullscreendiv {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        bottom: 0;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1500;
+    }
+    .sp {
+        width: 100%;
+        height: 100%;
+        clear: both;
+        margin: 0 auto;
+    }
+
+    .sp-circle {
+        border: 4px rgba(255, 255, 255, 0.25) solid;
+        border-top: 4px white solid;
+        border-radius: 50%;
+        -webkit-animation: spCircRot .6s infinite linear;
+        animation: spCircRot .6s infinite linear;
+    }
+
+    @-webkit-keyframes spCircRot {
+        from {
+            -webkit-transform: rotate(0deg);
+        }
+        to {
+            -webkit-transform: rotate(359deg);
+        }
+    }
+    @keyframes spCircRot {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(359deg);
+        }
+    }
+
+    .modal-dialog{
+        overflow-y: initial !important
+    }
+    .imagestyle{
+        width: 100px; 
+        height: 100px; 
+        margin-right: 20px;
+    }
+
+    .sp {
+        width: 20px;
+        height: 20px;
+        clear: both;
+        margin: 0 auto;
+    }
+    a.deleteBtn.success,a.deleteBtn.success:hover{color:#72af46;}
+    .success .tooltip-arrow,
+   .success .tooltip > .tooltip-inner {background-color: #72af46;}
+   .error.help-block {
+    color: #a94442;
+}
+
+</style>

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/rva/!svn/ver/41/Admin%20and%20API/application/views/emails
+END
+customErrorEmail.php
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/rva/!svn/ver/39/Admin%20and%20API/application/views/emails/customErrorEmail.php
+END
+forgotpassword.php
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/rva/!svn/ver/41/Admin%20and%20API/application/views/emails/forgotpassword.php
+END
