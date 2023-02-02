@@ -1,15 +1,22 @@
 <?php include_once 'header.php'; ?>
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Appointments</h1>
-    <div class="innerAll spacing-x2">                
-        <div class="alert alert-info displaymessage hidden">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <p></p>
-        </div>
+    <div class="innerAll spacing-x2">
         <div class="widget widget-inverse">
-            <div class="widget-body padding-bottom-none">
+            <div class="col-md-5" style="margin-top: 20px;">
+                <div class="col-md-4">
+                    <select class="form-control provider_data" id="provider_data" name="provider_data">
+                        <option value="">All Provider</option>
+                        <?php
+                        foreach ($providerlist as $clientfolder) {
+                            echo '<option value="' . $clientfolder['id'] . '" data-name="' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '">' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '</option>';
+                        } ?>
+                    </select>
+                </div>
+            </div>
+            <div class="widget-body padding-bottom-none appointment_details">
                 <div class="row">
-                    <table class="dynamicTable tableTools table table-striped checkboxs">                        
+                    <table class="dynamicTable tableTools table table-striped checkboxs">
                         <thead>
                             <tr class=" text-center">
                                 <th>Client Name</th>
@@ -21,30 +28,30 @@
                                 <th>Provider Name</th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
-                        </thead>                        
+                        </thead>
                         <tbody id="myTable">
-                        <?php
+                            <?php
                             if (isset($event_data)) {
-                                foreach ($event_data as $event_list) {                                    
+                                foreach ($event_data as $event_list) {
                             ?>
-                                <tr class="gradeX">
-                                    <td><?php echo $event_list->firstname . ' ' . $event_list->lastname ?></td>
-                                    <td><?php echo $event_list->schedule_date  ?></td>
-                                    <td><?php echo $event_list->start_time ?></td>
-                                    <td><?php echo $event_list->end_time ?></td>
-                                    <td><?php echo $event_list->appointment_type ?></td>
-                                    <td><?php echo $event_list->brief_note ?></td>
-                                    <td><?php echo $event_list->provider_first_name . ' ' .  $event_list->provider_last_name?></td>
-                                    <td></td>
-                                </tr>
+                                    <tr class="gradeX">
+                                        <td><?php echo $event_list->firstname . ' ' . $event_list->lastname ?></td>
+                                        <td><?php echo $event_list->schedule_date  ?></td>
+                                        <td><?php echo $event_list->start_time ?></td>
+                                        <td><?php echo $event_list->end_time ?></td>
+                                        <td><?php echo $event_list->appointment_type ?></td>
+                                        <td><?php echo $event_list->brief_note ?></td>
+                                        <td><?php echo $event_list->provider_first_name . ' ' .  $event_list->provider_last_name ?></td>
+                                        <td></td>
+                                    </tr>
                             <?php
                                 }
                             } else {
                                 echo '<tr class="gradeX"><td colspan="5" class="text-center">No Events available.</td></tr>';
                             }
                             ?>
-                        </tbody>                    
-                    </table>                    
+                        </tbody>
+                    </table>
                     <div class="jquery-bootpag-pagination pull-right">
                         <!-- <ul id="myLinks" class="bootpag pagination">                            
                             <?php
@@ -58,6 +65,34 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 <?php include_once 'footer.php'; ?>
+<script>
+    $(document).ready(function() {
+        var base_url = '<?php echo base_url(); ?>';
+        $(".provider_data").change(function(item) {
+            var provider_id = $('#provider_data').val();
+            var provider_name = $('#provider_data').find(':selected').data('name');
+            console.log('provider_id', provider_id);
+            console.log('provider_name', provider_name);
+            $('.appointment_details').html('');
+            // if (provider_name) {
+            //     $('.provider_name').text(provider_name);
+            // } else {
+            //     $('.provider_name').text("All Staff");
+            // }
+
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/appointment/filterByProvider/' + provider_id,
+                success: function(actionResponse) {                    
+                    $('.appointment_details').html(actionResponse);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+    });
+</script>
