@@ -3,7 +3,7 @@
         <?php echo form_open(base_url('admin/patients/addNewNotes')); ?>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <a style="float: right; margin-right: 20px;" href="<?php echo base_url('admin/patients'); ?>">Return to client portal</a>
+            <a style="float: right; margin-right: 20px;" data-toggle="modal" href="#clientPortal" class="formNotesDetails">Return to client portal</a>
             <?php
             foreach ($notes_data['client_name'] as $name) {
                 $client_id = $name->id;

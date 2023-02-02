@@ -122,7 +122,7 @@
                 <?php echo form_open(base_url('admin/patients/updatePatient'), array("class" => "patientForm")); ?>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
-                    <a style="float: right; margin-right: 20px;" href="<?php echo base_url('admin/patients'); ?>">Return to client portal</a>
+                    <a style="float: right; margin-right: 20px;" data-toggle="modal" href="#clientPortal" class="formClientDetails">Return to client portal</a>
                     <h3 class="modal-title">Client Details</h3>
                 </div>
 
@@ -458,7 +458,7 @@
                 <?php echo form_open(base_url('admin/patients/addNewNotes')); ?>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <a style="float: right; margin-right: 20px;" href="<?php echo base_url('admin/patients'); ?>">Return to client portal</a>
+                    <a style="float: right; margin-right: 20px;" data-toggle="modal" href="#clientPortal" class="formAccountDetails">Return to client portal</a>
                     <h4 class="modal-title">Client Name: </h4>
                 </div>
 
@@ -565,7 +565,7 @@
                 <?php echo form_open(base_url('admin/patients/updateRoutine'), array("class" => "routineForm")); ?>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
-                    <a style="float: right; margin-right: 20px;" href="<?php echo base_url('admin/patients'); ?>">Return to client portal</a>
+                    <a style="float: right; margin-right: 20px;" data-toggle="modal" href="#clientPortal" class="formRoutineDetails">Return to client portal</a>
                     <h3 class="modal-title"></h3>
                 </div>
                 <div class="modal-body modelform ">
@@ -1394,6 +1394,26 @@
                 $('.error').html('Please provide all data for Notes.');
                 return false;
             }
+        });
+
+        $(document).on('click', '.formClientDetails', function() {            
+            $('#responsiveUserdetails').modal('toggle');
+        });
+
+        $(document).on('click', '.formScheduleDetails', function() {            
+            $('#schedulePortal').modal('toggle');
+        });
+        
+        $(document).on('click', '.formNotesDetails', function() {            
+            $('#notePortal').modal('toggle');
+        });
+
+        $(document).on('click', '.formAccountDetails', function() {            
+            $('#accountPortal').modal('toggle');
+        });
+
+        $(document).on('click', '.formRoutineDetails', function() {            
+            $('#routinePortal').modal('toggle');
         });
 
         // $(".toggle-sidebar").click()
