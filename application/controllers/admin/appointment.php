@@ -4,7 +4,7 @@ class Appointment extends My_Controller
 {
     public function __construct()
     {
-        parent::__construct();        
+        parent::__construct();
     }
 
     public function index()
@@ -20,7 +20,8 @@ class Appointment extends My_Controller
                                 `provider_user`.`lastname` as `provider_last_name`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
+                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        ORDER BY `events`.`schedule_date` DESC";
         $data['event_data'] = $this->db->query($event_data)->result();
         $total_count = count($data['event_data']);
         $numlinks = 3;
@@ -44,23 +45,24 @@ class Appointment extends My_Controller
 
         // $listProvider->where('company_id', $data['global']['companyid']);
         $listProvider->order_by('firstname', 'ASC');
-        $listProvider->order_by('lastname', 'ASC');    
+        $listProvider->order_by('lastname', 'ASC');
         $listProvider->get();
 
-		//echo $this->db->last_query();
+        //echo $this->db->last_query();
 
         foreach ($listProvider as $lip) {
-            $userdetail=$lip->show_result();
-            $userlisted[]=$userdetail['id'];
+            $userdetail = $lip->show_result();
+            $userlisted[] = $userdetail['id'];
             $providerlist[] = $userdetail;
         }
-		$data['providerlist'] = $providerlist;
-        
-        $this->load->view('admin/panel/appointment', $data);
-}
+        $data['providerlist'] = $providerlist;
 
-    public function filterByProvider($provider_id = ''){
-        if($provider_id){
+        $this->load->view('admin/panel/appointment', $data);
+    }
+
+    public function filterByProvider($provider_id = '')
+    {
+        if ($provider_id) {
             $event_data = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
@@ -70,8 +72,9 @@ class Appointment extends My_Controller
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-                        WHERE `events`.`created_by` = $provider_id ";
-        }else{
+                        WHERE `events`.`created_by` = $provider_id 
+                        ORDER BY `events`.`schedule_date` DESC";
+        } else {
             $event_data = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
@@ -81,8 +84,8 @@ class Appointment extends My_Controller
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
-        }        
-        
+        }
+
         $data['event_data'] = $this->db->query($event_data)->result();
 
         return $this->load->view('admin/panel/filter_appointment_details', $data);
