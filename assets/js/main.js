@@ -4,11 +4,11 @@ $(function () {
     var currentEvent; // Holds the event object when editing an event
     // var base_url = 'http://dashboardnew.perfect-forms.net/'; // Here i define the base_url
     var base_url = 'https://synergy-plus.com/dashboardnew/'; // Here i define the base_url
-    var selectedDateTime;	
-    var setModel;	
+    var selectedDateTime;
+    var setModel;
     var modelEvent;
     var appoint_id;
-    
+
     if(window.location.href.indexOf("id") != -1){
         var appoint_id = window.location.href.split('?')[1];
         appoint_id = appoint_id.split('=')[1];        
@@ -30,7 +30,7 @@ $(function () {
     // Fullcalendar
     
     fullCalendar($apiUrl = 'admin/home/getEvents');
-    function fullCalendar($apiUrl) {        
+    function fullCalendar($apiUrl) {
         $('#calendar').fullCalendar({
             theme: false,
             // slotDuration: '00:30', // 2 hours
@@ -80,23 +80,17 @@ $(function () {
                 // Open modal to add event    
                 
                 if (selectedDate >= todayDate) {
-                    if (selectedDateTime >= todayDateTime) {
-                        modal({
-                            // Available buttons when adding
-                            buttons: {
-                                add: {
-                                    id: 'add-event', // Buttons id
-                                    css: 'btn-success', // Buttons class
-                                    label: 'Add' // Buttons label
-                                }
-                            },
-                            title: 'Add Event' // Modal title
-                        }, 'event-modal');
-                    }else{
-                        $('#past_appointment-confirmation-modal').find('.modal-title').html('You can not add an appointment for past time.');
-                        $('#past_appointment-confirmation-modal').modal('show');
-                        return false;
-                    }                    
+                    modal({
+                        // Available buttons when adding
+                        buttons: {
+                            add: {
+                                id: 'add-event', // Buttons id
+                                css: 'btn-success', // Buttons class
+                                label: 'Add' // Buttons label
+                            }
+                        },
+                        title: 'Add Event' // Modal title
+                    }, 'event-modal');
                 } else {
                     $('#past_appointment-confirmation-modal').find('.modal-title').html('You can not add an appointment for past time.');
                     $('#past_appointment-confirmation-modal').modal('show');
@@ -239,7 +233,7 @@ $(function () {
         }
 
         $('.modal-title').html(data.title);
-        $('.modal-footer button:not(".btn-default")').remove();        
+        $('.modal-footer button:not(".btn-default")').remove();
         if (client_id) {
             setTimeout(function () {
                 $('#client_id').val(client_id).trigger("change");
@@ -249,7 +243,7 @@ $(function () {
         } else {
             setTimeout(function () {
                 $('#client_id').val(data.event ? data.event.client_id : '').trigger("change");
-            }, 1000);            
+            }, 1000);
         }
         var today = new Date();
         if (data.event) {
@@ -479,7 +473,7 @@ $(function () {
         $('.postal_code').val("");
         $('.country').val("");
         $('.emergencycontactname').val("");
-        $('#emergencycontact').val('');        
+        $('#emergencycontact').val('');
     });
 
     $("#calendar").on('click', function () {
@@ -498,7 +492,7 @@ $(function () {
         $('.postal_code').val("");
         $('.country').val("");
         $('.emergencycontactname').val("");
-        $('#emergencycontact').val('');        
+        $('#emergencycontact').val('');
     });
 
     function hide_notify() {
@@ -647,9 +641,9 @@ $(function () {
         var duration_time = parseInt(duration_hours) + parseInt(duration_minutes);
 
         if (duration_time) {
-            var start_time_value = moment($('.start_time').val(), "h:mm A").format("H:mm");
-            var end_time_value = moment(start_time_value, "h:mm").add(duration_time, 'minutes').format("H:mm A");
-            $('.end_time').val(moment(end_time_value, "H:mm").format("h:mm A"));
+            var start_time_value = moment($('.start_time').val(), "hh:mm A").format("HH:mm");
+            var end_time_value = moment(start_time_value, "hh:mm").add(duration_time, 'minutes').format("HH:mm A");
+            $('.end_time').val(moment(end_time_value, "HH:mm").format("hh:mm A"));
         } else {
             $('.end_time').val('');
         }
@@ -856,7 +850,7 @@ $(function () {
             $('.provider_name').text("All Staff");
         }
         $('#calendar').fullCalendar('destroy');
-        fullCalendar($apiUrl = 'admin/home/getEvents/' + provider_id);        
+        fullCalendar($apiUrl = 'admin/home/getEvents/' + provider_id);
     });
     
     $(document).on('click', '#createNoteForm', function() {     
