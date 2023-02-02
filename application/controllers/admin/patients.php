@@ -1207,7 +1207,7 @@ class Patients extends My_Controller
         $sql = "UPDATE notes SET subjective = ?, objective = ?, assessment = ?, plan = ? WHERE id = ?";
 		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'],$_POST['note_id']));
         
-        if($this->db->affected_rows() != 1){
+        if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
             $result['success'] = false;                                
             $result['message'] = "Notes details not updated";
             echo json_encode($result);

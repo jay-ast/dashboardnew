@@ -10,6 +10,7 @@
         foreach ($notes_details as $notes) {
         ?>
             <div class="modal-body noteUpdateform">
+            <div class="error"></div>
                 <div class="form-body clearfix col-md-12">
                     <div class="row margin-top-10">
                         <div class="form-group col-md-6">

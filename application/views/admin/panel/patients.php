@@ -1252,9 +1252,9 @@
             });
         });
 
-        $(document).on('click', '#noteDetails', function() {	
-            $('#clientPortal').modal('toggle');            
-            var client_id = $('#clientPortal').find('.patientid').val();            
+        $(document).on('click', '#noteDetails', function() {
+            $('#clientPortal').modal('toggle');
+            var client_id = $('#clientPortal').find('.patientid').val();
 
             $.ajax({
                 type: 'POST',
@@ -1266,13 +1266,13 @@
                     console.log(data);
                 }
             });
-            
+
         });
 
-        $(document).on('click', '#editNotesData', function() {	
-            $('#notePortal').modal('toggle');            
+        $(document).on('click', '#editNotesData', function() {
+            $('#notePortal').modal('toggle');
             var note_id = $(this).attr('data-noteid');
-            console.log('asx', note_id);            
+            console.log('asx', note_id);
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/patients/editNotesDetails/' + note_id,
@@ -1283,40 +1283,45 @@
                     console.log(data);
                 }
             });
-            
+
         });
 
         $(document).on('click', '#updateNoteDetails', function(e) {
-            $.ajax({
-                type: 'POST',
-                url: base_url + 'admin/patients/updateNotesDetails',
-                data: {
-                    note_id: $('.noteUpdateform').find('#noteid').val(),
-                    subjective: $('.noteUpdateform').find('#subjective').val(),
-                    objective: $('.noteUpdateform').find('#objective').val(),
-                    assessment: $('.noteUpdateform').find('#assessment').val(),
-                    plan: $('.noteUpdateform').find('#plan').val(),                    
-                },
-                success: function(result) {
-                    var notesdata = JSON.parse(result);                    
-                    var extraMessageHtml = "";
-                    $('#editNotesDetails').modal('toggle');
-                    if (notesdata['success'] == true) {
-                        extraMessageHtml = '<div class="alert alert-success">' + notesdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';                        
-                    } else {
-                        extraMessageHtml = '<div class="alert alert-danger">' + notesdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+            if ($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'admin/patients/updateNotesDetails',
+                    data: {
+                        note_id: $('.noteUpdateform').find('#noteid').val(),
+                        subjective: $('.noteUpdateform').find('#subjective').val(),
+                        objective: $('.noteUpdateform').find('#objective').val(),
+                        assessment: $('.noteUpdateform').find('#assessment').val(),
+                        plan: $('.noteUpdateform').find('#plan').val(),
+                    },
+                    success: function(result) {
+                        var notesdata = JSON.parse(result);
+                        var extraMessageHtml = "";
+                        $('#editNotesDetails').modal('toggle');
+                        if (notesdata['success'] == true) {
+                            extraMessageHtml = '<div class="alert alert-success">' + notesdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        } else {
+                            extraMessageHtml = '<div class="alert alert-danger">' + notesdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        }
+                        $('.extraCustomMessage').html(extraMessageHtml);
+                    },
+                    complete: function() {},
+                    error: function(data) {
+                        console.log(data);
                     }
-                    $('.extraCustomMessage').html(extraMessageHtml);
-                },
-                complete: function() {},
-                error: function(data) {
-                    console.log(data);
-                }
-            })
+                })
+            } else {
+                $('.error').html('Please provide all data for Notes.');
+                return false;
+            }
         });
 
         $(document).on('click', '.deleteNotesWarning', function() {
-            var noteid = $(this).attr('data-noteid');                      
+            var noteid = $(this).attr('data-noteid');
             $(".deleteNotesDetails").attr('data-noteid', noteid);
             $("#deleteNote p").html("Do you realy want to delete this Notes?");
             $("#deleteNote").modal('show');
@@ -1334,9 +1339,9 @@
                     var deleteuserdata = JSON.parse(deleteAction);
                     var extraMessageHtml = "";
                     if (deleteuserdata['success'] == true) {
-                        extraMessageHtml = '<div class="alert alert-success">' + deleteuserdata['message'] +  '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        extraMessageHtml = '<div class="alert alert-success">' + deleteuserdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
                     } else {
-                        extraMessageHtml = '<div class="alert alert-danger">' + deleteuserdata['message'] +  '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        extraMessageHtml = '<div class="alert alert-danger">' + deleteuserdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
                     }
                     $('.extraCustomMessage').html(extraMessageHtml);
                     $('#patient-' + patientid).fadeOut(1500);
@@ -1359,7 +1364,7 @@
             $('#objective').val('');
             $('#assessment').val('');
             $('#plan').val('');
-            $('#notePortal').modal('toggle');            
+            $('#notePortal').modal('toggle');
         });
 
         $(document).on('click', '#addNoteDetails', function() {
@@ -1396,23 +1401,23 @@
             }
         });
 
-        $(document).on('click', '.formClientDetails', function() {            
+        $(document).on('click', '.formClientDetails', function() {
             $('#responsiveUserdetails').modal('toggle');
         });
 
-        $(document).on('click', '.formScheduleDetails', function() {            
+        $(document).on('click', '.formScheduleDetails', function() {
             $('#schedulePortal').modal('toggle');
         });
-        
-        $(document).on('click', '.formNotesDetails', function() {            
+
+        $(document).on('click', '.formNotesDetails', function() {
             $('#notePortal').modal('toggle');
         });
 
-        $(document).on('click', '.formAccountDetails', function() {            
+        $(document).on('click', '.formAccountDetails', function() {
             $('#accountPortal').modal('toggle');
         });
 
-        $(document).on('click', '.formRoutineDetails', function() {            
+        $(document).on('click', '.formRoutineDetails', function() {
             $('#routinePortal').modal('toggle');
         });
 
