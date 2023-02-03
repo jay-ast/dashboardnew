@@ -1120,7 +1120,7 @@ class Patients extends My_Controller
         
         $client_name = "SELECT * FROM users WHERE `id` = '" . $client_id .  "'";
         $client_data['client_name'] = $this->db->query($client_name)->result();
-        return $this->load->view('admin/panel/appointment_details', ['client_data'=>$client_data]);
+        return $this->load->view('admin/panel/appointment_details', $client_data);
     }
     
     public function getNotesDetails($client_id = ""){
@@ -1331,5 +1331,10 @@ class Patients extends My_Controller
     public function loadCreateNoteView()
     {
         return $this->load->view('admin/panel/create_note_view');
+    }
+
+    public function loadCreateUserView()
+    {
+        return $this->load->view('admin/panel/create_user_view');
     }
 }

@@ -111,65 +111,66 @@ class Home_Model extends CI_Model
 
 	public function addEvent()
 	{
-		// var_dump($_POST);
+		// var_dump($_POST);die;
 		// die;
 		// $mail = Kernal::send_mail();
 		// var_dump($mail);die;
-		$logged_user_id = $this->session->userdata('userid');
-		if ($_POST['repeating_weeks'] > 0) {
-			$date = date_create($_POST['schedule_date']);
-			$schedule_date = date_format($date, "Y/m/d");
-			$date = date_create($_POST['start_time']);
-			$start_time = date_format($date, "H:i:s");
-			$date = date_create($_POST['end_time']);
-			$end_time = date_format($date, "H:i:s");
+		foreach ($_POST['client_id'] as $cli_id) {			
+			$logged_user_id = $this->session->userdata('userid');
+			if ($_POST['repeating_weeks'] > 0) {
+				$date = date_create($_POST['schedule_date']);
+				$schedule_date = date_format($date, "Y/m/d");
+				$date = date_create($_POST['start_time']);
+				$start_time = date_format($date, "H:i:s");
+				$date = date_create($_POST['end_time']);
+				$end_time = date_format($date, "H:i:s");
 
-			$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+				$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
 
-			if ($_POST['recurrence'] == 'weekly') {
-				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
-					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
-					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
-					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				if ($_POST['recurrence'] == 'weekly') {
+					for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+						$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
+						$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+						$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					}
+				} elseif ($_POST['recurrence'] == 'daily') {
+					for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+						$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
+						$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+						$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					}
+				} elseif ($_POST['recurrence'] == 'monthly') {
+					for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+						$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
+						$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+						$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					}
 				}
-			} elseif ($_POST['recurrence'] == 'daily') {
-				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
-					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
-					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
-					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
+				$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+				if ($_POST['notify_mail'] == 'true') {
+					$this->notifyWithMail($cli_id, $_POST, $subject);
 				}
-			} elseif ($_POST['recurrence'] == 'monthly') {
-				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
-					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
-					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
-					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+			} else {
+				$repeating_weeks = !empty($_POST['repeating_weeks']) ?? 0;
+				$date = date_create($_POST['schedule_date']);
+				$schedule_date = date_format($date, "Y/m/d");
+				$date = date_create($_POST['start_time']);
+				$start_time = date_format($date, "H:i:s");
+				$date = date_create($_POST['end_time']);
+				$end_time = date_format($date, "H:i:s");
+
+				$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options,brief_note,meeting_duration,recurrence,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+				$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $repeating_weeks, $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+
+				// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
+				$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+				if ($_POST['notify_mail'] == 'true') {
+					$this->notifyWithMail($cli_id, $_POST, $subject);
 				}
-			}
-			// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
-			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
-			if ($_POST['notify_mail'] == 'true') {
-				$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
-			}
-		} else {
-			$repeating_weeks = !empty($_POST['repeating_weeks']) ?? 0;
-			$date = date_create($_POST['schedule_date']);
-			$schedule_date = date_format($date, "Y/m/d");
-			$date = date_create($_POST['start_time']);
-			$start_time = date_format($date, "H:i:s");
-			$date = date_create($_POST['end_time']);
-			$end_time = date_format($date, "H:i:s");
-
-			$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options,brief_note,meeting_duration,recurrence,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $repeating_weeks, $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-
-			// $subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
-			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
-			if ($_POST['notify_mail'] == 'true') {
-				$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
 			}
 		}
-
 		return ($this->db->affected_rows() != 1) ? false : true;
 	}
 

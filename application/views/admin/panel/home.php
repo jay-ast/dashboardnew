@@ -23,22 +23,22 @@
             <div class="widget-body padding-bottom-none">
                 <div class="row">
                     <?php if ($this->session->userdata('roleid') == '1') { ?>
-                    <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="col-md-4">
-                            <select class="form-control provider_data" id="provider_data" name="provider_data">
-                                <option value="">All Staff</option>
-                                <?php
-                                foreach ($providerlist as $clientfolder) {
-                                    echo '<option value="' . $clientfolder['id'] . '" data-name="' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] .'">' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '</option>';
-                                } ?>
-                            </select>
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                <div class="col-md-4">
+                                    <select class="form-control provider_data" id="provider_data" name="provider_data">
+                                        <option value="">All Staff</option>
+                                        <?php
+                                        foreach ($providerlist as $clientfolder) {
+                                            echo '<option value="' . $clientfolder['id'] . '" data-name="' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '">' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '</option>';
+                                        } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h3 class="provider_name"></h3>
                             </div>
                         </div>
-                        <div class="col-md-3">                            
-                                <h3 class="provider_name"></h3>
-                        </div>
-                    </div>
                     <?php } ?>
                     <div class="alert"></div>
                     <div id='calendar'></div>
@@ -58,11 +58,21 @@
                     <div class="error"></div>
                     <form class="form-horizontal" id="crud-form">
                         <div class="form-group">
+                            <label class="col-md-4 control-label" for="client_id">Select Group</label>
+                            <div class="col-md-4" class="group_client">
+                                <label for="single_client">Single</label>
+                                <input type="radio" name="single" id="single_client" value="single_client" checked />
+                                <label for="group_client">Group</label>
+                                <input type="radio" name="single" id="group_client" value="group_client" />
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-md-4 control-label" for="client_id">Client Name</label>
-                            <div class="col-md-4">
-                                <select class="form-control selectpicker client_id" id="client_id" name="client_id">
+                            <div class="col-md-4 clientSelect">
+                                <select class="form-control selectpicker client_id" id="client_id" name="client_id[]">
                                 </select>
                             </div>
+
                             <div class="col-md-4" id="update-client-info">
                                 <a class="btn btn-primary btnUpdateClient hide" data-toggle="modal" href="#client-modal" id="btnUpdateClient" style="max-width: 130px"> <i class="fa fa-edit"></i>Update Client</a>
                             </div>
@@ -76,14 +86,14 @@
                             </div>
                         </div> -->
 
-                        <div class="form-group">
+                        <div class="form-group email_div">
                             <label class="col-md-4 control-label" for="client_email">Client Email</label>
                             <div class="col-md-4">
                                 <input autocomplete="off" type="text" class="form-control client_email" id="client_email" name="client_email" readonly>
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group phone_div">
                             <label class="col-md-4 control-label" for="client_phone">Client Phone</label>
                             <div class="col-md-4">
                                 <input autocomplete="off" type="text" class="form-control client_phone" id="client_phone" name="client_phone" readonly>
@@ -104,13 +114,7 @@
                                 <input autocomplete="off" type="text" class="form-control start_time" id="start_time" name="start_time">
                             </div>
                         </div>
-
-                        <!-- <div class="form-group">
-                            <label class="col-md-4 control-label" for="meeting_duration">Meeting Duration</label>
-                            <div class="col-md-4">
-                            <input autocomplete="off" type="text" class="form-control meeting_duration" id="meeting_duration" name="meeting_duration">                                
-                            </div>
-                        </div>   -->
+                       
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="meeting_duration">Meeting Duration</label>
                             <div class="col-md-2">
@@ -224,163 +228,7 @@
         </div>
     </div>
 
-    <div id="client-modal" class="modal fade">
-        <div class="modal-dialog ">
-            <div class="modal-content ">
-                <?php echo form_open(base_url('admin/patients/updatePatient'), array("class" => "patientForm")); ?>
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
-                    <h3 class="modal-title">Client Details</h3>
-                </div>
-
-                <div class="modal-body modelform ">
-                    <div class="error"></div>
-                    <div class="form-body clearfix col-md-12">
-                        <div class="row margin-top-10">
-                            <div class="form-group col-md-6">
-                                <input type="hidden" class="form-control patientid" name="patientid" value="">
-                            </div>
-                        </div>
-                        <div class="col-md-12 userdetail">
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>First Name</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="firstname form-control firstname" id="firstname" name="firstname" placeholder="First Name" />
-                                </div>
-                            </div>
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Last Name</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="lastname form-control lastname" id="lastname" name="lastname" placeholder="Last Name" />
-                                </div>
-                            </div>
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Email</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input id="email" type="text" class="form-control email" id="email" name="email" placeholder="Email" />
-                                </div>
-                            </div>
-                            <div class="row margin-top-10 hidden userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Password</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="password" id="patientpassword" class="form-control  password" name="password" placeholder="Password" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 hidden userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Password</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="password" class="form-control confirmpassword " name="confirmpassword" placeholder="Confirm Password" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Phone</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="number" class="form-control phone" id="phone" name="phone" maxlength="15" placeholder="Phone" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Date Of Birth</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="date" class="form-control dateofbirth" id="dateofbirth" name="date_of_birth" maxlength="15" value="" placeholder="DOB" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Physical Address</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control physicaladdress" id="physicaladdress" name="physical_address" value="" placeholder="Physical Address" />
-                                </div>
-                            </div>
-
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Street</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control street" id="street" name="street" placeholder="Street" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>City</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control city" id="city" name="city" placeholder="City" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Postal Code</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control postal_code" id="postal_code" name="postal_code" placeholder="Postal Code" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Country</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control country" id="country" name="country" placeholder="Country" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Emergency Contact Name</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="text" class="form-control emergencycontactname" id="emergencycontactname" name="emergency_contact_name" value="" placeholder="Emergency Contact Name" />
-                                </div>
-                            </div>
-
-                            <div class="row margin-top-10 userdetails">
-                                <div class="form-group col-md-4">
-                                    <label>Emergency Contact</label>
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <input type="number" class="form-control emergencycontact" id="emergencycontact" name="emergency_contact" maxlength="15" value="" placeholder="Emergency Contact" />
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-md-12" style="display: flex; justify-content: center;">
-                        <button type="button" class="btn btn-success btnsaveuser save-client" name="btnsaveuser" formaction="<?php echo base_url('admin/patients/addNewPatient'); ?>">Add Client</button>
-                        <button type="button" class="btn btn-success btnSaveClient update-client" name="btnSaveClient" formaction="<?php echo base_url('admin/patients/updatePatient'); ?>">Update Client</button>
-                    </div>
-                    <div id="loader" class="lds-dual-ring hidden overlay"></div>
-                    <div class="clearfix"></div>
-
-                    <?php echo form_close(); ?>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-
-        </div>
+    <div id="client-modal" class="modal fade" tabindex="-1" aria-hidden="true">
     </div>
 
     <div id="appointment-confirmation-modal" class="modal fade">
@@ -396,12 +244,8 @@
                         <button type="button" class="btn btn-primary btnEditAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnEditAppointment" name="btnEditAppointment">Edit Existing Appointment</button>
                         <button type="button" class="btn btn-success btnCreateAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnCreateAppointment" name="btnCreateAppointment">Create New Appointment</button>
                     </div>
-                    <!-- <div id="loader" class="lds-dual-ring hidden overlay"></div> -->
                     <div class="clearfix"></div>
-
-                    <!-- <?php echo form_close(); ?> -->
                 </div>
-                <!-- /.modal-content -->
             </div>
 
         </div>
@@ -419,7 +263,6 @@
     <div id="eventDelete" class="modal fade">
         <div class="modal-dialog new-modal-dialog">
             <div class="modal-content">
-                <!-- dialog body -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Alert!!</h4>
@@ -427,7 +270,6 @@
                 <div class="modal-body alert-message">
                     <p style="margin: 10px 0px; font-size: 15px;"></p>
                 </div>
-                <!-- dialog buttons -->
                 <div style="margin: 10px;">
                     <button type="button" class="btn btn-danger modeldeleteyes" data-action="" data-patientid data-dismiss="modal" value="Yes">Yes</button>
                     <button type="button" class="btn btn-success no" data-dismiss="modal">No</button>
@@ -435,8 +277,8 @@
             </div>
         </div>
     </div>
-    
-    <div id="createNote" class="modal fade">        
+
+    <div id="createNote" class="modal fade">
     </div>
 
     <?php include_once 'footer.php'; ?>
@@ -448,7 +290,9 @@
         var currentMonth = date.getMonth();
         var currentDate = date.getDate();
         var currentYear = date.getFullYear();
-        $('.selectpicker').select2();
+        $('.selectpicker').select2({
+            multiple: false
+        });
 
         $('.start_time').datetimepicker({
             format: 'hh:mm A',
@@ -461,17 +305,29 @@
         });
 
         $('.schedule_date').datetimepicker({
-            format: 'YYYY-MM-DD',
-            // minDate: new Date(),
-            minDate: new Date(currentYear, currentMonth, currentDate),
+            // format: 'YYYY-MM-DD',
+            format: 'DD-MM-YYYY',
+            minDate: new Date(),
+            // minDate: new Date(currentDate, currentMonth, currentYear),
         });
 
         $(document).on('click', '.btnAddUser', function() {
             $('#event-modal').modal('hide');
             $('#client-modal').find('.modal-title').html('Add Client')
             $('.error').html('');
-            $('#client-modal').find('.btnsaveuser').show();
-            $('#client-modal').find('.btnSaveClient').hide();
+
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/patients/loadCreateUserView',
+                success: function(result) {
+                    $('#client-modal').html(result);
+                    $('#client-modal').find('.btnSaveClient').hide();
+                },
+                complete: function() {},
+                error: function(data) {
+                    console.log(data);
+                }
+            })
 
             //reset field values
             $('.patientid').val("");
@@ -494,13 +350,51 @@
             $('#exgeneral_list_to').find('option').remove();
         });
 
+
+        $(document).on('click', '#group_client', function() {
+            $('.client_id').off('change');
+            $('.selectpicker').select2('destroy');
+            $('.email_div').prop('hidden', true);
+            $('.phone_div').prop('hidden', true);
+            $('#client_id').removeClass('client_id');
+            $('.selectpicker').select2({
+                multiple: true
+            });
+        });
+
+        $(document).on('click', '#single_client', function() {
+            $('#client_id').addClass('client_id');
+            $('.selectpicker').select2({
+                multiple: false
+            });
+            $('.email_div').prop('hidden', false);
+            $('.phone_div').prop('hidden', false);
+            
+            // $('.client_id').on('change');
+            initClientOnChange();
+        });
+
         $(document).on('click', '#btnUpdateClient', function() {
             $('#event-modal').modal('hide');
             $('#client-modal').find('.modal-title').html('Update Client')
             $('.error').html('');
-            $('#client-modal').find('.btnsaveuser').hide();
-            $('#client-modal').find('.btnSaveClient').show();
+            // $('#client-modal').find('.btnsaveuser').hide();
+            // $('#client-modal').find('.btnSaveClient').show();
             var selectedClientId = $('#client_id').val();
+
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/patients/loadCreateUserView',
+                success: function(result) {
+                    $('#client-modal').html(result);
+                    $('#client-modal').find('.btnsaveuser').hide();
+                    $('#client-modal').find('.btnsaveclientuser').hide();
+                },
+                complete: function() {},
+                error: function(data) {
+                    console.log(data);
+                }
+            })
 
             $.ajax({
                 type: 'POST',
@@ -527,7 +421,8 @@
                     console.log(data);
                 }
             });
-        });
+        });        
+
     });
 </script>
 <style type="text/css">
@@ -550,5 +445,15 @@
         margin-top: 15px;
         background-color: #0395E2;
         color: white;
+    }
+
+    .save-client {
+        line-height: 1.75;
+        border-radius: 5px;
+        padding: 0px 20px;
+        text-decoration: none;
+        font-size: 20px;
+        margin-top: 20px;
+        margin-left: 10px
     }
 </style>

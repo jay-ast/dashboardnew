@@ -64,29 +64,37 @@
                             ?>
                                     <tr class="gradeX " data-id="333333" id="patient-<?php echo $userdatalist['id']; ?>">
 
-                                        <!-- <td><a data-toggle="modal" href="#responsiveUserdetails" data-patientid="<?php echo $userdatalist['id']; ?>" class="btnPatientDetails">
-                                                <?php echo $patient_name; ?>
-                                            </a>
-                                        </td> -->
-
-                                        <td><a data-toggle="modal" href="#clientPortal" data-patientid="<?php echo $userdatalist['id']; ?>" class="clientPortalDetails">
+                                        <td><a data-toggle="modal" href="#responsiveUserdetails" data-patientid="<?php echo $userdatalist['id']; ?>" class="btnPatientDetails">
                                                 <?php echo $patient_name; ?>
                                             </a>
                                         </td>
+
+                                        <!-- <td><a data-toggle="modal" href="#clientPortal" data-patientid="<?php echo $userdatalist['id']; ?>" class="clientPortalDetails">
+                                                <?php echo $patient_name; ?>
+                                            </a>
+                                        </td> -->
                                         <td><?php echo $userdatalist['email'] . " (" . $userdatalist['password'] . ")"; ?></td>
                                         <td><?php echo $userdatalist['phone']; ?></td>
                                         <td class="center">
 
-
                                             <a href="mailto:<?php echo $userdatalist['email']; ?>?Subject=Your%20Video%20Routine%20From%20Perfect%20Forms&body=To%20view%20your%20videos%3A%0A%0A1-%20Download%20our%20Perfect%20Forms%20app%20from%20App%20Store(IOS)%3A%20<?php echo APP_ITUNES_LINK ?>%20or%0A2-%20Download%20our%20Perfect%20Forms%20app%20from%20Google%20Play%20Store(Android)%3A%20<?php echo APP_PLAYSTORE_LINK ?>%20%0A3-%20Log%20into%20<?php echo APP_WEBAPP_LINK ?>%20from%20any%20device%20or%20computer.%0A%0AYour%20username%20and%20password%20are%3A%0AUsername%3A%20<?php echo urlencode($userdatalist['email']) ?>%0APassword%3A%20<?php echo urlencode($userdatalist['password']) ?>" target="_top">
-
-
-
-
-
-                                                <i class="fa fa-envelope" data-toggle="tooltip" title="Send Mail"></i></a>
+                                            <i class="fa fa-envelope" data-toggle="tooltip" title="Send Mail"></i></a>
+                                            
                                             <a class="deleteBtn" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
-                                                <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
+                                            <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
+
+                                            <a class="scheduleDetails" href="<?php echo base_url("admin/patients/getScheduleDetails/".$userdatalist['id']); ?>" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="schedule" data-toggle="modal">
+                                            <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>
+
+                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="notes" data-toggle="modal" href="#">
+                                            <i class="glyphicon glyphicon-list-alt" data-toggle="tooltip" title="Notes"></i></a>
+
+                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="routine" data-toggle="modal" href="#">
+                                            <i class="glyphicon glyphicon-tasks" data-toggle="tooltip" title="Routine"></i></a>
+
+                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="account" data-toggle="modal" href="#">
+                                            <i class="glyphicon glyphicon-book" data-toggle="tooltip" title="Account"></i></a>
+                                            
                                         </td>
                                     </tr>
                             <?php
@@ -365,10 +373,9 @@
         </div>
     </div>
 
-    <div id="clientPortal" class="modal fade">
+    <!-- <div id="clientPortal" class="modal fade">
         <div class="modal-dialog new-modal-dialog">
-            <div class="modal-content">
-                <!-- dialog body -->
+            <div class="modal-content">                
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title"></h4>
@@ -421,7 +428,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div id="schedulePortal" class="modal fade">
     </div>
@@ -1002,14 +1009,14 @@
         });
         //btn get patient details
         $(document).on('click', '.btnPatientDetails', function() {
-            $('#clientPortal').modal('toggle');
+            // $('#clientPortal').modal('toggle');
             $('#responsiveUserdetails').find('.modal-dialog').css('width', '70%');
             $('#responsiveUserdetails').find('.userdetail').removeClass('col-md-12');
             $('#responsiveUserdetails').find('.userdetail').addClass('col-md-12');
             $('#responsiveUserdetails').find('.userdetails').removeClass('col-md-12');
             $('#responsiveUserdetails').find('.userdetails').addClass('col-md-6');
-            // var patientid = $(this).attr('data-patientid');
-            var patientid = $('#clientPortal').find('.patientid').val();
+            var patientid = $(this).attr('data-patientid');
+            // var patientid = $('#clientPortal').find('.patientid').val();
             $('.btnsaveuser').addClass('hidden');
             $('.btnsaveclientuser').addClass('hidden');
             $('.btnupdateuser').removeClass('hidden');
@@ -1235,11 +1242,9 @@
             });
         });
 
-        $(document).on('click', '#scheduleDetails', function() {
+        $(document).on('click', '.scheduleDetails', function() {
             $('#clientPortal').modal('toggle');
-            var client_id = $('#clientPortal').find('.patientid').val();
-            console.log('scheduleDetails', client_id);
-
+            var client_id = $(this).attr('data-patientid');
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/patients/getScheduleDetails/' + client_id,
