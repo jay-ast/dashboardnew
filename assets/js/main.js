@@ -248,10 +248,10 @@ $(function () {
         var today = new Date();
         if (data.event) {
             if (currentDate != undefined || data.event != null) {
-                $('#schedule_date').val(data.event ? moment(data.event.start).format('YYYY-MM-DD') : moment(currentDate).format('YYYY-MM-DD'));
+                $('#schedule_date').val(data.event ? moment(data.event.start).format('DD-MM-YYYY') : moment(currentDate).format('DD-MM-YYYY'));
                 $('#schedule_date').prop('readonly', true);
             } else {
-                $('#schedule_date').val(selectedDate ? moment(selectedDate).format('YYYY-MM-DD') : moment(today).format('YYYY-MM-DD'));
+                $('#schedule_date').val(selectedDate ? moment(selectedDate).format('DD-MM-YYYY') : moment(today).format('DD-MM-YYYY'));
             }
         } else {
             if (eventDate) {
@@ -260,7 +260,7 @@ $(function () {
             } else {
                 $('#schedule_date').prop('readonly', false);
                 // $('#schedule_date').val(selectedDate ? moment(selectedDate).format('YYYY-MM-DD') : moment(today).format('YYYY-MM-DD'));
-                $('#schedule_date').val(moment(today).format('YYYY-MM-DD'));
+                $('#schedule_date').val(moment(today).format('DD-MM-YYYY'));
             }
         }
 
@@ -357,13 +357,13 @@ $(function () {
     $('.modal').on('click', '#add-event', function (e) {
 
         var today = new Date();
-        var todayDateTime = moment(today).format('YYYY-MM-DD hh:mm A');
+        var todayDateTime = moment(today).format('DD-MM-YYYY hh:mm A');
 
         if ($('#client_id').val()) {
             if ($('#appointment_type').val()) {
                 if ($('#recurrence').val()) {
-                    if (Date.parse(moment($('#schedule_date').val()).format('YYYY-MM-DD') + ' ' + $('#start_time').val()) >= Date.parse(todayDateTime)) {
-                        if ($('#start_time').val() < $('#end_time').val()) {
+                    if (Date.parse($('#schedule_date').val() + ' ' + $('#start_time').val()) >= Date.parse(todayDateTime)) {
+                        // if (Date.parse($('#start_time').val()) < Date.parse($('#end_time').val())) {
                             $.post(base_url + 'admin/home/addEvent', {
                                 client_id: $('#client_id').val(),
                                 schedule_date: $('#schedule_date').val(),
@@ -381,10 +381,10 @@ $(function () {
                                 $('#calendar').fullCalendar("refetchEvents");
                                 hide_notify();
                             });
-                        } else {
-                            $('.error').html('End time must be greater than the start time.');
-                            return false;
-                        }
+                        // } else {
+                        //     $('.error').html('End time must be greater than the start time.');
+                        //     return false;
+                        // }
                     } else {
                         $('.error').html('Date or time must be greater than the current date or time.');
                         return false;
@@ -407,7 +407,7 @@ $(function () {
     $('.modal').on('click', '#update-event', function (e) {
         if ($('#client_id').val()) {
             if ($('#appointment_type').val()) {
-                if ($('#start_time').val() < $('#end_time').val()) {
+                // if ($('#start_time').val() < $('#end_time').val()) {
                     $.post(base_url + 'admin/home/updateEvent', {
                         id: currentEvent._id,
                         client_id: $('#client_id').val(),
@@ -426,10 +426,10 @@ $(function () {
                         $('#calendar').fullCalendar("refetchEvents");
                         hide_notify();
                     });
-                } else {
-                    $('.error').html('End time must be greater than the start time.');
-                    return false;
-                }
+                // } else {
+                //     $('.error').html('End time must be greater than the start time.');
+                //     return false;
+                // }
             } else {
                 $('.error').html('Please select Appointment type.');
                 return false;
@@ -601,7 +601,7 @@ $(function () {
             url: base_url + 'admin/home/getClientName',
             success: function (actionResponse) {
                 var clientData = JSON.parse(actionResponse);
-                $('#client_id').append("<option value=''>Select Client</option>");
+                // $('#client_id').append("<option value=''>Select Client</option>");
                 $.each(clientData, function (key, value) {
                     $.each(value, function (k, v) {
                         $('#client_id').append("<option value='" + v.id + "'>" + v.firstname + ' ' + v.lastname + "</option>");
@@ -666,7 +666,7 @@ $(function () {
     });
 
     $(document).on('click', '.btnSaveClient', function (e) {
-        var selectedClientId = $('#client_id').val();
+        var selectedClientId = $('.client_id').val();
         if ($('#firstname').val() && $('#lastname').val() && $('#email').val() && $('#phone').val()) {
             $.ajax({
                 type: 'POST',
@@ -783,14 +783,14 @@ $(function () {
     $("#btnCreateAppointment").click(function (item) {
         $('#appointment-confirmation-modal').modal('hide');
         let client_id = currentEvent.client_id;
-        let eventDate = moment(currentEvent.start).format('YYYY-MM-DD');
+        let eventDate = moment(currentEvent.start).format('DD-MM-YYYY');
         var today = new Date();
-        let todayDate = moment(today).format('YYYY-MM-DD');
+        let todayDate = moment(today).format('DD-MM-YYYY');
 
         if (eventDate <= todayDate) {
-            eventDate = moment(today).format('YYYY-MM-DD');
+            eventDate = moment(today).format('DD-MM-YYYY');
         } else {
-            eventDate = moment(currentEvent.start).format('YYYY-MM-DD');
+            eventDate = moment(currentEvent.start).format('DD-MM-YYYY');
         }
         modal({
             // Available buttons when adding
@@ -805,16 +805,19 @@ $(function () {
         }, 'event-modal', client_id, eventDate);
     });
 
-    $(".client_id").change(function (item) {
-        var client_id = $('#client_id').val();
-        if (client_id) {
-            $('#btnUpdateClient').removeClass('hide');
-        } else {
-            $('#btnUpdateClient').addClass('hide');
-        }
-        // $('.client-details').removeAttr('hidden');	
-        getClientDetails(client_id);
-    });
+    initClientOnChange();
+    function initClientOnChange() {
+        $(".client_id").change(function (item) {
+            var client_id = $('#client_id').val();
+            if (client_id) {
+                $('#btnUpdateClient').removeClass('hide');
+            } else {
+                $('#btnUpdateClient').addClass('hide');
+            }
+            // $('.client-details').removeAttr('hidden');	
+            getClientDetails(client_id);
+        });
+    }
 
 
     function getClientDetails(client_id) {
@@ -827,13 +830,10 @@ $(function () {
                     $('.error').html('');
                     $('.client_name').val(clientData ? clientData['data']['firstname'] + ' ' + clientData['data']['lastname'] : ' ');
                     $('.client_email').val(clientData ? clientData['data']['email'] : ' ');
-                    $('.client_phone').val(clientData ? clientData['data']['phone'] : ' ');
-                    // $('#client_id').val(client_id).trigger("change");
-                } else {
-                    // $('.error').html('Please select client name.');	
+                    $('.client_phone').val(clientData ? clientData['data']['phone'] : ' ');                    
+                } else {                    
                     return false;
-                }
-                //  $('#client_id').val(data.event ? data.event.client_id : '');	
+                }                
             },
             error: function (data) {
                 console.log(data);
@@ -913,6 +913,10 @@ $(function () {
             $('.error').html('Please provide all data for Notes.');
             return false;
         }           
+    });
+
+    $(document).on('click', '.btnsaveclientuser', function (e) {
+        $('.btnsaveclientuser').val('save');        
     });
 
 });
