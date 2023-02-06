@@ -928,6 +928,7 @@ $(function () {
         $('.selectpicker').select2({
             multiple: true
         });
+        $('#btnUpdateClient').addClass('hide');
     });
 
     $(document).on('click', '#single_client', function() {
@@ -937,6 +938,11 @@ $(function () {
         });
         $('.email_div').prop('hidden', false);
         $('.phone_div').prop('hidden', false);            
+        if($('#client_id').val()){
+            $('#btnUpdateClient').removeClass('hide');    
+        }else{
+            $('#btnUpdateClient').addClass('hide');
+        }
         initClientOnChange();
     });
 
