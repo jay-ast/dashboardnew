@@ -919,4 +919,25 @@ $(function () {
         $('.btnsaveclientuser').val('save');        
     });
 
+    $(document).on('click', '#group_client', function() {
+        $('.client_id').off('change');
+        $('.selectpicker').select2('destroy');
+        $('.email_div').prop('hidden', true);
+        $('.phone_div').prop('hidden', true);
+        $('#client_id').removeClass('client_id');
+        $('.selectpicker').select2({
+            multiple: true
+        });
+    });
+
+    $(document).on('click', '#single_client', function() {
+        $('#client_id').addClass('client_id');
+        $('.selectpicker').select2({
+            multiple: false
+        });
+        $('.email_div').prop('hidden', false);
+        $('.phone_div').prop('hidden', false);            
+        initClientOnChange();
+    });
+
 });

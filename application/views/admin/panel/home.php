@@ -350,30 +350,6 @@
             $('#exgeneral_list_to').find('option').remove();
         });
 
-
-        $(document).on('click', '#group_client', function() {
-            $('.client_id').off('change');
-            $('.selectpicker').select2('destroy');
-            $('.email_div').prop('hidden', true);
-            $('.phone_div').prop('hidden', true);
-            $('#client_id').removeClass('client_id');
-            $('.selectpicker').select2({
-                multiple: true
-            });
-        });
-
-        $(document).on('click', '#single_client', function() {
-            $('#client_id').addClass('client_id');
-            $('.selectpicker').select2({
-                multiple: false
-            });
-            $('.email_div').prop('hidden', false);
-            $('.phone_div').prop('hidden', false);
-            
-            // $('.client_id').on('change');
-            initClientOnChange();
-        });
-
         $(document).on('click', '#btnUpdateClient', function() {
             $('#event-modal').modal('hide');
             $('#client-modal').find('.modal-title').html('Update Client')
