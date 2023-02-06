@@ -90,4 +90,46 @@ class Appointment extends My_Controller
 
         return $this->load->view('admin/panel/filter_appointment_details', $data);
     }
+
+    public function getAppointmentType(){
+
+        $data['page_title'] = 'Appointment Type';
+        $data['active_class'] = 'appointment_type';
+
+        $appoitment_type = "SELECT * FROM `appointment_type`";
+        $data['appoitment_type'] = $this->db->query($appoitment_type)->result();
+
+        return $this->load->view('admin/panel/appointment_list_details', $data);
+    }
+
+    public function addNewAppointmentType() {
+        $sql = "INSERT INTO appointment_type (appointment_name,color_code) VALUES (?,?)";
+		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color']));
+
+        if($this->db->affected_rows() != 1){
+            $result['success'] = false;                                
+            $result['message'] = "Appointment Type not Added";
+            echo json_encode($result);
+        }else{
+            $result['success'] = true;                                
+            $result['message'] = "Appointment Type Added successfully";
+            echo json_encode($result);
+        }
+    }
+
+    public function deleteAppointmentType($typeid = '')
+	{
+		$sql = "DELETE FROM appointment_type WHERE id = ?";
+		$this->db->query($sql, array($typeid));
+		
+        if($this->db->affected_rows() != 1){
+            $result['success'] = false;                                
+            $result['message'] = "Appointment Type not deleted";
+            echo json_encode($result);
+        }else{
+            $result['success'] = true;                                
+            $result['message'] = "Appointment Type delete successfully";
+            echo json_encode($result);
+        }
+	}
 }
