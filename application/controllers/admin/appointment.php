@@ -132,4 +132,25 @@ class Appointment extends My_Controller
             echo json_encode($result);
         }
 	}
+
+    public function editAppointmentType($typeid = ''){    
+        $sql = "SELECT * FROM appointment_type WHERE id = '" . $typeid . "' ";        
+        $result = $this->db->query($sql)->result();
+        echo json_encode(array('status' => true, 'data' => $result));        
+    }
+
+    public function  updateAppointmentType(){        
+        $sql = "UPDATE appointment_type SET appointment_name = ?, color_code = ? WHERE id = ?";
+		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['id']));
+        
+        if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
+            $result['success'] = false;                                
+            $result['message'] = "Appointment Type details not updated";
+            echo json_encode($result);
+        }else{
+            $result['success'] = true;                                
+            $result['message'] = "Appointment Type details updated successfully";
+            echo json_encode($result);
+        }        
+    }
 }

@@ -73,7 +73,7 @@
                 <div class="form-body clearfix col-md-12">
                     <div class="row margin-top-10">
                         <div class="form-group col-md-6">
-                            <input type="hidden" class="form-control appointment_type_id" name="appointment_type_id" value="">
+                            <input type="hidden" class="form-control appointment_type_id" id="appointment_type_id" name="appointment_type_id" value="">
                         </div>
                     </div>
                     <div class="col-md-12 userdetail">
@@ -101,7 +101,8 @@
                 <div class="modal-footer">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="First group">
-                            <button type="button" class="client-portal-button addAppointmentTypeDetails" data-toggle="modal" target="_top" href="#" id="addAppointmentTypeDetails">Add Appointment Type</button>
+                            <button type="button" class="client-portal-button addAppointmentTypeDetails" id="addAppointmentTypeDetails">Add Appointment Type</button>
+                            <button type="button" class="client-portal-button updateAppointmentTypeDetails" id="updateAppointmentTypeDetails">Update Appointment Type</button>
                         </div>
                     </div>
                 </div>
@@ -134,8 +135,13 @@
 <script>
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
-
-        $(document).on('click', '.addAppointmentTypeDetails', function(e) {
+        
+        $(document).on('click', '.btnAddAppointmentType', function(e) {    
+            $('#createAppointmentType').find('#addAppointmentTypeDetails').show()
+            $('#createAppointmentType').find('#updateAppointmentTypeDetails').hide()            
+        });
+        
+        $(document).on('click', '.addAppointmentTypeDetails', function(e) {           
             if ($('#appointment_name').val()) {
                 $.ajax({
                     type: 'POST',
@@ -201,6 +207,64 @@
                     console.log(data);
                 }
             });
+        });
+
+        $(document).on('click', '.editBtn', function() {
+            var typeid = $(this).attr('data-typeid');
+            $('#createAppointmentType').find('#addAppointmentTypeDetails').hide()
+            $('#createAppointmentType').find('#updateAppointmentTypeDetails').show()
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/appointment/editAppointmentType/' + typeid,
+                success: function(data) {                    
+                    var appointmentTypeData = JSON.parse(data);                    
+                    $.each(appointmentTypeData['data'], function (key, val) {                        
+                        $('#createAppointmentType').find('#appointment_type_id').val(val.id);
+                        $('#createAppointmentType').find('#appointment_name').val(val.appointment_name);
+                        $('#createAppointmentType').find('#color_code').val(val.color_code);
+                    });                    
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+        
+        $(document).on('click', '.updateAppointmentTypeDetails', function(e) {           
+            if ($('#appointment_name').val()) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'admin/appointment/updateAppointmentType',
+                    beforeSend: function() { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+                        $('#loader').removeClass('hidden')
+                    },
+                    data: {
+                        id: $('#appointment_type_id').val(), 
+                        appointment_name: $('#appointment_name').val(),
+                        color: $('#color_code').val(),
+                    },
+                    success: function(result) {
+                        var typedata = JSON.parse(result);
+                        $('#createAppointmentType').modal('toggle');
+                        var extraMessageHtml = "";
+                        if (typedata['success'] == true) {
+                            extraMessageHtml = '<div class="alert alert-success">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        } else {
+                            extraMessageHtml = '<div class="alert alert-danger">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                        }
+                        $('.extraCustomMessage').html(extraMessageHtml);                        
+                        return false;
+
+                    },
+                    complete: function() {},
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            } else {
+                $('.error').html('Appointment name is required');
+                return false;
+            }
         });
     });
 </script>
