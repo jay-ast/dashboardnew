@@ -45,7 +45,8 @@ class Home_Model extends CI_Model
 		foreach ($data as $res) {
 			$result['id'] = $res->event_id;
 			$result['client_id'] = $res->client_id;
-			$result['color'] = $types[$res->appointment_type];
+			$result['color'] = $res->color_code;
+			// $result['color'] = $types[$res->appointment_type];
 			$result['title'] = $res->firstname . " " . $res->lastname;
 			$result['start'] = $res->schedule_date . ' ' . $res->start_time;
 			$result['end'] = $res->schedule_date . ' ' . $res->end_time;
@@ -80,9 +81,13 @@ class Home_Model extends CI_Model
     				`users`.`id`,
     				`users`.`email`,
     				`users`.`firstname`,
-    				`users`.`lastname`
+    				`users`.`lastname`,
+					`appointment_type`.`id`,
+					`appointment_type`.`appointment_name`,
+					`appointment_type`.`color_code`
 				FROM (`events`)				
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
 				WHERE `events`.`created_by` = $logged_user_id ";
 			// $data = $this->db->query($sql)->result();
 		} else {
@@ -100,9 +105,13 @@ class Home_Model extends CI_Model
     				`users`.`id`,
     				`users`.`email`,
     				`users`.`firstname`,
-    				`users`.`lastname`
+    				`users`.`lastname`,
+					`appointment_type`.`id`,
+					`appointment_type`.`appointment_name`,
+					`appointment_type`.`color_code`
 				FROM (`events`)
-				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`";
+				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`";
 			// $data = $this->db->query($sql)->result();
 		}
 		$data = $this->db->query($sql)->result();

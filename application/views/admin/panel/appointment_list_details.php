@@ -16,6 +16,7 @@
                                 <th>Id</th>
                                 <th>Appointment Type</th>
                                 <th>Color Code</th>
+                                <th>Price</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -28,6 +29,7 @@
                                         <td><?php echo $appointment_list->id ?></td>
                                         <td><?php echo $appointment_list->appointment_name  ?></td>
                                         <td><?php echo $appointment_list->color_code  ?></td>
+                                        <td></td>
                                         <td>
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
                                                 <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Appointment Type"></i></a>

@@ -41,9 +41,13 @@ class Home extends My_Controller {
 		$providerlist = [
 			'providerlist' => $providerlist
 		];
+
+		$appointment_types = "SELECT * FROM appointment_type";        
+        $result = $this->db->query($appointment_types)->result();
 		$providerlist['page_title'] = 'Calendar';
 		$providerlist['active_class'] = 'calender';
 		$providerlist['client_id'] = $_GET['id'];
+		$providerlist['appointment_type'] = $result;
 		// echo "<pre>";
 		// print_r($providerlist);die;
 		$this->load->view('admin/panel/home', $providerlist);

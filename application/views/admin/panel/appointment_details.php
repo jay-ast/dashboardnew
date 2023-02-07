@@ -1,4 +1,4 @@
-<div class="modal-dialog new-modal-dialog">
+<div class="modal-dialog">
     <div class="modal-content">
         <!-- dialog body -->
         <div class="modal-header">
@@ -30,14 +30,14 @@
                                         $day = date("j", strtotime($data->schedule_date));
                                         $year = date("Y", strtotime($data->schedule_date));
                                 ?>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="card appointment-card">
                                                 <div class="card-header">
                                                     <h1 class="text-center"><?php echo $day ?></h1>
                                                     <h6 class="text-center"><?php echo $month . ',' . $year ?></h6>
                                                 </div>
                                                 <div class="card-body text-center">
-                                                    <label class="badge badge-success"> <?php echo $data->appointment_type ?></label>
+                                                    <label class="badge badge-success"> <?php echo $data->appointment_name ?></label>
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <label class="badge badge-info">Provider Name :- <?php echo $data->provider_first_name . ' ' . $data->provider_last_name ?></label>
@@ -69,14 +69,14 @@
                                         $day = date("j", strtotime($data->schedule_date));
                                         $year = date("Y", strtotime($data->schedule_date));
                                 ?>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="card appointment-card">
                                                 <div class="card-header">
                                                     <h1 class="text-center"><?php echo $day ?></h1>
                                                     <h6 class="text-center"><?php echo $month . ',' . $year ?></h6>
                                                 </div>
                                                 <div class="card-body text-center">
-                                                    <label class="badge badge-success"> <?php echo $data->appointment_type ?></label>
+                                                    <label class="badge badge-success"> <?php echo $data->appointment_name ?></label>
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <label class="badge badge-info">Provider Name :- <?php echo $data->provider_first_name . ' ' . $data->provider_last_name ?></label>

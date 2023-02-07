@@ -83,13 +83,13 @@
                                             <a class="deleteBtn" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
                                             <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
 
-                                            <a class="scheduleDetails" href="<?php echo base_url("admin/patients/getScheduleDetails/".$userdatalist['id']); ?>" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="schedule" data-toggle="modal">
-                                            <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>
+                                            <a class="scheduleDetails" href="#schedulePortal" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="schedule" data-toggle="modal">
+                                            <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>                                            
 
-                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="notes" data-toggle="modal" href="#">
-                                            <i class="glyphicon glyphicon-list-alt" data-toggle="tooltip" title="Notes"></i></a>
+                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="notes" data-toggle="modal" id="noteDetails" href="#notePortal">
+                                            <i class="glyphicon glyphicon-list-alt" data-toggle="tooltip" title="Notes"></i></a>                                            
 
-                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="routine" data-toggle="modal" href="#">
+                                            <a class="routineDetails" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="routine" data-toggle="modal" id="routineDetails" href="#routinePortal">
                                             <i class="glyphicon glyphicon-tasks" data-toggle="tooltip" title="Routine"></i></a>
 
                                             <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="account" data-toggle="modal" href="#">
@@ -932,8 +932,9 @@
 
 
         $(document).on('click', '.routineDetails', function() {
-            $('#clientPortal').modal('toggle');
-            var patientid = $('#clientPortal').find('.patientid').val();
+            // $('#clientPortal').modal('toggle');
+            // var patientid = $('#clientPortal').find('.patientid').val();
+            var patientid = $(this).attr('data-patientid');
             $('.btnupdateclientuser').attr('href', base_url + 'admin/exercises/addclientexercise/' + patientid)
             $('.assignes_ex_div').html("");
             $('#ex_list_to').find('option').remove();
@@ -1258,8 +1259,7 @@
         });
 
         $(document).on('click', '#noteDetails', function() {
-            $('#clientPortal').modal('toggle');
-            var client_id = $('#clientPortal').find('.patientid').val();
+            var client_id = $(this).attr('data-patientid');
 
             $.ajax({
                 type: 'POST',

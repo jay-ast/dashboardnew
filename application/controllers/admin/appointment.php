@@ -17,10 +17,14 @@ class Appointment extends My_Controller
                                 `users`.`firstname`,
                                 `users`.`lastname`,
                                 `provider_user`.`firstname` as `provider_first_name`,
-                                `provider_user`.`lastname` as `provider_last_name`
+                                `provider_user`.`lastname` as `provider_last_name`,
+                                `appointment_type`.`id`,
+					            `appointment_type`.`appointment_name`,
+					            `appointment_type`.`color_code`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
                         ORDER BY `events`.`schedule_date` DESC";
         $data['event_data'] = $this->db->query($event_data)->result();
         $total_count = count($data['event_data']);

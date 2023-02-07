@@ -1099,10 +1099,14 @@ class Patients extends My_Controller
                                 `users`.`firstname`,
                                 `users`.`lastname`,                                
                                 `provider_user`.`firstname` as `provider_first_name`,
-                                `provider_user`.`lastname` as `provider_last_name`
+                                `provider_user`.`lastname` as `provider_last_name`,
+                                `appointment_type`.`id`,
+					            `appointment_type`.`appointment_name`,
+					            `appointment_type`.`color_code`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
                         WHERE client_id = $client_id  AND `events`.`schedule_date` >= '" . $today_date . "'";
         $client_data['client_data_next_event'] = $this->db->query($client_data_next_event)->result();        
         
@@ -1111,16 +1115,20 @@ class Patients extends My_Controller
                                 `users`.`firstname`,
                                 `users`.`lastname`,
                                 `provider_user`.`firstname` as `provider_first_name`,
-                                `provider_user`.`lastname` as `provider_last_name`
+                                `provider_user`.`lastname` as `provider_last_name`,
+                                `appointment_type`.`id`,
+					            `appointment_type`.`appointment_name`,
+					            `appointment_type`.`color_code`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
                         WHERE client_id = $client_id  AND `events`.`schedule_date` < '" . $today_date . "'";
         $client_data['client_data_past_event'] = $this->db->query($client_data_past_event)->result();
         
         $client_name = "SELECT * FROM users WHERE `id` = '" . $client_id .  "'";
         $client_data['client_name'] = $this->db->query($client_name)->result();
-        return $this->load->view('admin/panel/appointment_details', $client_data);
+        return $this->load->view('admin/panel/appointment_details',['client_data' => $client_data]);
     }
     
     public function getNotesDetails($client_id = ""){

@@ -161,11 +161,13 @@
                             <div class="col-md-4">
                                 <select class="form-control appointment_type" id="appointment_type" name="appointment_type">
                                     <option value="">Select</option>
-                                    <option value="pilates">Pilates</option>
-                                    <option value="physical_therapy">Physical therapy</option>
-                                    <option value="fitness">Fitness</option>
-                                    <option value="consultation">Consultation</option>
-                                    <option value="other">Other</option>
+                                    <?php 
+                                        foreach($appointment_type as $types){
+                                    ?>
+                                        <option value="<?php echo $types->id ?>"><?php echo $types->appointment_name ?></option>
+                                    <?php 
+                                        }
+                                    ?>
                                 </select>
                             </div>
                         </div>
