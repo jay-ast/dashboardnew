@@ -357,12 +357,12 @@ $(function () {
     $('.modal').on('click', '#add-event', function (e) {
 
         var today = new Date();
-        var todayDateTime = moment(today).format('DD-MM-YYYY hh:mm A');
-
+        var todayDateTime = moment(today).format('YYYY-MM-DD hh:mm A');
+        var selectedDateData = moment($('#schedule_date').val(), "DD-MM-YYYY").format("YYYY-MM-DD");     
         if ($('#client_id').val()) {
             if ($('#appointment_type').val()) {
                 if ($('#recurrence').val()) {
-                    if (Date.parse($('#schedule_date').val() + ' ' + $('#start_time').val()) >= Date.parse(todayDateTime)) {
+                    if (Date.parse(selectedDateData + ' ' + $('#start_time').val()) >= Date.parse(todayDateTime)) {
                         // if (Date.parse($('#start_time').val()) < Date.parse($('#end_time').val())) {
                             $.post(base_url + 'admin/home/addEvent', {
                                 client_id: $('#client_id').val(),
