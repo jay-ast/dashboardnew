@@ -379,6 +379,7 @@ $(function () {
                                 notify_mail: $('#notify_mail').prop('checked'),
                                 meeting_duration: $('#meeting_duration_hours').val() + ':' + $('#meeting_duration_minutes').val(),
                                 recurrence: $('#recurrence').val(),
+                                price: $('#appointment_price').val(),
                             }, function (result) {
                                 $('.alert').addClass('alert-success').text('Event added successfuly');
                                 $('.modal').modal('hide');
@@ -424,6 +425,7 @@ $(function () {
                         notify_mail: $('#notify_mail').prop('checked'),
                         meeting_duration: $('#meeting_duration_hours').val() + ':' + $('#meeting_duration_minutes').val(),
                         recurrence: $('#recurrence').val(),
+                        price: $('#appointment_price').val(),
                     }, function (result) {
                         $('.alert').addClass('alert-success').text('Event updated successfuly');
                         $('.modal').modal('hide');
@@ -949,5 +951,27 @@ $(function () {
         }
         initClientOnChange();
     });
+
+    $(document).on('change', '.appointment_type', function() {
+        var appointment_type_id = $(this).val();
+        console.log('appointment_type_id', appointment_type_id);
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/patients/getAppointmentPrice/' + appointment_type_id,
+            success: function (actionResponse) {
+                var appointmentData = JSON.parse(actionResponse);                
+                if (appointmentData.status == true) {                    
+                    $.each(appointmentData['data'], function (index, val) {                        
+                        $('.appointment_price').val(val.appointment_price);
+                    })
+                } else {                    
+                    return false;
+                }                
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });        
+    });    
 
 });

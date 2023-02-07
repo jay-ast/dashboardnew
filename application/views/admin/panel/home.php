@@ -172,6 +172,13 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="client_email">Appointment Price</label>
+                            <div class="col-md-4">
+                                <input autocomplete="off" type="text" class="form-control appointment_price" id="appointment_price" name="appointment_price" readonly>
+                            </div>
+                        </div>
+
                         <div class="form-group recurrence_group">
                             <label class="col-md-4 control-label" for="recurrence">Recurrence</label>
                             <div class="col-md-4">

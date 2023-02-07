@@ -107,8 +107,8 @@ class Appointment extends My_Controller
     }
 
     public function addNewAppointmentType() {
-        $sql = "INSERT INTO appointment_type (appointment_name,color_code) VALUES (?,?)";
-		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color']));
+        $sql = "INSERT INTO appointment_type (appointment_name,color_code,appointment_price) VALUES (?,?,?)";
+		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price']));
 
         if($this->db->affected_rows() != 1){
             $result['success'] = false;                                
@@ -144,8 +144,8 @@ class Appointment extends My_Controller
     }
 
     public function  updateAppointmentType(){        
-        $sql = "UPDATE appointment_type SET appointment_name = ?, color_code = ? WHERE id = ?";
-		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['id']));
+        $sql = "UPDATE appointment_type SET appointment_name = ?, color_code = ?, appointment_price = ? WHERE id = ?";
+		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price'],$_POST['id']));
         
         if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
             $result['success'] = false;                                

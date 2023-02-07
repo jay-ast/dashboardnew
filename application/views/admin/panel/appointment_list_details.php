@@ -27,9 +27,9 @@
                             ?>
                                     <tr class="gradeX">
                                         <td><?php echo $appointment_list->id ?></td>
-                                        <td><?php echo $appointment_list->appointment_name  ?></td>
-                                        <td><?php echo $appointment_list->color_code  ?></td>
-                                        <td></td>
+                                        <td><?php echo $appointment_list->appointment_name ?></td>
+                                        <td><?php echo $appointment_list->color_code ?></td>
+                                        <td><?php echo $appointment_list->appointment_price ?></td>
                                         <td>
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
                                                 <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Appointment Type"></i></a>
@@ -96,6 +96,15 @@
                                 <input type="color" class="form-control color_code" id="color_code" name="color_code" placeholder="olor Code" />
                             </div>
                         </div>
+
+                        <div class="row margin-top-10 userdetails col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Price</label>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <input type="text" class="form-control appointment_price" id="appointment_price" name="appointment_price" placeholder="Appointment Price" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -154,6 +163,7 @@
                     data: {
                         appointment_name: $('#appointment_name').val(),
                         color: $('#color_code').val(),
+                        appointment_price: $('#appointment_price').val(),
                     },
                     success: function(result) {
                         var typedata = JSON.parse(result);
@@ -224,6 +234,7 @@
                         $('#createAppointmentType').find('#appointment_type_id').val(val.id);
                         $('#createAppointmentType').find('#appointment_name').val(val.appointment_name);
                         $('#createAppointmentType').find('#color_code').val(val.color_code);
+                        $('#createAppointmentType').find('#appointment_price').val(val.appointment_price);
                     });                    
                 },
                 error: function(data) {
@@ -244,6 +255,7 @@
                         id: $('#appointment_type_id').val(), 
                         appointment_name: $('#appointment_name').val(),
                         color: $('#color_code').val(),
+                        appointment_price: $("#appointment_price").val(),
                     },
                     success: function(result) {
                         var typedata = JSON.parse(result);

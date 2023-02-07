@@ -1345,4 +1345,10 @@ class Patients extends My_Controller
     {
         return $this->load->view('admin/panel/create_user_view');
     }
+
+    public function getAppointmentPrice($appointment_type_id = ''){        
+        $sql = "SELECT * FROM appointment_type WHERE id = ' " . $appointment_type_id . " '";
+        $result = $this->db->query($sql)->result();
+        echo json_encode(array('status' => true, 'data' => $result));
+    }
 }
