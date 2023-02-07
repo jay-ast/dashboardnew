@@ -78,7 +78,7 @@ $(function () {
                 selectedDateTime = moment(currentDate).format('YYYY-MM-DD HH:mm');
                 todayDateTime = moment(today).format('YYYY-MM-DD HH:mm');
                 // Open modal to add event    
-                
+                                
                 if (selectedDate >= todayDate) {
                     modal({
                         // Available buttons when adding
@@ -259,8 +259,12 @@ $(function () {
                 $('#schedule_date').val(eventDate ? eventDate : '');
             } else {
                 $('#schedule_date').prop('readonly', false);
+                if(selectedDate){
+                    $('#schedule_date').val(selectedDate ? moment(selectedDate).format('DD-MM-YYYY') : moment(today).format('DD-MM-YYYY'));    
+                }else{
+                    $('#schedule_date').val(moment(today).format('DD-MM-YYYY'));
+                }                
                 // $('#schedule_date').val(selectedDate ? moment(selectedDate).format('YYYY-MM-DD') : moment(today).format('YYYY-MM-DD'));
-                $('#schedule_date').val(moment(today).format('DD-MM-YYYY'));
             }
         }
 
