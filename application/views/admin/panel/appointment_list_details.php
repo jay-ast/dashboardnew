@@ -15,7 +15,7 @@
                             <tr class=" text-center">
                                 <th>Id</th>
                                 <th>Appointment Type</th>
-                                <th>Color Code</th>
+                                <th>Color</th>
                                 <th>Price</th>
                                 <th>Action</th>
                             </tr>
@@ -24,11 +24,14 @@
                             <?php
                             if (isset($appoitment_type)) {
                                 foreach ($appoitment_type as $appointment_list) {
+                                $color =  $appointment_list->color_code;
                             ?>
                                     <tr class="gradeX">
                                         <td><?php echo $appointment_list->id ?></td>
                                         <td><?php echo $appointment_list->appointment_name ?></td>
-                                        <td><?php echo $appointment_list->color_code ?></td>
+                                        <td>
+                                            <span style="height: 30px; width: 50%; display: block; background-color: <?php echo $color ?>"></span>
+                                        </td>
                                         <td><?php echo $appointment_list->appointment_price ?></td>
                                         <td>
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
