@@ -19,7 +19,11 @@
                         <option value="">All Clients</option>
                         <?php
                         foreach ($clientlist as $clients) {
-                            echo '<option value="' . $clients['id'] . '" data-name="' . $clients['firstname']  . ' ' .  $clients['lastname'] . '">' . $clients['firstname']  . ' ' .  $clients['lastname'] . '</option>';
+                            $selected = '';
+                            if ($client_id) {                             
+                                $selected = ($client_id == $clients['id']) ? 'selected' : '';
+                            }
+                            echo '<option value="' . $clients['id'] . '" data-name="' . $clients['firstname']  . ' ' .  $clients['lastname'] . '" ' . $selected . '>' . $clients['firstname']  . ' ' .  $clients['lastname'] . '</option>';
                         } ?>
                     </select>
                 </div>

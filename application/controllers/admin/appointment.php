@@ -11,8 +11,25 @@ class Appointment extends My_Controller
     {
         $data['page_title'] = 'Appointment';
         $data['active_class'] = 'appointment';
-
-        $event_data = "SELECT  `events`.*,
+        $id = $_GET['id'];
+        if($id){
+            $event_data = "SELECT  `events`.*,
+                                `users`.`id`,                                
+                                `users`.`firstname`,
+                                `users`.`lastname`,
+                                `provider_user`.`firstname` as `provider_first_name`,
+                                `provider_user`.`lastname` as `provider_last_name`,
+                                `appointment_type`.`id`,
+					            `appointment_type`.`appointment_name`,
+					            `appointment_type`.`color_code`
+                        FROM (`events`)
+                        LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+                        WHERE `events`.`client_id` = $id
+                        ORDER BY `events`.`schedule_date` DESC";
+        }else{
+            $event_data = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
                                 `users`.`lastname`,
@@ -26,6 +43,7 @@ class Appointment extends My_Controller
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
                         LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
                         ORDER BY `events`.`schedule_date` DESC";
+        }        
         $data['event_data'] = $this->db->query($event_data)->result();
         $total_count = count($data['event_data']);
         $numlinks = 3;
@@ -89,7 +107,7 @@ class Appointment extends My_Controller
             $clientlist[] = $userdetail;
         }
         $data['clientlist'] = $clientlist;
-
+        $data['client_id'] = $id;
         $this->load->view('admin/panel/appointment', $data);
     }
 
