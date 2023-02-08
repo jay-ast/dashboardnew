@@ -28,6 +28,9 @@
                     </select>
                 </div>
             </div>
+            <div class="pull-right">
+                <a class="btn btn-mail client-portal-button" href="<?php echo base_url("admin/home?id=".$client_id); ?>" target="_top" id="">Add Appointment</a>
+            </div>
             <div class="widget-body padding-bottom-none appointment_details">
                 <div class="row">
                     <table class="dynamicTable tableTools table table-striped checkboxs">

@@ -9,13 +9,15 @@ $(function () {
     var modelEvent;
     var appoint_id;
 
+    var today = new Date();                
+    var todayDate = moment(today).format('YYYY-MM-DD');
+    
     if(window.location.href.indexOf("id") != -1){
         var appoint_id = window.location.href.split('?')[1];
         appoint_id = appoint_id.split('=')[1];        
     }
     if(appoint_id){
-        modal({
-            // Available buttons when adding
+        modal({            
             buttons: {
                 add: {
                     id: 'add-event', // Buttons id
@@ -24,9 +26,19 @@ $(function () {
                 }
             },
             title: 'Add Event' // Modal title
-        }, 'event-modal', appoint_id);
-    }
-    
+        }, 'event-modal', appoint_id, todayDate);
+    }else{
+        modal({                    
+            buttons: {
+                add: {
+                    id: 'add-event', // Buttons id
+                    css: 'btn-success', // Buttons class
+                    label: 'Add' // Buttons label
+                }
+            },
+            title: 'Add Event' // Modal title
+        }, 'event-modal', '', todayDate);
+    }    
     // Fullcalendar
     
     fullCalendar($apiUrl = 'admin/home/getEvents');
