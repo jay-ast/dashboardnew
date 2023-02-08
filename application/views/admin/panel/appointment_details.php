@@ -39,7 +39,7 @@
                                                     <h6 class="text-center"><?php echo formatCustomDate($data->schedule_date, "F") . ',' . formatCustomDate($data->schedule_date, "Y") ?></h6>
                                                 </div>
                                                 <div class="card-body text-center">
-                                                    <label class="badge badge-primary"> <?php echo formatTime($data->start_time) . ' - ' . formatTime($data->end_time); ?></label>
+                                                    <label class="badge badge-warning"> <?php echo formatTime($data->start_time) . ' - ' . formatTime($data->end_time); ?></label>
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <label class="badge badge-success"> <?php echo $data->appointment_name ?></label>
@@ -81,7 +81,7 @@
                                                     <h6 class="text-center"><?php echo formatCustomDate($data->schedule_date, "F") . ',' . formatCustomDate($data->schedule_date, "Y") ?></h6>
                                                 </div>
                                                 <div class="card-body text-center">
-                                                    <label class="badge badge-primary"> <?php echo formatTime($data->start_time) . ' - ' . formatTime($data->end_time); ?></label>
+                                                    <label class="badge badge-warning"> <?php echo formatTime($data->start_time) . ' - ' . formatTime($data->end_time); ?></label>
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <label class="badge badge-success"> <?php echo $data->appointment_name ?></label>
