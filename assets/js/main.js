@@ -27,18 +27,7 @@ $(function () {
             },
             title: 'Add Event' // Modal title
         }, 'event-modal', appoint_id, todayDate);
-    }else{
-        modal({                    
-            buttons: {
-                add: {
-                    id: 'add-event', // Buttons id
-                    css: 'btn-success', // Buttons class
-                    label: 'Add' // Buttons label
-                }
-            },
-            title: 'Add Event' // Modal title
-        }, 'event-modal', '', todayDate);
-    }    
+    }
     // Fullcalendar
     
     fullCalendar($apiUrl = 'admin/home/getEvents');

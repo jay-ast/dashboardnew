@@ -2519,7 +2519,7 @@ textarea.form-control:focus {
     border: 1px solid #999
 }
 .badge.badge-primary {
-    background: #cb4040
+    background: #0395E2
 }
 .badge.badge-primary.badge-stroke {
     background: none;
@@ -3107,26 +3107,26 @@ html.csstransitions.csstransforms3d .panel-3d.panel-flip .back {
     border-right: 1px solid #e5e5e5
 }
 .tooltip .tooltip-inner {
-    background-color: #cb4040;
+    background-color: #0395E2;
     color: #fff;
     -webkit-border-radius: 0 0 0 0;
     -moz-border-radius: 0 0 0 0;
     border-radius: 0 0 0 0
 }
 .tooltip.right .tooltip-arrow {
-    border-right-color: #cb4040
+    border-right-color: #0395E2
 }
 .tooltip.left {
     margin-left: -13px
 }
 .tooltip.left .tooltip-arrow {
-    border-left-color: #cb4040
+    border-left-color: #0395E2
 }
 .tooltip.top .tooltip-arrow {
-    border-top-color: #cb4040
+    border-top-color: #0395E2
 }
 .tooltip.bottom .tooltip-arrow {
-    border-bottom-color: #cb4040
+    border-bottom-color: #0395E2
 }
 .rating {
     unicode-bidi: bidi-override;

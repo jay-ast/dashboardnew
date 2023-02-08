@@ -20,13 +20,6 @@ class Home_Model extends CI_Model
 
 	public function getEvents($id = null)
 	{
-		$types = [
-			'pilates' => '#5baff0',
-			'physical_therapy' => '#909090',
-			'fitness' => '#57acab',
-			'consultation' => '#bca1e5',
-			'other' => '#f90',
-		];
 		// $logged_user_id = $this->session->userdata('userid');
 		$logged_user_role_id = $this->session->userdata('roleid');
 		if ($logged_user_role_id == 1) {
@@ -213,6 +206,38 @@ class Home_Model extends CI_Model
 
 			$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
 			$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
+
+			if ($_POST['recurrence'] == 'weekly') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					$id = $this->db->insert_id();		
+
+					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
+					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
+				}
+			} elseif ($_POST['recurrence'] == 'daily') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					$id = $this->db->insert_id();		
+
+					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
+					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
+				}
+			} elseif ($_POST['recurrence'] == 'monthly') {
+				for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
+					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					$id = $this->db->insert_id();		
+
+					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
+					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
+				}
+			}
 
 			$subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
 			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';

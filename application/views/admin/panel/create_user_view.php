@@ -155,7 +155,7 @@
 
             <div class="clearfix"></div>
             <div class="modal-footer">
-                <a class="send-mail" id="mailto" href="#" style="float: left;" target="_top">Send e-mail</a>
+                <a class="send-mail pull-left" id="mailto" href="#" target="_top">Send e-mail</a>
                 <!-- <button type="submit" class="btn btn-success btnupdateuser" formaction="<?php echo base_url('admin/patients/updatePatient'); ?>">Update</button> -->
                 <button type="button" class="btn btn-success btnSaveClient update-client" name="btnSaveClient" formaction="<?php echo base_url('admin/patients/updatePatient'); ?>">Update Client</button>
                 <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>

@@ -7,7 +7,7 @@
         <div class="widget widget-inverse">
             <div class="widget-body padding-bottom-none appointment_details">
                 <div class="row">
-                    <div class="col-md-2" style="float: right; margin-bottom: 10px;">
+                    <div class="col-md-2 pull-right" style="margin-bottom: 10px;">
                         <a class="btn btn-success btnAddAppointmentType col-sm-12" data-toggle="modal" href="#createAppointmentType"> <i class="fa fa-plus"></i> Add</a>
                     </div>
                     <table class="dynamicTable tableTools table table-striped checkboxs">

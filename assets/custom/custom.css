@@ -12,8 +12,7 @@
 .error {
 	border: solid 1px red;
 }
-.sidebar.sidebar-default {
-    //border-right: 1px solid #e5e5e5;
+.sidebar.sidebar-default {    
     background: #636363 !important;
 }
 .sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active, .sidebar.sidebar-default>.sidebarMenuWrapper>ul li.active:hover>a {

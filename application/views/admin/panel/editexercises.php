@@ -200,7 +200,7 @@
                                 <div class="row">
                                     <div data-id="222222" class="col-md-6">
 
-                                        <img class="<?php echo ($isgeneral == true) ? 'hidden' : '' ?>" onclick="showMe(this)" data-toggle="yes" src="/assets/custom/images/showme.jpg" style="height: 25px;float: left;margin-right: 8px;cursor: pointer;" />
+                                        <img class="<?php echo ($isgeneral == true) ? 'hidden' : '' ?> pull-left" onclick="showMe(this)" data-toggle="yes" src="/assets/custom/images/showme.jpg" style="height: 25px;margin-right: 8px;cursor: pointer;" />
                                         <h4>General Routines Video</h4>
                                         <div id="videos-container">
 
