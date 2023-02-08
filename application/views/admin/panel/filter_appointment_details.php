@@ -30,7 +30,7 @@
             <?php
                 }
             } else {
-                echo '<tr class="gradeX"><td colspan="8" class="text-center">No Events available for this provider.</td></tr>';
+                echo '<tr class="gradeX"><td colspan="8" class="text-center">No Events available.</td></tr>';
             }
             ?>
         </tbody>

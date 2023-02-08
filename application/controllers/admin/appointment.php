@@ -61,12 +61,118 @@ class Appointment extends My_Controller
         }
         $data['providerlist'] = $providerlist;
 
+        $listClients = new User();
+        $listClients->where('roles_id', 3);
+        $listClients->where('isdeleted', 0);
+        if (!empty($fullname)) {
+            $listClients->group_start();
+            $listClients->or_like('firstname', $fullname);
+            $listClients->or_like('lastname', $fullname);
+            $listClients->group_end();
+        }
+        if (!empty($email)) {
+            $listClients->group_start();
+            $listClients->or_like('email', $email);
+            $listClients->group_end();
+        }
+
+        // $listClients->where('company_id', $data['global']['companyid']);
+        $listClients->order_by('firstname', 'ASC');
+        $listClients->order_by('lastname', 'ASC');
+        $listClients->get();
+
+        //echo $this->db->last_query();
+
+        foreach ($listClients as $lip) {
+            $userdetail = $lip->show_result();
+            $userlisted[] = $userdetail['id'];
+            $clientlist[] = $userdetail;
+        }
+        $data['clientlist'] = $clientlist;
+
         $this->load->view('admin/panel/appointment', $data);
     }
 
-    public function filterByProvider($provider_id = '')
+    // public function filterByProvider($provider_id = '')
+    // {
+    //     if ($provider_id) {
+    //         $event_data = "SELECT  `events`.*,
+    //                             `users`.`id`,                                
+    //                             `users`.`firstname`,
+    //                             `users`.`lastname`,
+    //                             `provider_user`.`firstname` as `provider_first_name`,
+    //                             `provider_user`.`lastname` as `provider_last_name`
+    //                     FROM (`events`)
+    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+    //                     WHERE `events`.`created_by` = $provider_id 
+    //                     ORDER BY `events`.`schedule_date` DESC";
+    //     } else {
+    //         $event_data = "SELECT  `events`.*,
+    //                             `users`.`id`,                                
+    //                             `users`.`firstname`,
+    //                             `users`.`lastname`,
+    //                             `provider_user`.`firstname` as `provider_first_name`,
+    //                             `provider_user`.`lastname` as `provider_last_name`
+    //                     FROM (`events`)
+    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
+    //     }
+
+    //     $data['event_data'] = $this->db->query($event_data)->result();
+
+    //     return $this->load->view('admin/panel/filter_appointment_details', $data);
+    // }
+
+    // public function filterByClient($client_id = '')
+    // {
+    //     if ($client_id) {
+    //         $event_data = "SELECT  `events`.*,
+    //                             `users`.`id`,                                
+    //                             `users`.`firstname`,
+    //                             `users`.`lastname`,
+    //                             `provider_user`.`firstname` as `provider_first_name`,
+    //                             `provider_user`.`lastname` as `provider_last_name`
+    //                     FROM (`events`)
+    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+    //                     WHERE `events`.`client_id` = $client_id 
+    //                     ORDER BY `events`.`schedule_date` DESC";
+    //     } else {
+    //         $event_data = "SELECT  `events`.*,
+    //                             `users`.`id`,                                
+    //                             `users`.`firstname`,
+    //                             `users`.`lastname`,
+    //                             `provider_user`.`firstname` as `provider_first_name`,
+    //                             `provider_user`.`lastname` as `provider_last_name`
+    //                     FROM (`events`)
+    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
+    //     }
+
+    //     $data['event_data'] = $this->db->query($event_data)->result();
+
+    //     return $this->load->view('admin/panel/filter_appointment_details', $data);
+    // }
+
+    public function filterAppointmentData()
     {
-        if ($provider_id) {
+        $client_id = $_POST['client_id'];
+        $provider_id = $_POST['provider_id'];        
+        if(!empty($client_id) && !empty($provider_id))
+        {            
+            $event_data = "SELECT  `events`.*,
+                `users`.`id`,                                
+                `users`.`firstname`,
+                `users`.`lastname`,
+                `provider_user`.`firstname` as `provider_first_name`,
+                `provider_user`.`lastname` as `provider_last_name`
+            FROM (`events`)
+            LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+            LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+            WHERE `events`.`client_id` = $client_id AND `events`.`created_by` = $provider_id
+            ORDER BY `events`.`schedule_date` DESC";
+        }else if($client_id){            
             $event_data = "SELECT  `events`.*,
                                 `users`.`id`,                                
                                 `users`.`firstname`,
@@ -76,26 +182,37 @@ class Appointment extends My_Controller
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-                        WHERE `events`.`created_by` = $provider_id 
+                        WHERE `events`.`client_id` = $client_id 
                         ORDER BY `events`.`schedule_date` DESC";
-        } else {
+        }else if($provider_id){            
             $event_data = "SELECT  `events`.*,
-                                `users`.`id`,                                
-                                `users`.`firstname`,
-                                `users`.`lastname`,
-                                `provider_user`.`firstname` as `provider_first_name`,
-                                `provider_user`.`lastname` as `provider_last_name`
-                        FROM (`events`)
-                        LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-                        LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
-        }
-
-        $data['event_data'] = $this->db->query($event_data)->result();
-
-        return $this->load->view('admin/panel/filter_appointment_details', $data);
+                `users`.`id`,                                
+                `users`.`firstname`,
+                `users`.`lastname`,
+                `provider_user`.`firstname` as `provider_first_name`,
+                `provider_user`.`lastname` as `provider_last_name`
+            FROM (`events`)
+            LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+            LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+            WHERE `events`.`created_by` = $provider_id
+            ORDER BY `events`.`schedule_date` DESC";
+        }else{            
+            $event_data = "SELECT  `events`.*,
+                `users`.`id`,                                
+                `users`.`firstname`,
+                `users`.`lastname`,
+                `provider_user`.`firstname` as `provider_first_name`,
+                `provider_user`.`lastname` as `provider_last_name`
+            FROM (`events`)
+            LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+            LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
+       }
+       $data['event_data'] = $this->db->query($event_data)->result();
+       return $this->load->view('admin/panel/filter_appointment_details', $data);
     }
 
-    public function getAppointmentType(){
+    public function getAppointmentType()
+    {
 
         $data['page_title'] = 'Appointment Type';
         $data['active_class'] = 'appointment_type';
@@ -106,55 +223,58 @@ class Appointment extends My_Controller
         return $this->load->view('admin/panel/appointment_list_details', $data);
     }
 
-    public function addNewAppointmentType() {
+    public function addNewAppointmentType()
+    {
         $sql = "INSERT INTO appointment_type (appointment_name,color_code,appointment_price) VALUES (?,?,?)";
-		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price']));
+        $this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price']));
 
-        if($this->db->affected_rows() != 1){
-            $result['success'] = false;                                
+        if ($this->db->affected_rows() != 1) {
+            $result['success'] = false;
             $result['message'] = "Appointment Type not Added";
             echo json_encode($result);
-        }else{
-            $result['success'] = true;                                
+        } else {
+            $result['success'] = true;
             $result['message'] = "Appointment Type Added successfully";
             echo json_encode($result);
         }
     }
 
     public function deleteAppointmentType($typeid = '')
-	{
-		$sql = "DELETE FROM appointment_type WHERE id = ?";
-		$this->db->query($sql, array($typeid));
-		
-        if($this->db->affected_rows() != 1){
-            $result['success'] = false;                                
+    {
+        $sql = "DELETE FROM appointment_type WHERE id = ?";
+        $this->db->query($sql, array($typeid));
+
+        if ($this->db->affected_rows() != 1) {
+            $result['success'] = false;
             $result['message'] = "Appointment Type not deleted";
             echo json_encode($result);
-        }else{
-            $result['success'] = true;                                
+        } else {
+            $result['success'] = true;
             $result['message'] = "Appointment Type delete successfully";
             echo json_encode($result);
         }
-	}
-
-    public function editAppointmentType($typeid = ''){    
-        $sql = "SELECT * FROM appointment_type WHERE id = '" . $typeid . "' ";        
-        $result = $this->db->query($sql)->result();
-        echo json_encode(array('status' => true, 'data' => $result));        
     }
 
-    public function  updateAppointmentType(){        
+    public function editAppointmentType($typeid = '')
+    {
+        $sql = "SELECT * FROM appointment_type WHERE id = '" . $typeid . "' ";
+        $result = $this->db->query($sql)->result();
+        echo json_encode(array('status' => true, 'data' => $result));
+    }
+
+    public function  updateAppointmentType()
+    {
         $sql = "UPDATE appointment_type SET appointment_name = ?, color_code = ?, appointment_price = ? WHERE id = ?";
-		$this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price'],$_POST['id']));
-        
-        if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
-            $result['success'] = false;                                
+        $this->db->query($sql, array($_POST['appointment_name'], $_POST['color'], $_POST['appointment_price'], $_POST['id']));
+
+        if ($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0) {
+            $result['success'] = false;
             $result['message'] = "Appointment Type details not updated";
             echo json_encode($result);
-        }else{
-            $result['success'] = true;                                
+        } else {
+            $result['success'] = true;
             $result['message'] = "Appointment Type details updated successfully";
             echo json_encode($result);
-        }        
+        }
     }
 }

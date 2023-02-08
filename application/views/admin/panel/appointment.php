@@ -5,11 +5,21 @@
         <div class="widget widget-inverse">
             <div class="col-md-5" style="margin-top: 20px;">
                 <div class="col-md-4">
-                    <select class="form-control provider_data" id="provider_data" name="provider_data">
+                    <select class="form-control provider_data filter_data" id="provider_data" name="provider_data">
                         <option value="">All Provider</option>
                         <?php
                         foreach ($providerlist as $clientfolder) {
                             echo '<option value="' . $clientfolder['id'] . '" data-name="' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '">' . $clientfolder['firstname']  . ' ' .  $clientfolder['lastname'] . '</option>';
+                        } ?>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <select class="form-control client_data filter_data" id="client_data" name="client_data">
+                        <option value="">All Clients</option>
+                        <?php
+                        foreach ($clientlist as $clients) {
+                            echo '<option value="' . $clients['id'] . '" data-name="' . $clients['firstname']  . ' ' .  $clients['lastname'] . '">' . $clients['firstname']  . ' ' .  $clients['lastname'] . '</option>';
                         } ?>
                     </select>
                 </div>
@@ -72,21 +82,55 @@
 <script>
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
-        $(".provider_data").change(function(item) {
+
+        // $(".provider_data").change(function(item) {
+        //     var provider_id = $('#provider_data').val();
+        //     var provider_name = $('#provider_data').find(':selected').data('name');
+        //     $('.appointment_details').html('');
+
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: base_url + 'admin/appointment/filterByProvider/' + provider_id,
+        //         success: function(actionResponse) {                    
+        //             $('.appointment_details').html(actionResponse);
+        //         },
+        //         error: function(data) {
+        //             console.log(data);
+        //         }
+        //     });
+        // });
+
+        // $(".client_data").change(function(item) {
+        //     var provider_id = $('#provider_data').val();
+        //     var provider_name = $('#provider_data').find(':selected').data('name');
+        //     var client_id = $('#client_data').val();
+        //     var client_name = $('#client_data').find(':selected').data('name');     
+        //     $('.appointment_details').html('');            
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: base_url + 'admin/appointment/filterByClient/' + client_id,
+        //         success: function(actionResponse) {                    
+        //             $('.appointment_details').html(actionResponse);
+        //         },
+        //         error: function(data) {
+        //             console.log(data);
+        //         }
+        //     });
+        // });
+
+        $(".filter_data").change(function(item) {
             var provider_id = $('#provider_data').val();
             var provider_name = $('#provider_data').find(':selected').data('name');
-            console.log('provider_id', provider_id);
-            console.log('provider_name', provider_name);
-            $('.appointment_details').html('');
-            // if (provider_name) {
-            //     $('.provider_name').text(provider_name);
-            // } else {
-            //     $('.provider_name').text("All Staff");
-            // }
-
+            var client_id = $('#client_data').val();
+            var client_name = $('#client_data').find(':selected').data('name');            
+            $('.appointment_details').html('');            
             $.ajax({
                 type: 'POST',
-                url: base_url + 'admin/appointment/filterByProvider/' + provider_id,
+                url: base_url + 'admin/appointment/filterAppointmentData',
+                data: {
+                        client_id: client_id, 
+                        provider_id: provider_id,                        
+                    },
                 success: function(actionResponse) {                    
                     $('.appointment_details').html(actionResponse);
                 },
