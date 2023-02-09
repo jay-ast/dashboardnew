@@ -1,4 +1,4 @@
-<div class="modal-dialog new-modal-dialog">
+<div class="modal-dialog">
     <div class="modal-content">
         <!-- dialog body -->
         <div class="modal-header">

@@ -1,4 +1,4 @@
-<div class="modal-dialog new-modal-dialog">
+<div class="modal-dialog">
     <div class="modal-content">
         <!-- dialog body -->
         <?php echo form_open(base_url('admin/patients/updateNotesDetails'), array("class" => "updateNotesForm")); ?>
