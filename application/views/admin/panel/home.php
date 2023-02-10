@@ -252,6 +252,8 @@
                     <div class="col-md-12" style="display: flex; justify-content: center;">
                         <button type="button" class="btn btn-primary btnEditAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnEditAppointment" name="btnEditAppointment">Edit Existing Appointment</button>
                         <button type="button" class="btn btn-success btnCreateAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnCreateAppointment" name="btnCreateAppointment">Create New Appointment</button>
+                        <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Checkout</button>
+                        <button type="button" class="btn btn-success btnCheckPaid edit-appointment-confirmation" style="margin: 4px;" id="btnCheckPaid" name="btnCheckPaid">Paid</button>
                     </div>
                     <div class="clearfix"></div>
                 </div>

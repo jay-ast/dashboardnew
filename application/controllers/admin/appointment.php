@@ -14,34 +14,44 @@ class Appointment extends My_Controller
         $id = $_GET['id'];
         if($id){
             $event_data = "SELECT  `events`.*,
-                                `users`.`id`,                                
+                                `users`.`id` as `user_id`,                                
                                 `users`.`firstname`,
                                 `users`.`lastname`,
                                 `provider_user`.`firstname` as `provider_first_name`,
                                 `provider_user`.`lastname` as `provider_last_name`,
-                                `appointment_type`.`id`,
+                                `appointment_type`.`id` as `appointment_id`,
 					            `appointment_type`.`appointment_name`,
-					            `appointment_type`.`color_code`
+					            `appointment_type`.`color_code`,
+                                `appointment_type`.`appointment_price`,
+                                `price_details`.`id` as `price_detail_id`,
+                                `price_details`.`event_id`,
+                                `price_details`.`payment_status`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
                         LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+                        LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
                         WHERE `events`.`client_id` = $id
                         ORDER BY `events`.`schedule_date` DESC";
         }else{
             $event_data = "SELECT  `events`.*,
-                                `users`.`id`,                                
+                                `users`.`id` as `user_id`,
                                 `users`.`firstname`,
                                 `users`.`lastname`,
                                 `provider_user`.`firstname` as `provider_first_name`,
                                 `provider_user`.`lastname` as `provider_last_name`,
-                                `appointment_type`.`id`,
+                                `appointment_type`.`id` as `appointment_id`,
 					            `appointment_type`.`appointment_name`,
-					            `appointment_type`.`color_code`
+					            `appointment_type`.`color_code`,
+                                `appointment_type`.`appointment_price`,
+                                `price_details`.`id` as `price_detail_id`,
+                                `price_details`.`event_id`,
+                                `price_details`.`payment_status`
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
                         LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+                        LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`                    
                         ORDER BY `events`.`schedule_date` DESC";
         }        
         $data['event_data'] = $this->db->query($event_data)->result();
@@ -51,7 +61,7 @@ class Appointment extends My_Controller
         $data["links"] = $this->paginationInit("admin/appointment/index", $total_count, $numlinks, $per_page, 4);
 
         $listProvider = new User();
-        $listProvider->where('roles_id', 2);
+        $listProvider->where_not_in('roles_id', 3);
         $listProvider->where('isdeleted', 0);
         if (!empty($fullname)) {
             $listProvider->group_start();
@@ -106,72 +116,14 @@ class Appointment extends My_Controller
             $userlisted[] = $userdetail['id'];
             $clientlist[] = $userdetail;
         }
+
+        $appoitment_type = "SELECT * FROM `appointment_type`";
+        $data['appoitment_type'] = $this->db->query($appoitment_type)->result();
+
         $data['clientlist'] = $clientlist;
         $data['client_id'] = $id;
         $this->load->view('admin/panel/appointment', $data);
     }
-
-    // public function filterByProvider($provider_id = '')
-    // {
-    //     if ($provider_id) {
-    //         $event_data = "SELECT  `events`.*,
-    //                             `users`.`id`,                                
-    //                             `users`.`firstname`,
-    //                             `users`.`lastname`,
-    //                             `provider_user`.`firstname` as `provider_first_name`,
-    //                             `provider_user`.`lastname` as `provider_last_name`
-    //                     FROM (`events`)
-    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-    //                     WHERE `events`.`created_by` = $provider_id 
-    //                     ORDER BY `events`.`schedule_date` DESC";
-    //     } else {
-    //         $event_data = "SELECT  `events`.*,
-    //                             `users`.`id`,                                
-    //                             `users`.`firstname`,
-    //                             `users`.`lastname`,
-    //                             `provider_user`.`firstname` as `provider_first_name`,
-    //                             `provider_user`.`lastname` as `provider_last_name`
-    //                     FROM (`events`)
-    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
-    //     }
-
-    //     $data['event_data'] = $this->db->query($event_data)->result();
-
-    //     return $this->load->view('admin/panel/filter_appointment_details', $data);
-    // }
-
-    // public function filterByClient($client_id = '')
-    // {
-    //     if ($client_id) {
-    //         $event_data = "SELECT  `events`.*,
-    //                             `users`.`id`,                                
-    //                             `users`.`firstname`,
-    //                             `users`.`lastname`,
-    //                             `provider_user`.`firstname` as `provider_first_name`,
-    //                             `provider_user`.`lastname` as `provider_last_name`
-    //                     FROM (`events`)
-    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-    //                     WHERE `events`.`client_id` = $client_id 
-    //                     ORDER BY `events`.`schedule_date` DESC";
-    //     } else {
-    //         $event_data = "SELECT  `events`.*,
-    //                             `users`.`id`,                                
-    //                             `users`.`firstname`,
-    //                             `users`.`lastname`,
-    //                             `provider_user`.`firstname` as `provider_first_name`,
-    //                             `provider_user`.`lastname` as `provider_last_name`
-    //                     FROM (`events`)
-    //                     LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-    //                     LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
-    //     }
-
-    //     $data['event_data'] = $this->db->query($event_data)->result();
-
-    //     return $this->load->view('admin/panel/filter_appointment_details', $data);
-    // }
 
     public function filterAppointmentData()
     {
@@ -180,50 +132,86 @@ class Appointment extends My_Controller
         if(!empty($client_id) && !empty($provider_id))
         {            
             $event_data = "SELECT  `events`.*,
-                `users`.`id`,                                
+                `users`.`id` as `user_id`,                                
                 `users`.`firstname`,
                 `users`.`lastname`,
                 `provider_user`.`firstname` as `provider_first_name`,
-                `provider_user`.`lastname` as `provider_last_name`
+                `provider_user`.`lastname` as `provider_last_name`,
+                `appointment_type`.`id` as `appointment_id`,
+				`appointment_type`.`appointment_name`,
+				`appointment_type`.`color_code`,
+                `appointment_type`.`appointment_price`,
+                `price_details`.`id` as `price_detail_id`,
+                `price_details`.`event_id`,
+                `price_details`.`payment_status`                
             FROM (`events`)
             LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
             LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+            LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+            LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
             WHERE `events`.`client_id` = $client_id AND `events`.`created_by` = $provider_id
             ORDER BY `events`.`schedule_date` DESC";
         }else if($client_id){            
             $event_data = "SELECT  `events`.*,
-                                `users`.`id`,                                
+                                `users`.`id` as `user_id`,
                                 `users`.`firstname`,
                                 `users`.`lastname`,
                                 `provider_user`.`firstname` as `provider_first_name`,
-                                `provider_user`.`lastname` as `provider_last_name`
+                                `provider_user`.`lastname` as `provider_last_name`,
+                                `appointment_type`.`id` as `appointment_id`,
+				                `appointment_type`.`appointment_name`,
+				                `appointment_type`.`color_code`,
+                                `appointment_type`.`appointment_price`,
+                                `price_details`.`id` as `price_detail_id`,
+                                `price_details`.`event_id`,
+                                `price_details`.`payment_status` 
                         FROM (`events`)
                         LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
                         LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+                        LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+                        LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
                         WHERE `events`.`client_id` = $client_id 
                         ORDER BY `events`.`schedule_date` DESC";
         }else if($provider_id){            
             $event_data = "SELECT  `events`.*,
-                `users`.`id`,                                
+                `users`.`id` as `user_id`,                                
                 `users`.`firstname`,
                 `users`.`lastname`,
                 `provider_user`.`firstname` as `provider_first_name`,
-                `provider_user`.`lastname` as `provider_last_name`
+                `provider_user`.`lastname` as `provider_last_name`,
+                `appointment_type`.`id` as `appointment_id`,
+				`appointment_type`.`appointment_name`,
+				`appointment_type`.`color_code`,
+                `appointment_type`.`appointment_price`,
+                `price_details`.`id` as `price_detail_id`,
+                `price_details`.`event_id`,
+                `price_details`.`payment_status` 
             FROM (`events`)
             LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
             LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+            LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+            LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
             WHERE `events`.`created_by` = $provider_id
             ORDER BY `events`.`schedule_date` DESC";
         }else{            
             $event_data = "SELECT  `events`.*,
-                `users`.`id`,                                
+                `users`.`id` as `user_id`,                                
                 `users`.`firstname`,
                 `users`.`lastname`,
                 `provider_user`.`firstname` as `provider_first_name`,
-                `provider_user`.`lastname` as `provider_last_name`
+                `provider_user`.`lastname` as `provider_last_name`,
+                `appointment_type`.`id` as `appointment_id`,
+				`appointment_type`.`appointment_name`,
+				`appointment_type`.`color_code`,
+                `appointment_type`.`appointment_price`,
+                `price_details`.`id` as `price_detail_id`,
+                `price_details`.`event_id`,
+                `price_details`.`payment_status`
             FROM (`events`)
             LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-            LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`";
+            LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+            LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+            LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`";
        }
        $data['event_data'] = $this->db->query($event_data)->result();
        return $this->load->view('admin/panel/filter_appointment_details', $data);
@@ -292,6 +280,46 @@ class Appointment extends My_Controller
         } else {
             $result['success'] = true;
             $result['message'] = "Appointment Type details updated successfully";
+            echo json_encode($result);
+        }
+    }
+
+    public function checkOutAppointment(){
+        $event_id = $_POST['event_id']; 
+        $logged_user_id = $this->session->userdata('userid');       
+        $data = "SELECT * from price_details WHERE event_id = '" . $event_id ."' ";
+        $result = $this->db->query($data)->result();
+        if(!empty($result)){            
+            $sql = "UPDATE price_details SET `payment_status` = ? WHERE event_id = ?";
+            $this->db->query($sql, array('paid', $event_id));
+        }else{
+            $data = "SELECT  `events`.*,
+                    `appointment_type`.`id` as `appointment_id`,
+				    `appointment_type`.`appointment_name`,
+				    `appointment_type`.`color_code`,
+                    `appointment_type`.`appointment_price`,                    
+                    `price_details`.`id` as `price_detail_id`,
+                    `price_details`.`event_id`,
+                    `price_details`.`payment_status`
+                FROM (`events`)                
+                LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
+                LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+                WHERE `events`.`id` = $event_id";
+            
+            $result = $this->db->query($data)->result();                    
+            foreach($result as $val){                
+                $query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+				$this->db->query($query, array($event_id, $val->client_id, $val->appointment_type, $logged_user_id, $val->appointment_price, 'paid'));
+            }            
+        }        
+
+        if ($this->db->affected_rows() != 1) {
+            $result['success'] = false;
+            $result['message'] = "Appointment not checkout successfully";
+            echo json_encode($result);
+        } else {
+            $result['success'] = true;
+            $result['message'] = "Appointment checkout successfully";
             echo json_encode($result);
         }
     }

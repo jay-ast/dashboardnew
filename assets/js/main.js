@@ -208,6 +208,13 @@ $(function () {
                 // Open modal to edit or delete event
                 $('#appointment-confirmation-modal').find('.modal-title').html('Please Confirm');
                 $('#appointment-confirmation-modal').modal('show');
+                if(currentEvent.payment_status == 'paid'){
+                    $('#appointment-confirmation-modal').find('#btnCheckout').hide();
+                    $('#appointment-confirmation-modal').find('#btnCheckPaid').show();
+                }else{
+                    $('#appointment-confirmation-modal').find('#btnCheckout').show();
+                    $('#appointment-confirmation-modal').find('#btnCheckPaid').hide();
+                }
             }
         });
     }
@@ -786,6 +793,25 @@ $(function () {
             event: currentEvent
         }, 'event-modal', clientId);
     });
+
+    $("#btnCheckout").click(function (item) {
+        $('#appointment-confirmation-modal').modal('hide');
+        var event_id = currentEvent.id;        
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/appointment/checkOutAppointment',
+            data: {
+                    event_id: event_id,                        
+                },
+            success: function(actionResponse) {    
+                $('#calendar').fullCalendar('destroy');
+                fullCalendar($apiUrl = 'admin/home/getEvents');         
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+    });    
 
     $("#btnCreateAppointment").click(function (item) {
         $('#appointment-confirmation-modal').modal('hide');

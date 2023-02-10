@@ -2,6 +2,8 @@
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Appointments</h1>
     <div class="innerAll spacing-x2">
+        <div class="extraCustomMessage">
+        </div>
         <div class="widget widget-inverse">
             <div class="col-md-5" style="margin-top: 20px;">
                 <div class="col-md-4">
@@ -26,7 +28,7 @@
                             echo '<option value="' . $clients['id'] . '" data-name="' . $clients['firstname']  . ' ' .  $clients['lastname'] . '" ' . $selected . '>' . $clients['firstname']  . ' ' .  $clients['lastname'] . '</option>';
                         } ?>
                     </select>
-                </div>
+                </div>                
             </div>
             <div class="pull-right">
                 <a class="btn btn-mail client-portal-button" href="<?php echo base_url("admin/home?id=".$client_id); ?>" target="_top" id="">Add Appointment</a>
@@ -42,7 +44,8 @@
                                 <th>Timing</th>                                
                                 <th>Brief Note</th>
                                 <th>Provider Name</th>
-                                <!-- <th style="text-align: center;">Action</th> -->
+                                <th>Amount</th>
+                                <th style="text-align: center;">Checkout</th>
                             </tr>
                         </thead>
                         <tbody id="myTable">
@@ -54,13 +57,27 @@
                                  $end_time = date("h:i a", strtotime($event_list->end_time));                                 
                             ?>
                                     <tr class="gradeX">
-                                        <td><?php echo $event_list->firstname . ' ' . $event_list->lastname ?? '----' ?></td>
-                                        <td><?php echo $event_list->appointment_name ?? '----'  ?></td>
-                                        <td><?php echo $date ?? '----'  ?></td>
-                                        <td><?php echo $start_time . '-' . $end_time ?? '----'  ?></td>                                                                                
-                                        <td><?php echo $event_list->brief_note ?? '----'  ?></td>
-                                        <td><?php echo $event_list->provider_first_name . ' ' .  $event_list->provider_last_name ?? '----'  ?></td>
-                                        <!-- <td></td> -->
+                                        <td><?php echo $event_list->firstname . ' ' . $event_list->lastname ?></td>
+                                        <td><?php echo $event_list->appointment_name ?></td>
+                                        <td><?php echo $date ?></td>
+                                        <td><?php echo $start_time . '-' . $end_time ?></td>                                                                                
+                                        <td><?php echo $event_list->brief_note ?></td>
+                                        <td><?php echo $event_list->provider_first_name . ' ' .  $event_list->provider_last_name ?></td>
+                                        <td><?php echo $event_list->appointment_price ?></td>                                        
+                                        <?php 
+                                            if($event_list->payment_status == "paid"){
+                                        ?>  
+                                            <td style="color: green; text-align: center">paid</td>
+                                        <?php    
+                                            }else{
+                                        ?>                                            
+                                            <td style="text-align: center">
+                                                <a class="checkoutBtn" data-appointmentid="<?php echo $event_list->id; ?>" data-action="checkout" data-toggle="modal" href="#">
+                                                <i class="fa fa-check-square-o" data-toggle="tooltip" title="Checkout Appointment"></i></a>
+                                            </td>
+                                        <?php        
+                                            }
+                                        ?>                                        
                                     </tr>
                             <?php
                                 }
@@ -90,46 +107,12 @@
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
 
-        // $(".provider_data").change(function(item) {
-        //     var provider_id = $('#provider_data').val();
-        //     var provider_name = $('#provider_data').find(':selected').data('name');
-        //     $('.appointment_details').html('');
-
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: base_url + 'admin/appointment/filterByProvider/' + provider_id,
-        //         success: function(actionResponse) {                    
-        //             $('.appointment_details').html(actionResponse);
-        //         },
-        //         error: function(data) {
-        //             console.log(data);
-        //         }
-        //     });
-        // });
-
-        // $(".client_data").change(function(item) {
-        //     var provider_id = $('#provider_data').val();
-        //     var provider_name = $('#provider_data').find(':selected').data('name');
-        //     var client_id = $('#client_data').val();
-        //     var client_name = $('#client_data').find(':selected').data('name');     
-        //     $('.appointment_details').html('');            
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: base_url + 'admin/appointment/filterByClient/' + client_id,
-        //         success: function(actionResponse) {                    
-        //             $('.appointment_details').html(actionResponse);
-        //         },
-        //         error: function(data) {
-        //             console.log(data);
-        //         }
-        //     });
-        // });
-
         $(".filter_data").change(function(item) {
             var provider_id = $('#provider_data').val();
             var provider_name = $('#provider_data').find(':selected').data('name');
             var client_id = $('#client_data').val();
             var client_name = $('#client_data').find(':selected').data('name');            
+            
             $('.appointment_details').html('');            
             $.ajax({
                 type: 'POST',
@@ -145,6 +128,35 @@
                     console.log(data);
                 }
             });
+        });
+
+        $(".checkoutBtn").click(function(item){
+            var event_id = $(this).attr('data-appointmentid');            
+
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/appointment/checkOutAppointment',
+                data: {
+                        event_id: event_id,                        
+                    },
+                success: function(actionResponse) {                    
+                    var extraMessageHtml = "";
+                    var typedata = JSON.parse(actionResponse);
+                    if (typedata['success'] == true) {
+                        extraMessageHtml = '<div class="alert alert-success">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                    } else {
+                        extraMessageHtml = '<div class="alert alert-danger">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                    }
+                    $('.extraCustomMessage').html(extraMessageHtml);
+                    setTimeout(function () {                    
+                        window.location.reload();
+                    }, 1000);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+
         });
     });
 </script>
