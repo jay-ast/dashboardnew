@@ -88,13 +88,13 @@
                         </tbody>
                     </table>
                     <div class="jquery-bootpag-pagination pull-right">
-                        <!-- <ul id="myLinks" class="bootpag pagination">                            
+                        <ul id="myLinks" class="bootpag pagination">                            
                             <?php
                             foreach ($links as $link) {
                                 echo "<li>" . $link . "</li>";
                             }
                             ?>
-                        </ul> -->
+                        </ul>
                     </div>
                 </div>
             </div>

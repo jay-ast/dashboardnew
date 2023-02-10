@@ -256,7 +256,7 @@ class Appointment extends My_Controller
             echo json_encode($result);
         } else {
             $result['success'] = true;
-            $result['message'] = "Appointment Type delete successfully";
+            $result['message'] = "Appointment Type deleted successfully";
             echo json_encode($result);
         }
     }

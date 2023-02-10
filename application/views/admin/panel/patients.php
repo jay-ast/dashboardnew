@@ -366,8 +366,8 @@
                 </div>
                 <!-- dialog buttons -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger modeldeleteyes" data-action="" data-patientid data-dismiss="modal">Yes</button>
-                    <button type="button" class="btn btn-success no" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-success modeldeleteyes" data-action="" data-patientid data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-danger no" data-dismiss="modal">No</button>
                 </div>
             </div>
         </div>

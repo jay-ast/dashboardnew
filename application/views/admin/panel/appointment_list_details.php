@@ -105,7 +105,7 @@
                                 <label>Price</label>
                             </div>
                             <div class="form-group col-md-8">
-                                <input type="text" class="form-control appointment_price" id="appointment_price" name="appointment_price" placeholder="Appointment Price" />
+                                <input type="number" class="form-control appointment_price" id="appointment_price" name="appointment_price" placeholder="Appointment Price" />
                             </div>
                         </div>
                     </div>
@@ -131,15 +131,15 @@
                 <!-- dialog body -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Alert!!</h4>
+                    <h4 class="modal-title">Delete Appointment</h4>
                 </div>
                 <div class="modal-body alert-message">
                     <p style="margin: 10px 0px; font-size: 15px;"></p>
                 </div>
                 <!-- dialog buttons -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger deleteTypeDetails" data-action="" data-typeid data-dismiss="modal">Yes</button>
-                    <button type="button" class="btn btn-success no" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-success deleteTypeDetails" data-action="" data-typeid data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-danger no" data-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
@@ -155,8 +155,9 @@
             $('#createAppointmentType').find('#updateAppointmentTypeDetails').hide()            
         });
         
-        $(document).on('click', '.addAppointmentTypeDetails', function(e) {           
-            if ($('#appointment_name').val()) {
+        $(document).on('click', '.addAppointmentTypeDetails', function(e) { 
+            console.log($("#appointment_price").val());          
+            if ($('#appointment_name').val() && $("#appointment_price").val()) {
                 $.ajax({
                     type: 'POST',
                     url: base_url + 'admin/appointment/addNewAppointmentType',
@@ -178,6 +179,7 @@
                             extraMessageHtml = '<div class="alert alert-danger">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
                         }
                         $('.extraCustomMessage').html(extraMessageHtml);                        
+                        window.location.reload();
                         return false;
 
                     },
@@ -187,7 +189,7 @@
                     }
                 });
             } else {
-                $('.error').html('Appointment name is required');
+                $('.error').html('Appointment name and Price is required');
                 return false;
             }
         });
@@ -195,7 +197,7 @@
         $(document).on('click', '.deleteBtn', function() {
             var typeid = $(this).attr('data-typeid');
             $(".deleteTypeDetails").attr('data-typeid', typeid);
-            $("#deleteWarning p").html("Do you realy want to delete this Appointment Type?");            
+            $("#deleteWarning p").html("Are you sure you want to delete this appointment type?");            
             return false;
         });
 
@@ -214,8 +216,8 @@
                     } else {
                         extraMessageHtml = '<div class="alert alert-danger">' + deleteuserdata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
                     }
-                    $('.extraCustomMessage').html(extraMessageHtml);
-                    $('#patient-' + patientid).fadeOut(1500);
+                    $('.extraCustomMessage').html(extraMessageHtml);                    
+                    window.location.reload();
                     return false;
                 },
                 error: function(data) {
@@ -228,6 +230,8 @@
             var typeid = $(this).attr('data-typeid');
             $('#createAppointmentType').find('#addAppointmentTypeDetails').hide()
             $('#createAppointmentType').find('#updateAppointmentTypeDetails').show()
+            $('#createAppointmentType').find('.modal-title').html('Edit Appointment Type');    
+                        
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/appointment/editAppointmentType/' + typeid,
@@ -247,7 +251,7 @@
         });
         
         $(document).on('click', '.updateAppointmentTypeDetails', function(e) {           
-            if ($('#appointment_name').val()) {
+            if ($('#appointment_name').val() && $("#appointment_price").val()) {
                 $.ajax({
                     type: 'POST',
                     url: base_url + 'admin/appointment/updateAppointmentType',
@@ -270,8 +274,8 @@
                             extraMessageHtml = '<div class="alert alert-danger">' + typedata['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
                         }
                         $('.extraCustomMessage').html(extraMessageHtml);                        
+                        window.location.reload();
                         return false;
-
                     },
                     complete: function() {},
                     error: function(data) {
@@ -279,7 +283,7 @@
                     }
                 });
             } else {
-                $('.error').html('Appointment name is required');
+                $('.error').html('Appointment name and Price is required');
                 return false;
             }
         });

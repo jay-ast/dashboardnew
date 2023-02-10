@@ -57,7 +57,7 @@
                 <div class="modal-body">
                     <div class="error"></div>
                     <form class="form-horizontal" id="crud-form">
-                        <div class="form-group">
+                        <div class="form-group event-group">
                             <label class="col-md-4 control-label" for="client_id">Select Group</label>
                             <div class="col-md-4" class="group_client">
                                 <label for="single_client">Single</label>
@@ -114,7 +114,7 @@
                                 <input autocomplete="off" type="text" class="form-control start_time" id="start_time" name="start_time">
                             </div>
                         </div>
-                       
+
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="meeting_duration">Meeting Duration</label>
                             <div class="col-md-2">
@@ -161,12 +161,12 @@
                             <div class="col-md-4">
                                 <select class="form-control appointment_type" id="appointment_type" name="appointment_type">
                                     <option value="">Select</option>
-                                    <?php 
-                                        foreach($appointment_type as $types){
+                                    <?php
+                                    foreach ($appointment_type as $types) {
                                     ?>
                                         <option value="<?php echo $types->id ?>"><?php echo $types->appointment_name ?></option>
-                                    <?php 
-                                        }
+                                    <?php
+                                    }
                                     ?>
                                 </select>
                             </div>
@@ -245,15 +245,56 @@
             <div class="modal-content ">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
-                    <h3 class="modal-title">Please Confirm</h3>
+                    <h3 class="modal-title">Appointment Status</h3>
                 </div>
 
-                <div class="modal-body modelform ">
-                    <div class="col-md-12" style="display: flex; justify-content: center;">
-                        <button type="button" class="btn btn-primary btnEditAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnEditAppointment" name="btnEditAppointment">Edit Existing Appointment</button>
-                        <button type="button" class="btn btn-success btnCreateAppointment edit-appointment-confirmation" style="margin: 4px;" id="btnCreateAppointment" name="btnCreateAppointment">Create New Appointment</button>
-                        <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Checkout</button>
-                        <button type="button" class="btn btn-success btnCheckPaid edit-appointment-confirmation" style="margin: 4px;" id="btnCheckPaid" name="btnCheckPaid">Paid</button>
+                <div class="modal-body modelform">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="mb-1">Appointment Info</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="well">
+                                <h3 class="appointment_provider_name mb-1"></h3>
+                                <p class="appointment_client_name">Client Name: {Client-Name}</p>
+                                <p class="appointment_date_time">Appointment Date: {01.02.2023} {01:00 PM}</p>
+                                <p class="appointment_type">Appointment Type: {Appointment-Type}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h2>Appointment Schedule / Status</h2>
+                        </div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary btnEditAppointment edit-appointment-confirmation" id="btnEditAppointment" name="btnEditAppointment">Reschedule</button>
+                            <button type="button" class="btn btn-success btnCreateAppointment edit-appointment-confirmation" id="btnCreateAppointment" name="btnCreateAppointment">Create New</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-1">
+                        <div class="col-12">
+                            <h2>Payment Status</h2>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="well">
+                                <p class="appointment_price mb-1"></p>                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row my-2">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Mark as Paid</button>
+                            <button type="button" class="btn btn-success btnCheckPaid edit-appointment-confirmation" style="margin: 4px;cursor: not-allowed;" id="btnCheckPaid" name="btnCheckPaid">Paid</button>
+                        </div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -276,14 +317,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Alert!!</h4>
+                    <h4 class="modal-title">Delete Event</h4>
                 </div>
                 <div class="modal-body alert-message">
                     <p style="margin: 10px 0px; font-size: 15px;"></p>
                 </div>
                 <div style="margin: 10px;">
-                    <button type="button" class="btn btn-danger modeldeleteyes" data-action="" data-patientid data-dismiss="modal" value="Yes">Yes</button>
-                    <button type="button" class="btn btn-success no" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-success     modeldeleteyes" data-action="" data-patientid data-dismiss="modal" value="Yes">Yes</button>
+                    <button type="button" class="btn btn-danger no" data-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
@@ -309,7 +350,7 @@
             format: 'hh:mm A',
             // minDate:new Date(),
         });
-
+            
         $('.meeting_duration').datetimepicker({
             format: 'hh:mm',
             // minDate:new Date(),
@@ -408,7 +449,7 @@
                     console.log(data);
                 }
             });
-        });        
+        });
 
     });
 </script>

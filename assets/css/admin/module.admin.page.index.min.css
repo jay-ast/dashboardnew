@@ -2074,8 +2074,8 @@ textarea.form-control:focus {
     border-bottom-color: rgba(255, 255, 255, 0.7)
 }
 .btn-danger {
-    background: #0395E2;
-    border-color: #0395E2;
+    background: #bd362f;
+    border-color: #bd362f;
     color: #fff
 }
 .btn-danger.btn-stroke {

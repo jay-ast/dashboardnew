@@ -81,6 +81,7 @@ $(function () {
                 // Open modal to add event    
                                 
                 if (selectedDate >= todayDate) {
+                    $('#event-modal').find('.event-group').show();
                     modal({
                         // Available buttons when adding
                         buttons: {
@@ -205,16 +206,31 @@ $(function () {
             eventClick: function (calEvent, jsEvent, view) {
                 // Set currentEvent variable according to the event clicked in the calendar
                 currentEvent = calEvent;
-                // Open modal to edit or delete event
-                $('#appointment-confirmation-modal').find('.modal-title').html('Please Confirm');
-                $('#appointment-confirmation-modal').modal('show');
-                if(currentEvent.payment_status == 'paid'){
-                    $('#appointment-confirmation-modal').find('#btnCheckout').hide();
-                    $('#appointment-confirmation-modal').find('#btnCheckPaid').show();
-                }else{
-                    $('#appointment-confirmation-modal').find('#btnCheckout').show();
-                    $('#appointment-confirmation-modal').find('#btnCheckPaid').hide();
-                }
+                
+                var appointment_provider_name = "Provider Name : " + currentEvent.firstname + ' ' + currentEvent.lastname;
+                var appointment_client_name = "Client Name : " + currentEvent.firstname + ' ' + currentEvent.lastname;
+                var appointment_type = "Appointment Type : " + currentEvent.appointment_name;
+                var appointment_date_time = "Appointment Date : " + moment(currentEvent.start).format('DD.MM.YYYY') + ' Timing is : ' + moment(currentEvent.start_time,["HH.mm"]).format('hh:mm A') + ' - ' + moment(currentEvent.end_time, ['HH.mm']).format('hh:mm A');
+                var appointment_price = "Appointment Rate : " + currentEvent.price;                                
+
+                var $appointmentConfirmationModal = $('#appointment-confirmation-modal');            
+                $appointmentConfirmationModal.modal('show');
+                $appointmentConfirmationModal.find("#btnCheckout").toggle(!(currentEvent.payment_status == 'paid'));
+                $appointmentConfirmationModal.find("#btnCheckPaid").toggle(currentEvent.payment_status == 'paid');
+
+                $appointmentConfirmationModal.find(".appointment_provider_name").text(appointment_provider_name);
+                $appointmentConfirmationModal.find(".appointment_client_name").text(appointment_client_name);
+                $appointmentConfirmationModal.find(".appointment_date_time").text(appointment_date_time);
+                $appointmentConfirmationModal.find(".appointment_type").text(appointment_type);
+                $appointmentConfirmationModal.find(".appointment_price").text(appointment_price);                
+                
+                // if(currentEvent.payment_status == 'paid'){
+                //     $('#appointment-confirmation-modal').find('#btnCheckout').hide();
+                //     $('#appointment-confirmation-modal').find('#btnCheckPaid').show();
+                // }else{
+                //     $('#appointment-confirmation-modal').find('#btnCheckout').show();
+                //     $('#appointment-confirmation-modal').find('#btnCheckPaid').hide();
+                // }
             }
         });
     }
@@ -456,7 +472,7 @@ $(function () {
 
     // Handle Click on Delete Button
     $(document).on('click', '#delete-event', function() {        
-        $('#eventDelete').find('.modal-title').html('Alert!!');
+        $('#eventDelete').find('.modal-title').html('Delete Event');
         $("#eventDelete p").html("Do you realy want to delete this Event?");                   
         $("#eventDelete").modal('show');        
         return false; 
@@ -774,6 +790,9 @@ $(function () {
 
     $("#btnEditAppointment").click(function (item) {
         $('#appointment-confirmation-modal').modal('hide');
+        $('#event-modal').find('.event-group').hide();
+        $('.email_div').prop('hidden', false);
+        $('.phone_div').prop('hidden', false);
         var clientId = currentEvent.client_id;
         modal({
             // Available buttons when editing
@@ -815,6 +834,7 @@ $(function () {
 
     $("#btnCreateAppointment").click(function (item) {
         $('#appointment-confirmation-modal').modal('hide');
+        $('#event-modal').find('.event-group').show();
         let client_id = currentEvent.client_id;
         let eventDate = moment(currentEvent.start).format('DD-MM-YYYY');
         var today = new Date();

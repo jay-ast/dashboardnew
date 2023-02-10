@@ -33,7 +33,8 @@ class Home_Model extends CI_Model
 			$logged_user_id = $this->session->userdata('userid');
 			$data = $this->queryFunction($logged_user_id);
 		}
-
+		// echo "<pre>";
+		// print_r($data);die;
 		$records = [];
 		foreach ($data as $res) {
 			$result['id'] = $res->id_event;
@@ -52,6 +53,10 @@ class Home_Model extends CI_Model
 			$result['all_day'] = false;
 			$result['recurrence'] = $res->recurrence;
 			$result['payment_status'] = $res->payment_status;
+			$result['price'] = $res->price;
+			$result['appointment_name'] = $res->appointment_name;
+			$result['firstname'] = $res->firstname;
+			$result['lastname'] = $res->lastname;
 			$records[] = $result;
 		}
 
