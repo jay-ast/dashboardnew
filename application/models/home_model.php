@@ -33,8 +33,6 @@ class Home_Model extends CI_Model
 			$logged_user_id = $this->session->userdata('userid');
 			$data = $this->queryFunction($logged_user_id);
 		}
-		// echo "<pre>";
-		// print_r($data);die;
 		$records = [];
 		foreach ($data as $res) {
 			$result['id'] = $res->id_event;
@@ -57,6 +55,7 @@ class Home_Model extends CI_Model
 			$result['appointment_name'] = $res->appointment_name;
 			$result['firstname'] = $res->firstname;
 			$result['lastname'] = $res->lastname;
+			$result['provider_name'] = $res->provider_first_name . " " . $res->provider_last_name;
 			$records[] = $result;
 		}
 
@@ -81,6 +80,8 @@ class Home_Model extends CI_Model
     				`users`.`email`,
     				`users`.`firstname`,
     				`users`.`lastname`,
+					`provider_user`.`firstname` as `provider_first_name`,
+                	`provider_user`.`lastname` as `provider_last_name`,
 					`appointment_type`.`id` as `appointment_type_id`,
 					`appointment_type`.`appointment_name`,
 					`appointment_type`.`color_code`,
@@ -90,6 +91,7 @@ class Home_Model extends CI_Model
 					`price_details`.`price`
 				FROM (`events`)				
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
 				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
 				WHERE `events`.`created_by` = $logged_user_id ";
@@ -110,6 +112,8 @@ class Home_Model extends CI_Model
     				`users`.`email`,
     				`users`.`firstname`,
     				`users`.`lastname`,
+					`provider_user`.`firstname` as `provider_first_name`,
+                	`provider_user`.`lastname` as `provider_last_name`,
 					`appointment_type`.`id`,
 					`appointment_type`.`appointment_name`,
 					`appointment_type`.`color_code`,
@@ -119,6 +123,7 @@ class Home_Model extends CI_Model
 					`price_details`.`price`
 				FROM (`events`)
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
 				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id` ";
 				 

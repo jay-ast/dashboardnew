@@ -207,7 +207,7 @@ $(function () {
                 // Set currentEvent variable according to the event clicked in the calendar
                 currentEvent = calEvent;
                 
-                var appointment_provider_name = "Provider Name : " + currentEvent.firstname + ' ' + currentEvent.lastname;
+                var appointment_provider_name = "Provider Name : " + currentEvent.provider_name;
                 var appointment_client_name = "Client Name : " + currentEvent.firstname + ' ' + currentEvent.lastname;
                 var appointment_type = "Appointment Type : " + currentEvent.appointment_name;
                 var appointment_date_time = "Appointment Date : " + moment(currentEvent.start).format('DD.MM.YYYY') + ' Timing is : ' + moment(currentEvent.start_time,["HH.mm"]).format('hh:mm A') + ' - ' + moment(currentEvent.end_time, ['HH.mm']).format('hh:mm A');
