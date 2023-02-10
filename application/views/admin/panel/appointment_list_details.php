@@ -12,8 +12,7 @@
                     </div>
                     <table class="dynamicTable tableTools table table-striped checkboxs">
                         <thead>
-                            <tr class=" text-center">
-                                <th>Id</th>
+                            <tr class=" text-center">                                
                                 <th>Appointment Type</th>
                                 <th>Color</th>
                                 <th>Price</th>
@@ -26,8 +25,7 @@
                                 foreach ($appoitment_type as $appointment_list) {
                                 $color =  $appointment_list->color_code;
                             ?>
-                                    <tr class="gradeX">
-                                        <td><?php echo $appointment_list->id ?></td>
+                                    <tr class="gradeX">                                        
                                         <td><?php echo $appointment_list->appointment_name ?></td>
                                         <td>
                                             <span style="height: 30px; width: 50%; display: block; background-color: <?php echo $color ?>"></span>
