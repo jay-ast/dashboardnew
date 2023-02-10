@@ -215,6 +215,7 @@ $(function () {
 
                 var $appointmentConfirmationModal = $('#appointment-confirmation-modal');            
                 $appointmentConfirmationModal.modal('show');
+                $appointmentConfirmationModal.find('.modal-title').text('Appointment Status');
                 $appointmentConfirmationModal.find("#btnCheckout").toggle(!(currentEvent.payment_status == 'paid'));
                 $appointmentConfirmationModal.find("#btnCheckPaid").toggle(currentEvent.payment_status == 'paid');
 

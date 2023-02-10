@@ -251,13 +251,13 @@
                 <div class="modal-body modelform">
                     <div class="row">
                         <div class="col-12">
-                            <h2 class="mb-1">Appointment Info</h2>
+                            <h4 class="mb-1">Appointment Info</h4>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="well">
-                                <h3 class="appointment_provider_name mb-1"></h3>
+                                <p class="appointment_provider_name mb-1"></p>
                                 <p class="appointment_client_name">Client Name: {Client-Name}</p>
                                 <p class="appointment_date_time">Appointment Date: {01.02.2023} {01:00 PM}</p>
                                 <p class="appointment_type">Appointment Type: {Appointment-Type}</p>
@@ -266,7 +266,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <h2>Appointment Schedule / Status</h2>
+                            <h4>Appointment Schedule / Status</h4>
                         </div>
                     </div>
                     <div class="row my-2">
@@ -278,7 +278,7 @@
                     <hr>
                     <div class="row mb-1">
                         <div class="col-12">
-                            <h2>Payment Status</h2>
+                            <h4>Payment Status</h4>
                         </div>
                     </div>
 
