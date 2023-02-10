@@ -258,9 +258,9 @@
                         <div class="col-12">
                             <div class="well">
                                 <p class="appointment_provider_name mb-1"></p>
-                                <p class="appointment_client_name">Client Name: {Client-Name}</p>
-                                <p class="appointment_date_time">Appointment Date: {01.02.2023} {01:00 PM}</p>
-                                <p class="appointment_type">Appointment Type: {Appointment-Type}</p>
+                                <p class="appointment_client_name"></p>
+                                <p class="appointment_date_time"></p>
+                                <p class="appointment_type"></p>
                             </div>
                         </div>
                     </div>

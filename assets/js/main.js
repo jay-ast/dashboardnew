@@ -474,7 +474,7 @@ $(function () {
     // Handle Click on Delete Button
     $(document).on('click', '#delete-event', function() {        
         $('#eventDelete').find('.modal-title').html('Delete Event');
-        $("#eventDelete p").html("Do you realy want to delete this Event?");                   
+        $("#eventDelete p").html("Are you sure you want to delete this event?");                   
         $("#eventDelete").modal('show');        
         return false; 
     });
