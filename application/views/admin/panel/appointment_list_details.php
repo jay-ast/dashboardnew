@@ -1,6 +1,6 @@
 <?php include_once 'header.php'; ?>
 <div id="content">
-    <h1 class="bg-white content-heading border-bottom">Appointments</h1>
+    <h1 class="bg-white content-heading border-bottom">Appointments Types</h1>
     <div class="innerAll spacing-x2">
         <div class="extraCustomMessage">
         </div>
