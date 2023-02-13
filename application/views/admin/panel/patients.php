@@ -1276,8 +1276,7 @@
 
         $(document).on('click', '#editNotesData', function() {
             $('#notePortal').modal('toggle');
-            var note_id = $(this).attr('data-noteid');
-            console.log('asx', note_id);
+            var note_id = $(this).attr('data-noteid');            
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/patients/editNotesDetails/' + note_id,

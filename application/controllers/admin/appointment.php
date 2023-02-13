@@ -223,9 +223,15 @@ class Appointment extends My_Controller
         $data['page_title'] = 'Appointment Type';
         $data['active_class'] = 'appointment_type';
 
-        $appoitment_type = "SELECT * FROM `appointment_type`";
-        $data['appoitment_type'] = $this->db->query($appoitment_type)->result();
-
+        $appoitment_type = "SELECT `appointment_type` .*,
+                                `events`.`id` as `events_id`,
+                                `events`.`appointment_type`,
+                                `events`.`client_id`,
+                                count(`events`.`appointment_type`) as event_count
+                            FROM (`appointment_type`)
+                            LEFT JOIN `events` ON `events`.`appointment_type` = `appointment_type`.`id`
+                            GROUP BY `appointment_type`.`id`";
+        $data['appoitment_type'] = $this->db->query($appoitment_type)->result();       
         return $this->load->view('admin/panel/appointment_list_details', $data);
     }
 

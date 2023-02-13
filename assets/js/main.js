@@ -908,8 +908,7 @@ $(function () {
     });
     
     $(document).on('click', '#createNoteForm', function() {     
-        var client_id_notes = $('#event-modal').find('#client_id').val();  
-        console.log('client_id_notes', client_id_notes);
+        var client_id_notes = $('#event-modal').find('#client_id').val();          
         $("#createNote").attr('data-clientid', client_id_notes);            
  
         if(client_id_notes){
@@ -1001,8 +1000,7 @@ $(function () {
     });
 
     $(document).on('change', '.appointment_type', function() {
-        var appointment_type_id = $(this).val();
-        console.log('appointment_type_id', appointment_type_id);
+        var appointment_type_id = $(this).val();        
         $.ajax({
             type: 'POST',
             url: base_url + 'admin/patients/getAppointmentPrice/' + appointment_type_id,

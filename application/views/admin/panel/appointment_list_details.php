@@ -34,9 +34,14 @@
                                         <td>
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
                                                 <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Appointment Type"></i></a>
-
-                                            <a class="deleteBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
+                                            <?php 
+                                                if($appointment_list->event_count){
+                                            ?>
+                                                <a class="deleteBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
                                                 <i class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete Appointment Type"></i></a>
+                                            <?php 
+                                                }
+                                            ?>                                            
                                         </td>
                                     </tr>
                             <?php
@@ -153,8 +158,7 @@
             $('#createAppointmentType').find('#updateAppointmentTypeDetails').hide()            
         });
         
-        $(document).on('click', '.addAppointmentTypeDetails', function(e) { 
-            console.log($("#appointment_price").val());          
+        $(document).on('click', '.addAppointmentTypeDetails', function(e) {              
             if ($('#appointment_name').val() && $("#appointment_price").val()) {
                 $.ajax({
                     type: 'POST',
