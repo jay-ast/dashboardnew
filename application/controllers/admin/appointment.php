@@ -225,7 +225,6 @@ class Appointment extends My_Controller
             $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
             $this->db->join('price_details','price_details.event_id = events.id', 'left');
             $this->db->order_by('events.schedule_date','DESC');
-            $this->db->limit($per_page, (($page - 1) * $per_page));
             $count_data = $this->db->get();
             $total_count = count($count_data->result());
 
@@ -251,17 +250,32 @@ class Appointment extends My_Controller
 
     public function getAppointmentType()
     {
-
         $data['page_title'] = 'Appointment Type';
         $data['active_class'] = 'appointment_type';
 
-        $appoitment_type = "SELECT `appointment_type` .*,                                
-                                `events`.`appointment_type`,                                
-                                count(`events`.`appointment_type`) as event_count
-                            FROM (`appointment_type`)
-                            LEFT JOIN `events` ON `events`.`appointment_type` = `appointment_type`.`id`
-                            GROUP BY `appointment_type`.`id`";
-        $data['appoitment_type'] = $this->db->query($appoitment_type)->result();       
+        $numlinks = 2;
+        $per_page = 5;
+
+        if ($this->uri->segment(4)) {
+            $page = ($this->uri->segment(4));
+        } else {
+            $page = 1;
+        }
+
+        $this->db->select('*');
+        $this->db->from('appointment_type');            
+        $count_data = $this->db->get();
+        $total_count = count($count_data->result());    
+        $data["links"] = $this->paginationInit("admin/appointment/getAppointmentType", $total_count, $numlinks, $per_page, 4);        
+
+        $this->db->select('appointment_type.*,events.appointment_type, count(events.appointment_type) as event_count');
+        $this->db->from('appointment_type');
+        $this->db->join('events','events.appointment_type = appointment_type.id','left');
+        $this->db->group_by('appointment_type.id');
+        $this->db->limit($per_page, (($page - 1) * $per_page));
+        $appoitment_type = $this->db->get();
+        $data['appoitment_type'] = $appoitment_type->result();
+                
         return $this->load->view('admin/panel/appointment_list_details', $data);
     }
 
