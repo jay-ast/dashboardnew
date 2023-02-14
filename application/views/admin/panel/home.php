@@ -278,7 +278,9 @@
                     <hr>
                     <div class="row mb-1">
                         <div class="col-12">
-                            <h4>Payment Status</h4>
+                            <h4>Payment Status
+                                <label class="btnCheckPaid edit-appointment-confirmation" style="margin: 4px;cursor: not-allowed;color: green;font-size: 19px;" id="btnCheckPaid" name="btnCheckPaid">Checkout</label>
+                            </h4>
                         </div>
                     </div>
 
@@ -292,8 +294,7 @@
 
                     <div class="row my-2">
                         <div class="col-12">
-                            <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Mark as Paid</button>
-                            <button type="button" class="btn btn-success btnCheckPaid edit-appointment-confirmation" style="margin: 4px;cursor: not-allowed;" id="btnCheckPaid" name="btnCheckPaid">Paid</button>
+                            <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Mark as Paid</button>                            
                         </div>
                     </div>
                     <div class="clearfix"></div>

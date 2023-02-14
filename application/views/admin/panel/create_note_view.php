@@ -29,7 +29,7 @@
                             <label>Objective</label>
                         </div>
                         <div class="form-group col-md-8">
-                            <input type="text" class="form-control objective" id="objective" name="objective" placeholder="Objective" />
+                            <textarea type="text" class="form-control objective" rows="6" id="objective" name="objective" placeholder="Objective"></textarea>
                         </div>
                     </div>
 

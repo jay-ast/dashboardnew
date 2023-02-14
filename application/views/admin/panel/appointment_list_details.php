@@ -35,7 +35,7 @@
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
                                                 <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Appointment Type"></i></a>
                                             <?php 
-                                                if($appointment_list->event_count){
+                                                if($appointment_list->event_count == 0){
                                             ?>
                                                 <a class="deleteBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
                                                 <i class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete Appointment Type"></i></a>

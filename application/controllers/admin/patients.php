@@ -1157,11 +1157,10 @@ class Patients extends My_Controller
     
     public function addNewNotes()
     {    
-        // var_dump($_POST);die;
-        
+        $exercies_id = implode(",", $_POST['exercies_id']);        
         $created_date = date('Y-m-d');
-        $sql = "INSERT INTO notes (subjective,objective,assessment,plan,provider_id,client_id,created_date) VALUES (?,?,?,?,?,?,?)";
-		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'], $this->session->userdata('userid'), $_POST['client_id'], $created_date));
+        $sql = "INSERT INTO notes (subjective,objective,assessment,plan,provider_id,client_id,created_date,exercies_id) VALUES (?,?,?,?,?,?,?,?)";
+		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'], $this->session->userdata('userid'), $_POST['client_id'], $created_date, $exercies_id));
 
         if($this->db->affected_rows() != 1){
             $result['success'] = false;                                
@@ -1172,48 +1171,33 @@ class Patients extends My_Controller
             $result['message'] = "Notes details added successfully";
             echo json_encode($result);
         }
-        
-        // if (!empty($_POST)) {
-        //     // $createNote = new Notes();
-        //     var_dump('adzjvciu');die;
-        //     $createNote->subjective  = default_value($this->input->post("subjective"), "");
-        //     $createNote->objective   = default_value($this->input->post("objective"), "");
-        //     $createNote->assessment  = default_value($this->input->post("assessment"), "");
-        //     $createNote->plan        = default_value($this->input->post("plan"), "");
-        //     $createNote->provider_id = $this->session->userdata('userid');
-        //     $createNote->client_id   = default_value($this->input->post("client_id"), "");
-        //     $created_id = $createNote->save();   
-        //     var_dump($created_id);die;
-        //     if ($created_id) {                
-        //         $result['success'] = true;                                
-        //         $result['message'] = "Notes details added successfully";
-        //         echo json_encode($result);
-
-        //     } else {
-        //         $result['success'] = false;                                
-        //         $result['message'] = "Notes details not added successfully";
-        //         echo json_encode($result);
-        //     }
-        // } else {
-        //     $result['success'] = false;                                
-        //     $result['message'] = "Please Provide Valid Data";
-        //     echo json_encode($result);
-        // }
     }
     
-    public function editNotesDetails($note_id = '')
+    public function editNotesDetails()
     {
-        $notes_details = "SELECT * FROM notes WHERE `id` = '" . $note_id . "' ";
-        $notes_details = $this->db->query($notes_details)->result();
+        $notes_details = "SELECT * FROM notes WHERE `id` = '" . $_POST['note_id'] . "' ";
+        $data['notes_details'] = $this->db->query($notes_details)->result();
 
-        return $this->load->view('admin/panel/edit_notes_details', ['notes_details' => $notes_details]);
+        $patient_id = $_POST['clientid'];
+        $this->db->select('exercise.*,exercisefolder_exercise.exercisefolder_id as folderid,exercisefolder_exercise.insert_at as insertdate');
+		$this->db->from('exercise_folder');
+		$this->db->join('exercisefolder_exercise', 'exercisefolder_exercise.exercisefolder_id=exercise_folder.id', 'left');
+		$this->db->join('exercise', 'exercise.id=exercisefolder_exercise.exercise_id', 'left');
+		$this->db->where('exercise.isdeleted', 0);			
+		$this->db->where('exercise_folder.client_id', 0);
+		$this->db->where('exercise_folder.company_id', $this->session->userdata('companyid'));
+		$this->db->group_by('exercise.id,folderid,insertdate');
+		$this->db->order_by('exercise.name', 'ASC');
+		$getEx = $this->db->get();
+        $data['generalexercies'] = $getEx->result();
+        return $this->load->view('admin/panel/edit_notes_details', ['data' => $data]);
     }
 
     public function updateNotesDetails()
     {
-        // var_dump($_POST);die;
-        $sql = "UPDATE notes SET subjective = ?, objective = ?, assessment = ?, plan = ? WHERE id = ?";
-		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'],$_POST['note_id']));
+        $exercies_id = implode(",", $_POST['exercies_id']);        
+        $sql = "UPDATE notes SET subjective = ?, objective = ?, assessment = ?, plan = ?, exercies_id = ? WHERE id = ?";
+		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'],$exercies_id,$_POST['note_id']));
         
         if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
             $result['success'] = false;                                

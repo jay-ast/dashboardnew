@@ -529,7 +529,7 @@
                                     <label>Objective</label>
                                 </div>
                                 <div class="form-group col-md-8">
-                                    <input type="text" class="form-control objective" id="objective" name="objective" placeholder="Objective" />
+                                    <textarea type="text" class="form-control objective" rows="6" id="objective" name="objective" placeholder="Objective" ></textarea>
                                 </div>
                             </div>
 
@@ -549,6 +549,14 @@
                                 <div class="form-group col-md-8">
                                     <textarea type="text" class="form-control plan" id="plan" rows="6" name="plan" placeholder="Plan"></textarea>
                                 </div>
+                            </div>
+
+                            <div class="row margin-top-10 userdetails col-md-12">
+                                <label class="col-md-4 control-label" for="exercise">Select Exercise</label>
+                                <div class="col-md-4 clientSelect">
+                                    <select class="form-control exercise_data" id="exercise_data" name="exercise_data[]" multiple>                                                                       
+                                    </select>
+                                </div>                            
                             </div>
                         </div>
                     </div>
@@ -1276,10 +1284,15 @@
 
         $(document).on('click', '#editNotesData', function() {
             $('#notePortal').modal('toggle');
-            var note_id = $(this).attr('data-noteid');            
+            var note_id = $(this).attr('data-noteid');
+            var clientid = $(this).attr('data-clientid');
             $.ajax({
                 type: 'POST',
-                url: base_url + 'admin/patients/editNotesDetails/' + note_id,
+                url: base_url + 'admin/patients/editNotesDetails',
+                data:{
+                    note_id:note_id,
+                    clientid:clientid
+                },
                 success: function(actionResponse) {
                     $('#editNotesDetails').html(actionResponse);
                 },
@@ -1290,7 +1303,7 @@
 
         });
 
-        $(document).on('click', '#updateNoteDetails', function(e) {
+        $(document).on('click', '#updateNoteDetails', function(e) {            
             if ($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
                 $.ajax({
                     type: 'POST',
@@ -1301,6 +1314,7 @@
                         objective: $('.noteUpdateform').find('#objective').val(),
                         assessment: $('.noteUpdateform').find('#assessment').val(),
                         plan: $('.noteUpdateform').find('#plan').val(),
+                        exercies_id: $('.noteUpdateform').find('#exercise_data').val(),
                     },
                     success: function(result) {
                         var notesdata = JSON.parse(result);
@@ -1369,9 +1383,27 @@
             $('#assessment').val('');
             $('#plan').val('');
             $('#notePortal').modal('toggle');
+            var patientid = $(this).attr('data-clientid');
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/patients/getPatientDetails/' + patientid,
+                success: function(actionResponse) {
+                    var patientData = JSON.parse(actionResponse);                    
+                    var generalexerc = patientData['data']['generalexercies'];                    
+                    // console.log('generalexerc', generalexerc);
+                    $.each(generalexerc, function (key, val) {                        
+                        $('#exercise_data').append('<option value="' + val.id + '">' + val.name + '</option>');                        
+                    });
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+
         });
 
-        $(document).on('click', '#addNoteDetails', function() {
+        $(document).on('click', '#addNoteDetails', function() {             
+            var client_id = $("#newNotes").attr('data-clientid');           
             if ($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
                 $.ajax({
                     type: 'POST',
@@ -1381,7 +1413,8 @@
                         objective: $('#objective').val(),
                         assessment: $('#assessment').val(),
                         plan: $('#plan').val(),
-                        client_id: $('#clientPortal').find('.patientid').val(),
+                        client_id: client_id,
+                        exercies_id: $('#exercise_data').val(),
                     },
                     success: function(result) {
                         var notesdata = JSON.parse(result);

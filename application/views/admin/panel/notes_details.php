@@ -21,10 +21,7 @@
                         <thead>
                             <tr class=" text-center">
                                 <th>Date</th>
-                                <th>Subjective</th>
-                                <th>Objective</th>
-                                <th>Assessment</th>
-                                <th>Plan</th>
+                                <th>Notes Type</th>
                                 <th>Provider</th>
                                 <th>Action</th>
                             </tr>
@@ -36,13 +33,10 @@
                             ?>
                                     <tr class="gradeX" id="">
                                         <td><?php echo $notes->created_date ?></td>
-                                        <td><?php echo $notes->subjective ?></td>
-                                        <td><?php echo $notes->objective ?></td>
-                                        <td><?php echo $notes->assessment ?></td>
-                                        <td><?php echo $notes->plan ?></td>                                    
+                                        <td>Notes Type</td>
                                         <td> <?php echo $notes->firstname . ' ' . $notes->lastname ?></td>
                                         <td>                                    
-                                            <a class="editNotesData" id="editNotesData" data-noteid="<?php echo $notes->note_id; ?>" data-action="edit" data-toggle="modal" href="#editNotesDetails">
+                                            <a class="editNotesData" id="editNotesData" data-clientid="<?php echo $client_id ?>" data-noteid="<?php echo $notes->note_id; ?>" data-action="edit" data-toggle="modal" href="#editNotesDetails">
                                             <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Note"></i></a>
 
                                             <a class="deleteNotesWarning" data-noteid="<?php echo $notes->note_id; ?>" data-action="delete" data-toggle="modal" href="#deleteNote">
@@ -61,7 +55,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="client-portal-button" data-toggle="modal" target="_top" href="#createNote" id="newNotes">Create new note</button>
+            <button type="submit" class="client-portal-button" data-toggle="modal" target="_top" data-clientid="<?php echo $client_id ?>" href="#createNote" id="newNotes">Create new note</button>
         </div>
         <?php echo form_close(); ?>
     </div>
