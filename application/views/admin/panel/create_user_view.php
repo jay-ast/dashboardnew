@@ -8,6 +8,7 @@
 
         <div class="modal-body modelform ">
             <div class="form-body clearfix col-md-12">
+            <div class="error"></div>
                 <div class="row margin-top-10">
                     <div class="form-group col-md-6">
                         <input type="hidden" class="form-control patientid" name="patientid" value="">

@@ -620,7 +620,7 @@ $(function () {
                 }
             });
         } else {
-            $('.error').html('Firstname, lastname, email and phone fields are require');
+            $('#client-modal').find('.error').html('Firstname, lastname, email and phone fields are require');
             return false;
         }
     });
@@ -931,16 +931,18 @@ $(function () {
     });
 
     $(document).on('click', '#addNoteDetails', function() {        
-        if($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()){
+        if($('#note_title').val() && $('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()){
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/patients/addNewNotes',
                 data: {
+                    note_title: $('#note_title').val(),
                     subjective: $('#subjective').val(),
                     objective: $('#objective').val(),
                     assessment: $('#assessment').val(),
                     plan: $('#plan').val(),
                     client_id: $('#event-modal').find('#client_id').val(),
+                    exercies_id: $('#exercise_data').val(),
                 },
                 success: function(result) {
                     var notesdata = JSON.parse(result);                    

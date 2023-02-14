@@ -399,13 +399,10 @@ class Patients extends My_Controller
 */
                 //                redirect('admin/patients');
             } else {
-
-
-
-
+                $hash_password = password_hash("perfectforms", PASSWORD_DEFAULT);
                 $para['firstname'] = default_value($this->input->post("firstname"), "");
                 $para['lastname'] = default_value($this->input->post("lastname"), "");
-                $para['password'] = default_value($this->input->post("password"), "perfectforms");
+                $para['password'] = default_value(password_hash($this->input->post("password"), PASSWORD_DEFAULT), $hash_password);
                 $para['phone'] = default_value($this->input->post("phone"), "");
                 $para['date_of_birth'] = default_value($this->input->post("date_of_birth"), "");
                 $para['physical_address'] = default_value($this->input->post("physical_address"), "");
@@ -1134,6 +1131,7 @@ class Patients extends My_Controller
     public function getNotesDetails($client_id = ""){
         $notes_data = [];
         $notes_details = "SELECT `notes`.`id` as `note_id`,
+                        `notes`.`note_title`,
                         `notes`.`subjective`,
                         `notes`.`objective`,
                         `notes`.`assessment`,
@@ -1159,8 +1157,8 @@ class Patients extends My_Controller
     {    
         $exercies_id = implode(",", $_POST['exercies_id']);        
         $created_date = date('Y-m-d');
-        $sql = "INSERT INTO notes (subjective,objective,assessment,plan,provider_id,client_id,created_date,exercies_id) VALUES (?,?,?,?,?,?,?,?)";
-		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'], $this->session->userdata('userid'), $_POST['client_id'], $created_date, $exercies_id));
+        $sql = "INSERT INTO notes (note_title,subjective,objective,assessment,plan,provider_id,client_id,created_date,exercies_id) VALUES (?,?,?,?,?,?,?,?,?)";
+		$this->db->query($sql, array($_POST['note_title'], $_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'], $this->session->userdata('userid'), $_POST['client_id'], $created_date, $exercies_id));
 
         if($this->db->affected_rows() != 1){
             $result['success'] = false;                                
@@ -1196,8 +1194,8 @@ class Patients extends My_Controller
     public function updateNotesDetails()
     {
         $exercies_id = implode(",", $_POST['exercies_id']);        
-        $sql = "UPDATE notes SET subjective = ?, objective = ?, assessment = ?, plan = ?, exercies_id = ? WHERE id = ?";
-		$this->db->query($sql, array($_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'],$exercies_id,$_POST['note_id']));
+        $sql = "UPDATE notes SET note_title = ?, subjective = ?, objective = ?, assessment = ?, plan = ?, exercies_id = ? WHERE id = ?";
+		$this->db->query($sql, array($_POST['note_title'], $_POST['subjective'], $_POST['objective'], $_POST['assessment'], $_POST['plan'],$exercies_id,$_POST['note_id']));
         
         if($this->db->affected_rows() != 1 && $this->db->affected_rows() != 0){
             $result['success'] = false;                                
@@ -1322,7 +1320,18 @@ class Patients extends My_Controller
     
     public function loadCreateNoteView()
     {
-        return $this->load->view('admin/panel/create_note_view');
+        $this->db->select('exercise.*,exercisefolder_exercise.exercisefolder_id as folderid,exercisefolder_exercise.insert_at as insertdate');
+		$this->db->from('exercise_folder');
+		$this->db->join('exercisefolder_exercise', 'exercisefolder_exercise.exercisefolder_id=exercise_folder.id', 'left');
+		$this->db->join('exercise', 'exercise.id=exercisefolder_exercise.exercise_id', 'left');
+		$this->db->where('exercise.isdeleted', 0);			
+		$this->db->where('exercise_folder.client_id', 0);
+		$this->db->where('exercise_folder.company_id', $this->session->userdata('companyid'));
+		$this->db->group_by('exercise.id,folderid,insertdate');
+		$this->db->order_by('exercise.name', 'ASC');
+		$getEx = $this->db->get();
+        $data['generalexercies'] = $getEx->result();
+        return $this->load->view('admin/panel/create_note_view',['data' => $data]);
     }
 
     public function loadCreateUserView()

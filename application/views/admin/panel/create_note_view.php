@@ -17,6 +17,14 @@
                 <div class="col-md-12 userdetail">
                     <div class="row margin-top-10 userdetails col-md-12">
                         <div class="form-group col-md-4">
+                            <label>Note Title</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <input type="text" class="form-control note_title" id="note_title" name="note_title" placeholder="Notes Title" />
+                        </div>
+                    </div>
+                    <div class="row margin-top-10 userdetails col-md-12">                    
+                        <div class="form-group col-md-4">
                             <label>Subjective</label>
                         </div>
                         <div class="form-group col-md-8">
@@ -50,6 +58,21 @@
                             <textarea type="text" class="form-control plan" id="plan" rows="6" name="plan" placeholder="Plan"></textarea>
                         </div>
                     </div>
+
+                    <div class="row margin-top-10 userdetails col-md-12">
+                        <div class="form-group col-md-4">
+                            <label>Select Exercise</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <select class="form-control exercise_data" id="exercise_data" name="exercise_data[]" multiple>
+                                <?php
+                                    foreach ($data['generalexercies'] as $generalex) {                                        
+                                        $selected = in_array($generalex->id, $exercies_id) ? 'selected' : '';                                                                       
+                                        echo '<option value="' . $generalex->id . '" ' . $selected . '>' . $generalex->name  . '</option>';
+                                    } ?>                                                                                                       
+                            </select>
+                        </div>
+                    </div>                                
                 </div>
             </div>
 

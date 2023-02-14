@@ -517,6 +517,14 @@
                         <div class="col-md-12 userdetail">
                             <div class="row margin-top-10 userdetails col-md-12">
                                 <div class="form-group col-md-4">
+                                    <label>Note Title</label>
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <input type="text" class="form-control note_title" id="note_title" name="note_title" placeholder="Notes Title" />
+                                </div>
+                            </div>
+                            <div class="row margin-top-10 userdetails col-md-12">
+                                <div class="form-group col-md-4">
                                     <label>Subjective</label>
                                 </div>
                                 <div class="form-group col-md-8">
@@ -880,7 +888,7 @@
         });
         $(document).on('click', '.btnsaveuser', function(e) {
             $(this).val('save');
-            //return false;
+            return true;
         })
 
         $(document).on('click', '.btnupdateuser', function(e) {
@@ -1304,12 +1312,13 @@
         });
 
         $(document).on('click', '#updateNoteDetails', function(e) {            
-            if ($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
+            if ($('#note_title').val() && $('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
                 $.ajax({
                     type: 'POST',
                     url: base_url + 'admin/patients/updateNotesDetails',
                     data: {
                         note_id: $('.noteUpdateform').find('#noteid').val(),
+                        note_title: $('.noteUpdateform').find('#note_title').val(),
                         subjective: $('.noteUpdateform').find('#subjective').val(),
                         objective: $('.noteUpdateform').find('#objective').val(),
                         assessment: $('.noteUpdateform').find('#assessment').val(),
@@ -1378,6 +1387,7 @@
 
         $(document).on('click', '#newNotes', function() {
             $('.error').html('');
+            $('#note_title').val('');
             $('#subjective').val('');
             $('#objective').val('');
             $('#assessment').val('');
@@ -1404,11 +1414,12 @@
 
         $(document).on('click', '#addNoteDetails', function() {             
             var client_id = $("#newNotes").attr('data-clientid');           
-            if ($('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
+            if ($('#note_title').val() && $('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {
                 $.ajax({
                     type: 'POST',
                     url: base_url + 'admin/patients/addNewNotes',
                     data: {
+                        note_title: $('#note_title').val(),
                         subjective: $('#subjective').val(),
                         objective: $('#objective').val(),
                         assessment: $('#assessment').val(),

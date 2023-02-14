@@ -20,6 +20,14 @@
                     <div class="col-md-12 userdetail">
                         <div class="row margin-top-10 userdetails col-md-12">
                             <div class="form-group col-md-4">
+                                <label>Note Title</label>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <input type="text" class="form-control note_title" id="note_title" name="note_title" placeholder="Notes Title" value="<?php echo $notes->note_title ?>" />
+                            </div>
+                        </div>
+                        <div class="row margin-top-10 userdetails col-md-12">
+                            <div class="form-group col-md-4">
                                 <label>Subjective</label>
                             </div>
                             <div class="form-group col-md-8">

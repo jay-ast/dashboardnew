@@ -33,7 +33,7 @@
                             ?>
                                     <tr class="gradeX" id="">
                                         <td><?php echo $notes->created_date ?></td>
-                                        <td>Notes Type</td>
+                                        <td><?php echo $notes->note_title ?></td>
                                         <td> <?php echo $notes->firstname . ' ' . $notes->lastname ?></td>
                                         <td>                                    
                                             <a class="editNotesData" id="editNotesData" data-clientid="<?php echo $client_id ?>" data-noteid="<?php echo $notes->note_id; ?>" data-action="edit" data-toggle="modal" href="#editNotesDetails">
