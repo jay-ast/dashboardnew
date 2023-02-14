@@ -235,10 +235,8 @@ class Appointment extends My_Controller
         $data['page_title'] = 'Appointment Type';
         $data['active_class'] = 'appointment_type';
 
-        $appoitment_type = "SELECT `appointment_type` .*,
-                                `events`.`id` as `events_id`,
-                                `events`.`appointment_type`,
-                                `events`.`client_id`,
+        $appoitment_type = "SELECT `appointment_type` .*,                                
+                                `events`.`appointment_type`,                                
                                 count(`events`.`appointment_type`) as event_count
                             FROM (`appointment_type`)
                             LEFT JOIN `events` ON `events`.`appointment_type` = `appointment_type`.`id`

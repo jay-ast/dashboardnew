@@ -102,7 +102,7 @@ class Patients extends My_Controller
 
             $userdetail = new User();
             $userdetail->where('id',  $data['userid']);
-            $userdetail->get();;
+            $userdetail->get();
             $data['patientlist'][] = $userdetail->show_result();
         }
 
