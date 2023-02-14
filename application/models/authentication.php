@@ -88,7 +88,7 @@ class Authentication extends DataMapper {
 
         if ($type == 'username') {
             $orginalCredential = $this->getOriginalCredential($type, $value);
-            if ($orginalCredential->password == $password) {
+            if (password_verify($password,$orginalCredential->password)) {
                 if( $orginalCredential->company_id !=0)
                 {
                  $getCompanytDetails = new Company();
@@ -113,7 +113,7 @@ class Authentication extends DataMapper {
             //for admin credenitals 
             $orginalCredential = $this->getOriginalCredential($type, $value);
 
-            if ($orginalCredential->password == $password) {
+            if (password_verify($password,$orginalCredential->password)) {
                 //set session
                 if( $orginalCredential->company_id !=0)
                 {
