@@ -82,7 +82,7 @@
                             <?php
                                 }
                             } else {
-                                echo '<tr class="gradeX"><td colspan="5" class="text-center">No Events available.</td></tr>';
+                                echo '<tr class="gradeX"><td colspan="5" class="text-center">No Appoinment available.</td></tr>';
                             }
                             ?>
                         </tbody>

@@ -1350,7 +1350,7 @@
         $(document).on('click', '.deleteNotesWarning', function() {
             var noteid = $(this).attr('data-noteid');
             $(".deleteNotesDetails").attr('data-noteid', noteid);
-            $("#deleteNote p").html("Do you realy want to delete this Notes?");
+            $("#deleteNote p").html("Are you sure you want to delete this Note?");
             $("#deleteNote").modal('show');
             return false;
         });
