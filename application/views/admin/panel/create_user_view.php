@@ -134,7 +134,7 @@
                             <label>Emergency Contact</label>
                         </div>
                         <div class="form-group col-md-9">
-                            <input type="text" class="form-control emergencycontact" name="emergency_contact" id="emergencycontact" maxlength="15" value="" placeholder="Emergency Contact" />
+                            <input type="number" class="form-control emergencycontact" name="emergency_contact" id="emergencycontact" maxlength="15" value="" placeholder="Emergency Contact" />
                         </div>
                     </div>
 

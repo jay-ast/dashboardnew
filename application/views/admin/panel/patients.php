@@ -445,7 +445,7 @@
                 <!-- dialog body -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Alert!!</h4>
+                    <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body alert-message">
                     <p style="margin: 10px 0px; font-size: 15px;"></p>
@@ -1350,6 +1350,7 @@
         $(document).on('click', '.deleteNotesWarning', function() {
             var noteid = $(this).attr('data-noteid');
             $(".deleteNotesDetails").attr('data-noteid', noteid);
+            $("#deleteNote").find(".modal-title").html('Delete Note');
             $("#deleteNote p").html("Are you sure you want to delete this Note?");
             $("#deleteNote").modal('show');
             return false;
