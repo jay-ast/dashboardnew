@@ -124,4 +124,43 @@ class Home extends My_Controller {
 		echo json_encode($patientlist);
 	}
 
+	public function getParentEventData($parent_id){
+
+		$sql = "SELECT `events`.`id` as `id_event`,
+    				`events`.`client_id`,
+    				`events`.`schedule_date`,
+     				`events`.`start_time`,
+					`events`.`end_time`,
+					`events`.`appointment_type`,
+					`events`.`weekly_repeating_options`,
+					`events`.`brief_note`,		
+					`events`.`meeting_duration`,
+					`events`.`recurrence`,
+					`events`.`created_by`,
+					`events`.`parent_event_id`,
+    				`users`.`id` as `user_id`,
+    				`users`.`email`,
+    				`users`.`firstname`,
+    				`users`.`lastname`,
+					`provider_user`.`firstname` as `provider_first_name`,
+                	`provider_user`.`lastname` as `provider_last_name`,
+					`appointment_type`.`id` as `appointment_type_id`,
+					`appointment_type`.`appointment_name`,
+					`appointment_type`.`color_code`,
+					`price_details`.`id` as `price_details_id`,
+					`price_details`.`event_id`,
+					`price_details`.`payment_status`,
+					`price_details`.`price`
+				FROM (`events`)				
+				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
+				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
+				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
+				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
+				WHERE `events`.`parent_event_id` = $parent_id";		
+		$data = $this->db->query($sql)->result();
+
+		return $this->load->view('admin/panel/group-event-confirmation', ['data' => $data]);
+		// echo json_encode($data);		
+	}
+
 }

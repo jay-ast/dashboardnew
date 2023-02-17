@@ -183,9 +183,9 @@
                             <label class="col-md-4 control-label" for="recurrence">Recurrence</label>
                             <div class="col-md-4">
                                 <select class="form-control recurrence" id="recurrence" name="recurrence">
-                                    <option value="daily" selected>Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
+                                    <option value="days" selected>Daily</option>
+                                    <option value="week">Weekly</option>
+                                    <option value="months">Monthly</option>
                                     <option value="no_fixed_time">None</option>
                                 </select>
                             </div>
@@ -196,11 +196,10 @@
                             <div class="col-md-4">
                                 <select class="form-control repeating_weeks" id="repeating_weeks" name="repeating_weeks">
                                     <?php
-                                    $total_days = range(0, 15);
-                                    foreach ($total_days as $key => $minutes) {
+                                    foreach (range(1, 15) as $key => $repeat_count) {
                                     ?>
-                                        <option value="<?php echo $minutes ?>">
-                                            <?php echo $minutes ?>
+                                        <option value="<?php echo $repeat_count; ?>">
+                                            <?php echo $repeat_count; ?>
                                         </option>
                                     <?php
                                     }
@@ -241,67 +240,6 @@
     </div>
 
     <div id="appointment-confirmation-modal" class="modal fade">
-        <div class="modal-dialog ">
-            <div class="modal-content ">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle-o"></i></button>
-                    <h3 class="modal-title">Appointment Status</h3>
-                </div>
-
-                <div class="modal-body modelform">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4 class="mb-1">Appointment Info</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="well">
-                                <p class="appointment_provider_name mb-1"></p>
-                                <p class="appointment_client_name"></p>
-                                <p class="appointment_date_time"></p>
-                                <p class="appointment_type"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <h4>Appointment Schedule / Status</h4>
-                        </div>
-                    </div>
-                    <div class="row my-2">
-                        <div class="col-12">
-                            <button type="button" class="btn btn-primary btnEditAppointment edit-appointment-confirmation" id="btnEditAppointment" name="btnEditAppointment">Reschedule</button>
-                            <button type="button" class="btn btn-success btnCreateAppointment edit-appointment-confirmation" id="btnCreateAppointment" name="btnCreateAppointment">Create New</button>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row mb-1">
-                        <div class="col-12">
-                            <h4>Payment Status
-                                <label class="btnCheckPaid edit-appointment-confirmation" style="margin: 4px;cursor: not-allowed;color: green;font-size: 19px;" id="btnCheckPaid" name="btnCheckPaid">Checkout</label>
-                            </h4>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="well">
-                                <p class="appointment_price mb-1"></p>                                
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row my-2">
-                        <div class="col-12">
-                            <button type="button" class="btn btn-warning btnCheckout edit-appointment-confirmation" style="margin: 4px;" id="btnCheckout" name="btnCheckout">Mark as Paid</button>                            
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-
-        </div>
     </div>
 
     <div id="past_appointment-confirmation-modal" class="modal fade">
@@ -351,7 +289,7 @@
             format: 'hh:mm A',
             // minDate:new Date(),
         });
-            
+
         $('.meeting_duration').datetimepicker({
             format: 'hh:mm',
             // minDate:new Date(),
@@ -402,6 +340,25 @@
             $('.assignes_ex_div').html("");
             $('#exgeneral_list_to').find('option').remove();
         });
+
+        // $('#appointment-confirmation-modal').find("#btnCheckout").click(function(item) {
+        //     $('#appointment-confirmation-modal').modal('hide');
+        //     var event_id = currentEvent.id;
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: base_url + 'admin/appointment/checkOutAppointment',
+        //         data: {
+        //             event_id: event_id,
+        //         },
+        //         success: function(actionResponse) {
+        //             $('#calendar').fullCalendar('destroy');
+        //             fullCalendar($apiUrl = 'admin/home/getEvents');
+        //         },
+        //         error: function(data) {
+        //             console.log(data);
+        //         }
+        //     });
+        // });
 
         $(document).on('click', '#btnUpdateClient', function() {
             $('#event-modal').modal('hide');

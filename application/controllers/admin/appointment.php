@@ -109,7 +109,7 @@ class Appointment extends My_Controller
     public function filterAppointmentData()
     {
         $client_id = $_POST['client_id'];
-        $provider_id = $_POST['provider_id'];        
+        $provider_id = $_POST['provider_id'];
         $numlinks = 3;
         $per_page = 10;
 
@@ -118,9 +118,8 @@ class Appointment extends My_Controller
         } else {
             $page = 1;
         }
-        
-        if(!empty($client_id) && !empty($provider_id))
-        {
+
+        if (!empty($client_id) && !empty($provider_id)) {
             $this->db->select('events.*, users.id as user_id, users.firstname, users.lastname,provider_user.firstname as provider_first_name,
                     provider_user.lastname as provider_last_name,appointment_type.id as appointment_id,appointment_type.appointment_name,
                     appointment_type.color_code,appointment_type.appointment_price,price_details.id as price_detail_id,
@@ -128,11 +127,11 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.client_id', $client_id);
             $this->db->where('events.created_by', $provider_id);
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $count_data = $this->db->get();
             $total_count = count($count_data->result());
 
@@ -145,15 +144,14 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.client_id', $client_id);
             $this->db->where('events.created_by', $provider_id);
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $this->db->limit($per_page, (($page - 1) * $per_page));
             $event_data = $this->db->get();
-
-        }else if($client_id){
+        } else if ($client_id) {
             $this->db->select('events.*, users.id as user_id, users.firstname, users.lastname,provider_user.firstname as provider_first_name,
                     provider_user.lastname as provider_last_name,appointment_type.id as appointment_id,appointment_type.appointment_name,
                     appointment_type.color_code,appointment_type.appointment_price,price_details.id as price_detail_id,
@@ -161,10 +159,10 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.client_id', $client_id);
-            $this->db->order_by('events.schedule_date','DESC');            
+            $this->db->order_by('events.schedule_date', 'DESC');
             $count_data = $this->db->get();
             $total_count = count($count_data->result());
 
@@ -177,13 +175,13 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.client_id', $client_id);
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $this->db->limit($per_page, (($page - 1) * $per_page));
             $event_data = $this->db->get();
-        }else if($provider_id){
+        } else if ($provider_id) {
             $this->db->select('events.*, users.id as user_id, users.firstname, users.lastname,provider_user.firstname as provider_first_name,
                     provider_user.lastname as provider_last_name,appointment_type.id as appointment_id,appointment_type.appointment_name,
                     appointment_type.color_code,appointment_type.appointment_price,price_details.id as price_detail_id,
@@ -191,10 +189,10 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.created_by', $provider_id);
-            $this->db->order_by('events.schedule_date','DESC');        
+            $this->db->order_by('events.schedule_date', 'DESC');
             $count_data = $this->db->get();
             $total_count = count($count_data->result());
 
@@ -207,13 +205,13 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
             $this->db->where('events.created_by', $provider_id);
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $this->db->limit($per_page, (($page - 1) * $per_page));
             $event_data = $this->db->get();
-        }else{
+        } else {
 
             $this->db->select('events.*, users.id as user_id, users.firstname, users.lastname,provider_user.firstname as provider_first_name,
                             provider_user.lastname as provider_last_name,appointment_type.id as appointment_id,appointment_type.appointment_name,
@@ -222,13 +220,13 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $count_data = $this->db->get();
             $total_count = count($count_data->result());
 
-            $data["links"] = $this->paginationInit("admin/appointment/index", $total_count, $numlinks, $per_page, 4); 
+            $data["links"] = $this->paginationInit("admin/appointment/index", $total_count, $numlinks, $per_page, 4);
 
             $this->db->select('events.*, users.id as user_id, users.firstname, users.lastname,provider_user.firstname as provider_first_name,
                             provider_user.lastname as provider_last_name,appointment_type.id as appointment_id,appointment_type.appointment_name,
@@ -237,12 +235,12 @@ class Appointment extends My_Controller
             $this->db->from('events');
             $this->db->join('users', 'users.id = events.client_id', 'left');
             $this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
-            $this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
-            $this->db->join('price_details','price_details.event_id = events.id', 'left');
-            $this->db->order_by('events.schedule_date','DESC');
+            $this->db->join('appointment_type', 'appointment_type.id = events.appointment_type', 'left');
+            $this->db->join('price_details', 'price_details.event_id = events.id', 'left');
+            $this->db->order_by('events.schedule_date', 'DESC');
             $this->db->limit($per_page, (($page - 1) * $per_page));
-            $event_data = $this->db->get(); 
-       }
+            $event_data = $this->db->get();
+        }
         //    $data['event_data'] = $this->db->query($event_data)->result();
         $data['event_data'] = $event_data->result();
         return $this->load->view('admin/panel/filter_appointment_details', $data);
@@ -335,15 +333,15 @@ class Appointment extends My_Controller
     }
 
     public function checkOutAppointment(){
-        $event_id = $_POST['event_id']; 
-        $logged_user_id = $this->session->userdata('userid');       
-        $data = "SELECT * from price_details WHERE event_id = '" . $event_id ."' ";
-        $result = $this->db->query($data)->result();
-        if(!empty($result)){            
-            $sql = "UPDATE price_details SET `payment_status` = ? WHERE event_id = ?";
-            $this->db->query($sql, array('paid', $event_id));
-        }else{
-            $data = "SELECT  `events`.*,
+        foreach ($_POST['event_id'] as $event_id) {
+            $logged_user_id = $this->session->userdata('userid');
+            $data = "SELECT * from price_details WHERE event_id = '" . $event_id . "' ";
+            $result = $this->db->query($data)->result();
+            if (!empty($result)) {
+                $sql = "UPDATE price_details SET `payment_status` = ? WHERE event_id = ?";
+                $this->db->query($sql, array('paid', $event_id));
+            } else {
+                $data = "SELECT  `events`.*,
                     `appointment_type`.`id` as `appointment_id`,
 				    `appointment_type`.`appointment_name`,
 				    `appointment_type`.`color_code`,
@@ -355,14 +353,14 @@ class Appointment extends My_Controller
                 LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
                 LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
                 WHERE `events`.`id` = $event_id";
-            
-            $result = $this->db->query($data)->result();                    
-            foreach($result as $val){                
-                $query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
-				$this->db->query($query, array($event_id, $val->client_id, $val->appointment_type, $logged_user_id, $val->appointment_price, 'paid'));
-            }            
-        }        
 
+                $result = $this->db->query($data)->result();
+                foreach ($result as $val) {
+                    $query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+                    $this->db->query($query, array($event_id, $val->client_id, $val->appointment_type, $logged_user_id, $val->appointment_price, 'paid'));
+                }
+            }
+        }
         if ($this->db->affected_rows() != 1) {
             $result['success'] = false;
             $result['message'] = "Appointment not checkout successfully";

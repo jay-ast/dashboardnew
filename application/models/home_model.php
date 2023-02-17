@@ -56,6 +56,7 @@ class Home_Model extends CI_Model
 			$result['firstname'] = $res->firstname;
 			$result['lastname'] = $res->lastname;
 			$result['provider_name'] = $res->provider_first_name . " " . $res->provider_last_name;
+			$result['parent_event_id']  = $res->parent_event_id;
 			$records[] = $result;
 		}
 
@@ -76,6 +77,7 @@ class Home_Model extends CI_Model
 					`events`.`meeting_duration`,
 					`events`.`recurrence`,
 					`events`.`created_by`,
+					`events`.`parent_event_id`,
     				`users`.`id` as `user_id`,
     				`users`.`email`,
     				`users`.`firstname`,
@@ -94,7 +96,8 @@ class Home_Model extends CI_Model
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
 				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
-				WHERE `events`.`created_by` = $logged_user_id ";
+				WHERE `events`.`created_by` = $logged_user_id
+				GROUP BY `events`.`parent_event_id`";
 			// $data = $this->db->query($sql)->result();
 		} else {
 			$sql = "SELECT `events`.`id` as `id_event`,
@@ -108,6 +111,7 @@ class Home_Model extends CI_Model
 					`events`.`meeting_duration`,
 					`events`.`recurrence`,
 					`events`.`created_by`,
+					`events`.`parent_event_id`,
     				`users`.`id`,
     				`users`.`email`,
     				`users`.`firstname`,
@@ -125,8 +129,9 @@ class Home_Model extends CI_Model
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id` ";
-				 
+				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
+				GROUP BY `events`.`parent_event_id`";
+
 			// $data = $this->db->query($sql)->result();
 		}
 		$data = $this->db->query($sql)->result();
@@ -137,9 +142,104 @@ class Home_Model extends CI_Model
 	{
 		$logged_user_id = $this->session->userdata('userid');
 		$payment_status = 'pending';
-		if(is_array($_POST['client_id'])){			
-			foreach ($_POST['client_id'] as $cli_id) {					
-				// $logged_user_id = $this->session->userdata('userid');
+		$date = date_create($_POST['start_time']);
+		$start_time = date_format($date, "H:i:s");
+		$date = date_create($_POST['end_time']);
+		$end_time = date_format($date, "H:i:s");
+		// if  recurrence is set, get all the dates for the events
+		// Loop through all the selected-clients, and store the event information and pricing-details				
+		$event_parent_ids = [];
+		if(is_array($_POST['client_id'])){
+			foreach ($_POST['client_id'] as $client_id) {
+				if($_POST['recurrence']){
+					$event_dates = getAppointmentDates($_POST['schedule_date'], $_POST['repeating_weeks'], $_POST['recurrence']);
+					foreach ($event_dates as $event_date) {
+						$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+						$this->db->query($sql, array($client_id, $event_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+						$parent_event_id = $this->db->insert_id();
+						if (!isset($event_parent_ids[$event_date])) {
+							$event_parent_ids[$event_date] = $parent_event_id;
+						}
+						$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+						$this->db->query($query, array($parent_event_id, $client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
+
+						$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $event_date . '.';
+						if ($_POST['notify_mail'] == 'true') {
+							$this->notifyWithMail($client_id, $_POST, $subject);
+						}
+					}
+				}else{
+					$date = date_create($_POST['schedule_date']);
+					$schedule_date = date_format($date, "Y/m/d"); 
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($client_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					$parent_event_id = $this->db->insert_id();
+					if (!isset($event_parent_ids[$schedule_date])) {
+						$event_parent_ids[$schedule_date] = $parent_event_id;
+					}
+					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+					$this->db->query($query, array($parent_event_id, $client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
+
+					$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+					if ($_POST['notify_mail'] == 'true') {
+						$this->notifyWithMail($client_id, $_POST, $subject);
+					}
+				}				
+			}
+			foreach ($event_parent_ids as $event_date => $parent_event_id) {
+				$sql = "UPDATE events SET parent_event_id = ? WHERE schedule_date = ?";
+				$this->db->query($sql, array($parent_event_id, formatDate($event_date, "Y-m-d")));
+			}
+		}else{			
+			if($_POST['recurrence'] != 'no_fixed_time'){				
+				$event_dates = getAppointmentDates($_POST['schedule_date'], $_POST['repeating_weeks'], $_POST['recurrence']);				
+				foreach ($event_dates as $event_date) {
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($_POST['client_id'], $event_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+					$parent_event_id = $this->db->insert_id();
+					if (!isset($event_parent_ids[$event_date])) {
+						$event_parent_ids[$event_date] = $parent_event_id;
+					}
+					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+					$this->db->query($query, array($parent_event_id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
+				}
+				foreach ($event_parent_ids as $event_date => $parent_event_id) {
+					$sql = "UPDATE events SET parent_event_id = ? WHERE schedule_date = ?";
+					$this->db->query($sql, array($parent_event_id, formatDate($event_date, "Y-m-d")));
+				}
+				$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $event_date . '.';
+				if ($_POST['notify_mail'] == 'true') {
+					$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
+				}
+			}else{				
+				$date = date_create($_POST['schedule_date']);
+				$schedule_date = date_format($date, "Y/m/d"); 
+				$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
+				$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
+				$id = $this->db->insert_id();
+				
+				$sql = "UPDATE events SET parent_event_id = ? WHERE schedule_date = ?";
+				$this->db->query($sql, array($id, formatDate($schedule_date, "Y-m-d")));
+
+				$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+				$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
+
+				$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+				if ($_POST['notify_mail'] == 'true') {
+					$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
+				}
+			}
+		}		
+		
+		return ($this->db->affected_rows() != 1) ? false : true;
+	}
+
+	public function addEventOld()
+	{
+		$logged_user_id = $this->session->userdata('userid');
+		$payment_status = 'pending';
+		if (is_array($_POST['client_id'])) {
+			foreach ($_POST['client_id'] as $cli_id) {
 				if ($_POST['repeating_weeks'] > 0) {
 					$date = date_create($_POST['schedule_date']);
 					$schedule_date = date_format($date, "Y/m/d");
@@ -147,21 +247,21 @@ class Home_Model extends CI_Model
 					$start_time = date_format($date, "H:i:s");
 					$date = date_create($_POST['end_time']);
 					$end_time = date_format($date, "H:i:s");
-	
+
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 					$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-					$id = $this->db->insert_id();		
+					$id = $this->db->insert_id();
 
 					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 					$this->db->query($query, array($id, $cli_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
-					
-	
+
+
 					if ($_POST['recurrence'] == 'weekly') {
 						for ($i = 1; $i <= $_POST['repeating_weeks']; $i++) {
 							$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
 							$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 							$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-							$id = $this->db->insert_id();		
+							$id = $this->db->insert_id();
 
 							$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 							$this->db->query($query, array($id, $cli_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
@@ -171,7 +271,7 @@ class Home_Model extends CI_Model
 							$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
 							$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 							$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-							$id = $this->db->insert_id();		
+							$id = $this->db->insert_id();
 
 							$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 							$this->db->query($query, array($id, $cli_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
@@ -181,7 +281,7 @@ class Home_Model extends CI_Model
 							$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
 							$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 							$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-							$id = $this->db->insert_id();		
+							$id = $this->db->insert_id();
 
 							$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 							$this->db->query($query, array($id, $cli_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
@@ -200,10 +300,10 @@ class Home_Model extends CI_Model
 					$start_time = date_format($date, "H:i:s");
 					$date = date_create($_POST['end_time']);
 					$end_time = date_format($date, "H:i:s");
-	
+
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options,brief_note,meeting_duration,recurrence,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 					$this->db->query($sql, array($cli_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $repeating_weeks, $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-					$id = $this->db->insert_id();		
+					$id = $this->db->insert_id();
 
 					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 					$this->db->query($query, array($id, $cli_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
@@ -214,7 +314,7 @@ class Home_Model extends CI_Model
 					}
 				}
 			}
-		}else{
+		} else {
 			$repeating_weeks = !empty($_POST['repeating_weeks']) ?? 0;
 			$date = date_create($_POST['schedule_date']);
 			$schedule_date = date_format($date, "Y/m/d");
@@ -225,7 +325,7 @@ class Home_Model extends CI_Model
 
 			$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options,brief_note,meeting_duration,recurrence,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $repeating_weeks, $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-			$id = $this->db->insert_id();		
+			$id = $this->db->insert_id();
 
 			$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
 			$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
@@ -235,7 +335,7 @@ class Home_Model extends CI_Model
 					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'week', strtotime($_POST['schedule_date'])));
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-					$id = $this->db->insert_id();		
+					$id = $this->db->insert_id();
 
 					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
 					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
@@ -245,7 +345,7 @@ class Home_Model extends CI_Model
 					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'days', strtotime($_POST['schedule_date'])));
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-					$id = $this->db->insert_id();		
+					$id = $this->db->insert_id();
 
 					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
 					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
@@ -255,14 +355,14 @@ class Home_Model extends CI_Model
 					$schedule_date = date('Y/m/d', strtotime(' +' . $i . 'months', strtotime($_POST['schedule_date'])));
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
 					$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id));
-					$id = $this->db->insert_id();		
+					$id = $this->db->insert_id();
 
 					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price) VALUES (?,?,?,?,?)";
 					$this->db->query($query, array($id, $_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price']));
 				}
 			}
 
-			$subject = 'Your Meeting has been Scheduled on '. ' ' .$schedule_date. '.';
+			$subject = 'Your Meeting has been Scheduled on ' . ' ' . $schedule_date . '.';
 			$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
 			if ($_POST['notify_mail'] == 'true') {
 				$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
@@ -274,7 +374,7 @@ class Home_Model extends CI_Model
 	public function updateEvent()
 	{
 		// var_dump($_POST);die;	
-		$logged_user_id = $this->session->userdata('userid');	
+		$logged_user_id = $this->session->userdata('userid');
 		$date = date_create($_POST['schedule_date']);
 		$schedule_date = date_format($date, "Y/m/d");
 		$date = date_create($_POST['start_time']);
@@ -391,26 +491,26 @@ class Home_Model extends CI_Model
 			// $msg_data .= '<p>In California: 704 Mission Avenue, San Rafael CA 94901.<br/>
 			// 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;415-924-2228 or <a href="mailto:synergy@synergyptpilates.com">synergy@synergyptpilates.com</a><br/>
 
-            //                          Switzerland: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
+			//                          Switzerland: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
 			// 						 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+41 (0) 78 422 71 25 or <a href="mailto:zeina@synergyptpilates.com">zeina@synergyptpilates.com</a><br/><br/>
-            //                     </p>';
+			//                     </p>';
 			// $msg_data .= ' <br/>Thanks you and we look forward to seeing you very soon! <br/><br/>';
 
 			// Italian Mail Templete
 			// $msg_data .= ' In health and strength, <br/>
-            //                        Synergy+ team... <br/><br/>';
+			//                        Synergy+ team... <br/><br/>';
 
 			// $msg_data .= '<br/><br/>Gentile ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
 			// $msg_data .= '<br/>';
 			// $msg_data .= 'Il suo appuntamento di ' . ucwords(str_replace('_', ' ', $details['appointment_type'])) . ' é confermato con ' 
 			// 								   . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') . '<br/><br/>';
-					   
+
 			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Appointment date : ' . $details['schedule_date'] . '<br/>';
 			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time : ' . $details['start_time'] . '<br/>';
-					   
+
 			// $msg_data .= '<p>Per favore ci contatti con 24 ore di anticipo per eventuali cambiamenti o per disdire l’appuntamento senza incorrere in pagamenti.</p>';
 			// 					   // $msg_data .= '<br/>';
-					   
+
 			// $msg_data .='<p>
 			// 				Svizzera: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
 			// 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numero di telefono/messaggio/WhatsApp: +41 (0) 78 422 71 25 or 
@@ -421,9 +521,9 @@ class Home_Model extends CI_Model
 			// $msg_data .= '<br/>Grazie e siamo lieti di vedervi presto!/ Vi aspettiamo presto! <br/><br/>';
 			// $msg_data .= 'In salute e forza, <br/>
 			// 			Zeina e Synergy+';
-					
+
 			// }
-			
+
 			$from_email = $this->session->userdata('email');
 			$to_email = $client_data->email;
 			$to = $to_email;

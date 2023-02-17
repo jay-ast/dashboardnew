@@ -508,3 +508,13 @@ if (!function_exists('formatCustomDate')) {
         return date($format, strtotime($date));
     }
 }
+
+if(!function_exists('getAppointmentDates')){
+    function getAppointmentDates($date,$repeat,$type){
+        $schedule_days = [];        
+        for ($i = 0; $i <= $repeat; $i++) {
+			$schedule_days[] = date('Y/m/d', strtotime(' +' . $i . $type, strtotime($date)));
+		}        
+        return $schedule_days;
+    }
+}
