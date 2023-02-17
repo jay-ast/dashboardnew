@@ -145,13 +145,15 @@ $(function () {
                 }                
             },
 
-            eventRender: function (event, element) {                
-                if(event.parent_event_id){
-                    element.find(".fc-content").append("<i class='pull-right center group-event fa fa-expand' data-parentId='"+event.parent_event_id+"'></i>");
-                }
+            eventRender: function (event, element) {
+                // if(event.parent_event_id){
+                //     element.find(".fc-content").append("<i class='pull-right center group-event fa fa-expand mr-3' data-parentId='"+event.parent_event_id+"'></i>");
+                // }
                 if (event.brief_note) {
                     element.find(".fc-content").append("<i class='brief-info fa fa-info-circle'></i>");
                 }
+                element.find(".fc-content").addClass('group-event');
+                element.find(".fc-content").attr('data-parentId', event.parent_event_id);            
             },
 
             eventDrop: function (event, delta, revertFunc, start, end) {
