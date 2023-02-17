@@ -131,8 +131,9 @@
         });
 
         $(".checkoutBtn").click(function(item){
-            var event_id = $(this).attr('data-appointmentid');            
-
+            var event_id = [];
+            var appointment_id = $(this).attr('data-appointmentid');            
+            event_id.push(appointment_id);
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/appointment/checkOutAppointment',
