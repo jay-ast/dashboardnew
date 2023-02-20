@@ -186,7 +186,7 @@
                                     <option value="days" selected>Daily</option>
                                     <option value="week">Weekly</option>
                                     <option value="months">Monthly</option>
-                                    <option value="no_fixed_time">None</option>
+                                    <option value="none">None</option>
                                 </select>
                             </div>
                         </div>

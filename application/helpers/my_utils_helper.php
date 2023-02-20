@@ -509,12 +509,20 @@ if (!function_exists('formatCustomDate')) {
     }
 }
 
-if(!function_exists('getAppointmentDates')){
-    function getAppointmentDates($date,$repeat,$type){
+if (!function_exists('getAppointmentDates')) {
+    function getAppointmentDates($date, $repeat = 0, $type = "days")
+    {
         $schedule_days = [];        
         for ($i = 0; $i <= $repeat; $i++) {
-			$schedule_days[] = date('Y/m/d', strtotime(' +' . $i . $type, strtotime($date)));
-		}        
+            $schedule_days[] = date('Y/m/d', strtotime(' +' . $i . $type, strtotime($date)));
+        }
         return $schedule_days;
+    }
+}
+
+if (!function_exists('formatDateYearToDay')) {
+    function formatDateYearToDay($date, $format = "Y-m-d")
+    {
+        return date($format, strtotime($date));
     }
 }

@@ -364,7 +364,12 @@ $(function () {
 
     // Handle Click on Add Button
     $('.modal').on('click', '#add-event', function (e) {
-
+        var client_id = [];
+        if(!Array.isArray($('#client_id').val())){
+            client_id.push($('#client_id').val());
+        }else{
+            client_id = $('#client_id').val();
+        }        
         var today = new Date();
         var todayDateTime = moment(today).format('YYYY-MM-DD hh:mm A');
         var selectedDateData = moment($('#schedule_date').val(), "DD-MM-YYYY").format("YYYY-MM-DD");     
@@ -373,7 +378,7 @@ $(function () {
                 if ($('#recurrence').val()) {
                     if (Date.parse(selectedDateData + ' ' + $('#start_time').val()) >= Date.parse(todayDateTime)) {                        
                         $.post(base_url + 'admin/home/addEvent', {
-                            client_id: $('#client_id').val(),
+                            client_id: client_id,
                             schedule_date: $('#schedule_date').val(),
                             start_time: $('#start_time').val(),
                             end_time: $('#end_time').val(),
@@ -662,7 +667,7 @@ $(function () {
 
     $("#recurrence").change(function (item) {
         // alert('Here');
-        if ($(this).val() == "no_fixed_time") {
+        if ($(this).val() == "none") {
             $('#repeating_weeks').prop('disabled', true);
             $('.repeating_weeks_group').hide();
         } else {
