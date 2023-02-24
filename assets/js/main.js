@@ -796,18 +796,24 @@ $(function () {
 
     function loadbtnCheckout(){
         $("#btnCheckout").click(function (item) {                        
-            var event_id = [];
+            var event_data = [];
             $.each($("input[name='client_checkout']:checked"), function(){
-                event_id.push($(this).val());
-            });
-            console.log('wkaegsdv', event_id);
-            if(event_id != ''){
+                let arr = {
+                        event_id :  $(this).val(),
+                        use_wallet : $(this).siblings('.appoinment_transaction_details_'+$(this).attr('data-clientid')).find('.wallet_balance_used').is(':checked'),
+                        appointment_type_id: $(this).data('appointmentypeid'),
+                        client_id: $(this).data('clientid')
+                };
+                event_data.push(arr);
+            });            
+            if(event_data != ''){
                 $('#appointment-confirmation-modal').modal('toggle');
                 $.ajax({
                     type: 'POST',
                     url: base_url + 'admin/appointment/checkOutAppointment',
                     data: {
-                            event_id: event_id,                        
+                            event_data: event_data,
+                            amount_type: 'debit',                        
                         },
                     success: function(actionResponse) {                    
                         $('#calendar').fullCalendar('destroy');
@@ -1029,4 +1035,46 @@ $(function () {
         });
     });
 
+    $(document).on('click', '#client_checkout', function(){
+        var event_id = [];
+        var appointment_type = [];
+        var client_id = [];        
+        var is_check_use_wallet;
+        
+        var is_client_id = $(this).data('clientid');
+        
+        if($(this).is(':checked')){
+            console.log($(this).find('.appoinment_transaction_details_'+is_client_id));
+            $('.appoinment_transaction_details_'+is_client_id).removeClass('hide')
+        }else{
+            $('.appoinment_transaction_details_'+is_client_id).addClass('hide')
+        }
+
+        // $.each($("input[name='client_checkout']:checked"), function(){
+        //     event_id.push($(this).val());
+        //     appointment_type.push($(this).attr('data-appointmentypeid'));
+        //     client_id.push($(this).attr('data-clientid'));            
+        //     is_check_use_wallet = $('.wallet_balance_used').is(':checked');
+        // });
+
+        // // console.log('event_id', event_id);
+        // // console.log('appointment_type', appointment_type);
+        // // console.log('client_id', client_id);    
+        // // console.log('is_check_use_wallet', is_check_use_wallet);
+
+        // $.ajax({
+        //     type: 'POST',
+        //     url: base_url + 'admin/patients/getClienWalletData',
+        //     data:{
+        //         event_id:event_id,
+        //         appointment_type:appointment_type,
+        //         client_id:client_id,
+        //         is_check_use_wallet:is_check_use_wallet
+        //     },
+        //     success: function (actionResponse) {},
+        //     error: function (data) {
+        //         console.log(data);
+        //     }
+        // })
+    });
 });

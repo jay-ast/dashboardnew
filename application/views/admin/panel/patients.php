@@ -92,7 +92,7 @@
                                             <a class="routineDetails" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="routine" data-toggle="modal" id="routineDetails" href="#routinePortal">
                                             <i class="glyphicon glyphicon-tasks" data-toggle="tooltip" title="Routine"></i></a>
 
-                                            <a class="" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="account" data-toggle="modal" href="#">
+                                            <a class="accountDetails" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="account" data-toggle="modal" id="accountDetails" href="<?php echo base_url('admin/patients/getAccountDetails?client_id=' . $userdatalist['id']); ?>">
                                             <i class="glyphicon glyphicon-book" data-toggle="tooltip" title="Account"></i></a>
                                             
                                         </td>
@@ -459,43 +459,65 @@
         </div>
     </div>
 
-    <div id="accountPortal" class="modal fade">
+    <div id="accountPortal" class="modal fade">        
+    </div>
+
+    <div id="accountPaymentReceived" class="modal fade">        
+    </div>
+
+    <div id="addBalance" class="modal fade">
         <div class="modal-dialog new-modal-dialog">
-            <div class="modal-content">
-                <?php echo form_open(base_url('admin/patients/addNewNotes')); ?>
+            <div class="modal-content">                
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <a style="float: right; margin-right: 20px;" data-toggle="modal" href="#clientPortal" class="formAccountDetails">Return to client portal</a>
-                    <h4 class="modal-title">Client Name: </h4>
+                    <h4 class="modal-title"></h4>
                 </div>
 
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12 notesDetail">
-                            <table class="dynamicTable tableTools table table-striped checkboxs">
-                                <thead>
-                                    <tr class=" text-center">
-                                        <th>Visit number</th>
-                                        <th>Date</th>
-                                        <th>Service</th>
-                                        <th>Price</th>
-                                        <th>Payment received Amount &date</th>
-                                        <th>Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="myTable">
-                                </tbody>
-                            </table>
+                <div class="modal-body modelform">
+                    <div class="form-body clearfix col-md-12">
+                        <div class="row margin-top-10">
+                            <div class="form-group col-md-6">
+                                <input type="hidden" class="form-control clientid" id="clientid" name="clientid" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-12 userdetail">
+                            <div class="row margin-top-10 userdetails col-md-12">
+                                <div class="form-group col-md-4">
+                                    <label>Select Appointment</label>
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <select class="form-control appointment_type" id="appointment_type" name="appointment_type">
+                                        <option value="">Select</option>
+                                        <?php
+                                        foreach ($appointment_type as $types) {
+                                        ?>
+                                            <option value="<?php echo $types->id ?>"><?php echo $types->appointment_name ?></option>
+                                        <?php
+                                        }
+                                    ?>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="row margin-top-10 userdetails col-md-12">
+                                <div class="form-group col-md-4">
+                                    <label>Balance</label>
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <input type="number" class="form-control appointment_balance" id="appointment_balance" name="appointment_balance" placeholder="Appointment Balance" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
 
+                    <div class="clearfix"></div>
+                    <div class="modal-footer">                        
+                        <button type="button" class="btn btn-success pull-right add_appointment_balance" id="add_appointment_balance">Add Balance</button>                            
+                    </div>
                 </div>
-                <?php echo form_close(); ?>
             </div>
         </div>
     </div>
+
 
     <div id="createNote" class="modal fade">
         <div class="modal-dialog new-modal-dialog">
@@ -1381,11 +1403,6 @@
             });
         });
 
-        $(document).on('click', '#accountDetails', function() {
-            $('#clientPortal').modal('toggle');
-            var client_id = $('#clientPortal').find('.patientid').val();
-        });
-
         $(document).on('click', '#newNotes', function() {
             $('.error').html('');
             $('#note_title').val('');
@@ -1470,6 +1487,10 @@
             $('#routinePortal').modal('toggle');
         });
 
+        $(document).on('click', '.formPaymentReceivedDetails', function() {
+            $('#routinePortal').modal('toggle');
+        });
+
         // $(".toggle-sidebar").click()
 
         <?php
@@ -1479,6 +1500,83 @@
         <?php
         }
         ?>
+
+        $(document).on('click', '#accountDetails', function() {
+            var client_id = $(this).attr('data-patientid');
+            var client_name = $(this).attr('data-patientname');            
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/patients/getAccountDetails/' + client_id,
+                success: function(actionResponse) {
+                    $('#accountPortal').html(actionResponse);
+                    $('#accountPortal').find('.modal-title').text(client_name);
+                    $('#accountPortal').find('.client_id').val(client_id);
+                    $('#accountPortal').find('.addAppintmentBalance').attr('data-clientid',client_id);
+                    
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+
+        });
+
+        $(document).on('click', '#checkoutAccountDetails', function() {
+            var account_details = $(this).attr('data-accountdetails');   
+            $('#accountPortal').modal('toggle');           
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/patients/getReceivedPaymentDetails',
+                data:{
+                    account_details:account_details, 
+                },
+                success: function(actionResponse) {
+                    $('#accountPaymentReceived').html(actionResponse);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $('.input-daterange input').each(function() {
+            $(this).datetimepicker({
+                format: 'DD-MM-YYYY'
+            });        
+        });
+        
+        $(document).on('click', '.filter_account_details', function() {
+            console.log('start ',$('.date_range_start').val());
+            console.log('End ',$('.date_range_end').val());
+        });
+
+        $(document).on('click', '#addAppintmentBalance', function() {
+            var client_id = $('#addAppintmentBalance').attr('data-clientid');            
+            $("#addBalance").find(".modal-title").html('Add balance');
+            $('#clientid').val(client_id);
+        });
+        
+        $(document).on('click', '#add_appointment_balance', function() {            
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'admin/patients/addAppointmentBalance',
+                    data: {
+                        client_id: $('#addBalance').find('#clientid').val(),
+                        appointment_type: $('#addBalance').find('#appointment_type').val(),
+                        appointment_balance: $('#addBalance').find('#appointment_balance').val(),
+                    },
+                    success: function(result) {
+                        $('#addBalance').modal('toggle');
+                        $('#accountPortal').find('.appointment_type_balance').html('');
+                        
+                    },
+                    complete: function() {},
+                    error: function(data) {
+                        console.log(data);
+                    }
+                })            
+        });
+        
     });
 </script>
 <style type="text/css">
@@ -1530,5 +1628,17 @@
         font-size: 20px;
         margin-top: 20px;
         margin-left: 10px
+    }
+
+    .btn-primary {
+        background: #0395E2;
+        border-color: #0395E2;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background: none;
+        color: black;
+        border-color: black;
     }
 </style>

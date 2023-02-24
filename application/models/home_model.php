@@ -87,15 +87,15 @@ class Home_Model extends CI_Model
 					`appointment_type`.`id` as `appointment_type_id`,
 					`appointment_type`.`appointment_name`,
 					`appointment_type`.`color_code`,
-					`price_details`.`id` as `price_details_id`,
-					`price_details`.`event_id`,
-					`price_details`.`payment_status`,
-					`price_details`.`price`
+					`event_transaction`.`id` as `event_transaction_id`,
+					`event_transaction`.`event_id`,
+					`event_transaction`.`payment_status`,
+					`event_transaction`.`price`
 				FROM (`events`)				
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
+				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
 				WHERE `events`.`created_by` = $logged_user_id
 				GROUP BY `events`.`parent_event_id`";
 			// $data = $this->db->query($sql)->result();
@@ -121,15 +121,15 @@ class Home_Model extends CI_Model
 					`appointment_type`.`id`,
 					`appointment_type`.`appointment_name`,
 					`appointment_type`.`color_code`,
-					`price_details`.`id` as `price_details_id`,
-					`price_details`.`event_id`,
-					`price_details`.`payment_status`,
-					`price_details`.`price`
+					`event_transaction`.`id` as `event_transaction_id`,
+					`event_transaction`.`event_id`,
+					`event_transaction`.`payment_status`,
+					`event_transaction`.`price`
 				FROM (`events`)
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
+				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
 				GROUP BY `events`.`parent_event_id`";
 
 			// $data = $this->db->query($sql)->result();
@@ -149,7 +149,7 @@ class Home_Model extends CI_Model
 		// if  recurrence is set, get all the dates for the events
 		// Loop through all the selected-clients, and store the event information and pricing-details				
 		$event_parent_ids = [];
-		
+		$parent_event_id = '';
 			foreach ($_POST['client_id'] as $client_id) {				
 				$event_dates = getAppointmentDates($_POST['schedule_date'], $_POST['repeating_weeks'], $_POST['recurrence']);					
 				foreach ($event_dates as $event_date) {
@@ -159,7 +159,7 @@ class Home_Model extends CI_Model
 					if (!isset($event_parent_ids[$event_date])) {
 						$event_parent_ids[$event_date] = $parent_event_id;
 					}
-					$query = "INSERT INTO price_details (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+					$query = "INSERT INTO event_transaction (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 					$this->db->query($query, array($parent_event_id, $client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
 					$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $event_date . '.';
 					if ($_POST['notify_mail'] == 'true') {
@@ -188,7 +188,7 @@ class Home_Model extends CI_Model
 		$sql = "UPDATE events SET client_id = ?, schedule_date = ?, start_time = ?, end_time = ? ,appointment_type = ? ,brief_note = ? ,meeting_duration = ? ,recurrence = ? WHERE id = ?";
 		$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $_POST['id']));
 
-		$query = "UPDATE price_details SET client_id = ?, appointment_id = ?, provider_id = ?, price = ? WHERE event_id = ?";
+		$query = "UPDATE event_transaction SET client_id = ?, appointment_id = ?, provider_id = ?, price = ? WHERE event_id = ?";
 		$this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price'], $_POST['id']));
 		// $subject = 'Your scheduled meeting has been updated on'. ' ' . $schedule_date. '.';
 		$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';

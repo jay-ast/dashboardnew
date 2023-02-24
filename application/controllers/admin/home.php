@@ -147,16 +147,22 @@ class Home extends My_Controller {
 					`appointment_type`.`id` as `appointment_type_id`,
 					`appointment_type`.`appointment_name`,
 					`appointment_type`.`color_code`,
-					`price_details`.`id` as `price_details_id`,
-					`price_details`.`event_id`,
-					`price_details`.`payment_status`,
-					`price_details`.`price`
+					`event_transaction`.`id` as `event_transaction_id`,
+					`event_transaction`.`event_id`,
+					`event_transaction`.`payment_status`,
+					`event_transaction`.`price`,
+					`client_balance_summary`.`id` as `balance_summary_id`,
+					`client_balance_summary`.`client_id` as `balance_summary_client_id`,
+					`client_balance_summary`.`appointment_type_id`,
+					`client_balance_summary`.`appointment_balance`
 				FROM (`events`)				
 				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `price_details` ON `price_details`.`event_id` = `events`.`id`
-				WHERE `events`.`parent_event_id` = $parent_id";		
+				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
+				LEFT JOIN `client_balance_summary` ON `client_balance_summary`.`client_id` = `events`.`client_id`
+				WHERE `events`.`parent_event_id` = $parent_id
+				GROUP BY `event_transaction`.`event_id`";
 		$data = $this->db->query($sql)->result();
 
 		return $this->load->view('admin/panel/group-event-confirmation', ['data' => $data]);

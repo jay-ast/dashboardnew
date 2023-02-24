@@ -31,15 +31,29 @@
                     <div class="well">                        
                     <?php 
                         foreach($data as $dt){ 
-                        $checked = ($dt->payment_status == 'paid') ? 'checked' : '';
+                        // $checked = ($dt->payment_status == 'paid') ? 'checked' : '';
                         $disabled = ($dt->payment_status == 'paid') ? 'disabled' : '';
                         if($dt->payment_status == 'pending'){
                             $temp = 1;
                         }                               
                     ?>
-                        <input type="checkbox" name="client_checkout" id="client_checkout" value="<?php echo $dt->id_event ?>" <?php echo $checked ?> <?php echo $disabled ?>/>
-                        <span class="appointment_client_name"><?php echo $dt->firstname . ' ' . $dt->lastname ?></span>                        
-                        <br/>                        
+                        <input type="checkbox" name="client_checkout" id="client_checkout" data-clientid="<?php echo $dt->client_id ?>" data-appointmentypeid="<?php echo $dt->appointment_type ?>" value="<?php echo $dt->id_event ?>" <?php echo $disabled ?>/>
+                        <span class="appointment_client_name"><?php echo $dt->firstname . ' ' . $dt->lastname ?></span><br>
+
+                        <div class="appoinment_transaction_details_<?php echo $dt->client_id; ?> hide">
+                            <span class="appointment_fees" data-appointmentfees="<?php echo $dt->client_id; ?>">Received Amount: <?php echo $dt->price ?></span><br>
+                            <span class="wallet_balance" data-walletbalance="<?php echo $dt->client_id; ?>">Wallet Balance: <?php echo $dt->appointment_balance ? $dt->appointment_balance: '0' ?></span><br>
+                            <?php 
+                                if($dt->appointment_balance > 0){
+                            ?>
+                                <input type="checkbox" name="use_wallet" class="wallet_balance_used" data-appointmentprice="<?php echo $dt->price; ?>" data-clientid="<?php echo $dt->client_id ?>" value="<?php echo $dt->appointment_balance ? $dt->appointment_balance: '0' ?>"/>
+                                <span class="appointment_wallet">Use Wallet</span><br>
+                            <?php        
+                                }
+                            ?>                            
+                            <br/>
+                        </div>                        
+
                     <?php        
                         }
                     ?>        

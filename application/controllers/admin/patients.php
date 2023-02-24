@@ -147,6 +147,10 @@ class Patients extends My_Controller
             $data['generalexercies'][] = $temp;
         }
 
+        $appointment_types = "SELECT * FROM appointment_type";        
+        $result = $this->db->query($appointment_types)->result();	
+		$data['appointment_type'] = $result;
+
         $this->load->view('admin/panel/patients', $data);
     }
 
@@ -1343,5 +1347,87 @@ class Patients extends My_Controller
         $sql = "SELECT * FROM appointment_type WHERE id = ' " . $appointment_type_id . " '";
         $result = $this->db->query($sql)->result();
         echo json_encode(array('status' => true, 'data' => $result));
+    }
+
+    public function getAccountDetails()
+    { 
+        $client_id = $_GET['client_id'];
+        $details['page_title'] = 'Clients';
+        $details['active_class'] = 'patient';
+        $details['client_id'] = $client_id;
+
+        // $this->db->select('event_transaction.*, 
+        //                     events.id as events_id, 
+        //                     events.client_id,
+        //                     events.schedule_date, 
+        //                     appointment_type.id as appointment_type_id, 
+        //                     appointment_type.appointment_name,
+        //                     users.id, 
+        //                     users.firstname,
+        //                     users.lastname,
+        //                 ');
+        // $this->db->from('event_transaction');
+        // $this->db->join('events', 'events.id = event_transaction.event_id', 'left');
+        // $this->db->join('users', 'users.id = events.client_id', 'left');        
+        // $this->db->join('appointment_type', 'appointment_type.id = event_transaction.appointment_id', 'left');
+        // $this->db->where('event_transaction.client_id', $client_id);
+        // $this->db->where('event_transaction.payment_status', 'paid');
+
+        $this->db->select('client_wallet_transaction.*,
+                            events.id as events_id, 
+                            events.client_id,
+                            events.schedule_date,                             
+                            appointment_type.id as appointment_type_id, 
+                            appointment_type.appointment_name,
+                            users.id, 
+                            users.firstname,
+                            users.lastname,    
+                        ');
+        $this->db->from('client_wallet_transaction');        
+        $this->db->join('users', 'users.id = client_wallet_transaction.client_id', 'left');        
+        $this->db->join('events', 'events.id = client_wallet_transaction.event_id', 'left');
+        $this->db->join('appointment_type', 'appointment_type.id = client_wallet_transaction.appointment_type_id', 'left');
+        $this->db->where('client_wallet_transaction.client_id', $client_id);
+        // $this->db->group_by('client_wallet_transaction.appointment_type_id');        
+        $accountData = $this->db->get();
+        $details['accountData'] = $accountData->result();
+        $this->db->select('client_balance_summary.*,appointment_type.id as appointment_type_id,appointment_type.appointment_name');
+        $this->db->from('client_balance_summary');
+        $this->db->join('appointment_type', 'appointment_type.id = client_balance_summary.appointment_type_id');
+        $this->db->where('client_balance_summary.client_id', $client_id);
+        $data = $this->db->get();
+        $details['appointment_type_balance_details'] = $data->result();
+        
+
+        $appointment_types = "SELECT * FROM appointment_type";
+        $result = $this->db->query($appointment_types)->result();	
+		$details['appointment_type'] = $result;        
+
+        $this->load->view('admin/panel/account_details', ['data' => $details]);
+    }
+
+    public function addAppointmentBalance(){
+        $this->db->select('client_balance_summary.*');
+        $this->db->from('client_balance_summary');
+        $this->db->where('client_id', $_POST['client_id']);
+        $this->db->where('appointment_type_id',$_POST['appointment_type']);
+        $data = $this->db->get();
+        $data = $data->result();
+        
+        if($data){
+            foreach($data as $dt){
+                $balance = $dt->appointment_balance + $_POST['appointment_balance'];                
+                $sql = "UPDATE client_balance_summary SET appointment_balance = ? WHERE id = ?";
+                $this->db->query($sql, array($balance, $dt->id));
+            }
+        }else{
+            $query = "INSERT INTO client_balance_summary (client_id, appointment_type_id, appointment_balance) VALUES (?,?,?)";
+		    $this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $_POST['appointment_balance']));
+        }
+        
+        if($this->db->affected_rows()){
+            $query = "INSERT INTO client_wallet_transaction(client_id, appointment_type_id, used_balanced, transsaction_type) VALUES (?,?,?,?)";
+            $this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $_POST['appointment_balance'], 'credit'));
+        }
     }
 }
