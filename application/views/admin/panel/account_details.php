@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col-md-10">
                         <?php
-                        foreach ($data['appointment_type_balance_details'] as $dt) {                                                        
+                        foreach ($data['appointment_type_balance_details'] as $dt) {
                         ?>
                             <div class="p-3 border bg-light">
                                 <h4><?php echo $dt->appointment_name . ': ' . $dt->appointment_balance ?></h4>
@@ -57,7 +57,7 @@
                                         <?php
                                         if ($dt->transsaction_type == 'debit') {
                                             echo "<td style='color:red'>$dt->used_balanced</td>";
-                                        } else {                                            
+                                        } else {
                                             echo "<td style='color:green'>$dt->used_balanced</td>";
                                         }
                                         ?>
@@ -86,6 +86,7 @@
             </div>
 
             <div class="modal-body modelform">
+            <div class="error"></div>
                 <div class="form-body clearfix col-md-12">
                     <div class="row margin-top-10">
                         <div class="form-group col-md-6">
@@ -149,23 +150,34 @@
         });
 
         $(document).on('click', '#add_appointment_balance', function() {
-            $.ajax({
-                type: 'POST',
-                url: base_url + 'admin/patients/addAppointmentBalance',
-                data: {
-                    client_id: $('#addBalance').find('#clientid').val(),
-                    appointment_type: $('#addBalance').find('#appointment_type').val(),
-                    appointment_balance: $('#addBalance').find('#appointment_balance').val(),
-                },
-                success: function(result) {
-                    $('#addBalance').modal('toggle');
-                    window.location.reload();
-                },
-                complete: function() {},
-                error: function(data) {
-                    console.log(data);
+            if ($('#addBalance').find('#appointment_type').val() && $('#addBalance').find('#appointment_balance').val()) {
+                if($('#addBalance').find('#appointment_balance').val() >= 0){
+                    $.ajax({
+                    type: 'POST',
+                    url: base_url + 'admin/patients/addAppointmentBalance',
+                    data: {
+                        client_id: $('#addBalance').find('#clientid').val(),
+                        appointment_type: $('#addBalance').find('#appointment_type').val(),
+                        appointment_balance: $('#addBalance').find('#appointment_balance').val(),
+                    },
+                    success: function(result) {
+                        $('#addBalance').modal('toggle');
+                        window.location.reload();
+                    },
+                    complete: function() {},
+                    error: function(data) {
+                        console.log(data);
+                    }
+                    })
+                }else{
+                    $('#addBalance').find('.error').html('Balance cannot be nagative.');
+                    return false;
                 }
-            })
+                
+            } else {
+                $('#addBalance').find('.error').html('Appointment type and balance field are require.');
+                return false;
+            }
         });
 
     });
