@@ -41,7 +41,8 @@
                         <span class="appointment_client_name"><?php echo $dt->firstname . ' ' . $dt->lastname ?></span><br>
 
                         <div class="appoinment_transaction_details_<?php echo $dt->client_id; ?> hide">
-                            <span class="appointment_fees" data-appointmentfees="<?php echo $dt->client_id; ?>">Received Amount: <?php echo $dt->price ?></span><br>
+                            <label>Received Amount: </label>
+                            <input type="text" class="appointment_fees" data-appointmentfees="<?php echo $dt->client_id; ?>" value="<?php echo $dt->price ?>" readonly></input><br>
                             <span class="wallet_balance" data-walletbalance="<?php echo $dt->client_id; ?>">Wallet Balance: <?php echo $dt->appointment_balance ? $dt->appointment_balance: '0' ?></span><br>
                             <?php 
                                 if($dt->appointment_balance > 0){

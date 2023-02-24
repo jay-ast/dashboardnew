@@ -347,9 +347,7 @@ class Appointment extends My_Controller
                         $data = $this->db->get();
                         $data = $data->result();
                         foreach($data as $val){                                                            
-                            if($val->appointment_balance > $res->price){       
-                                echo "if";
-                                die;                         
+                            if($val->appointment_balance > $res->price){                                                          
                                 $balance = $val->appointment_balance - $res->price;
                             
                                 $sql = "UPDATE event_transaction SET `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
@@ -366,10 +364,10 @@ class Appointment extends My_Controller
                                 $direct_payment = $res->price - $val->appointment_balance;
                                 
                                 $sql = "UPDATE event_transaction SET `payment_status` = ?, `price` = ?, `amount_type` = ? WHERE event_id = ?";
-                                $this->db->query($sql, array('paid', $direct_payment ,'wallet' ,$event_data['event_id']));             
+                                $this->db->query($sql, array('paid', $wallet_balance ,'wallet' ,$event_data['event_id']));             
 
                                 $query = "INSERT INTO event_transaction (event_id, client_id, appointment_id, provider_id, price, payment_status, amount_type) VALUES (?,?,?,?,?,?,?)";
-                                $this->db->query($query, array($event_data['event_id'], $event_data['client_id'], $event_data['appointment_type_id'], $logged_user_id, $wallet_balance, 'paid', 'Mastercard'));
+                                $this->db->query($query, array($event_data['event_id'], $event_data['client_id'], $event_data['appointment_type_id'], $logged_user_id, $direct_payment, 'paid', 'Mastercard'));
 
                                 $query = "INSERT INTO client_wallet_transaction(client_id, appointment_type_id, event_id,used_balanced, transsaction_type) VALUES (?,?,?,?,?)";
                                 $this->db->query($query, array($event_data['client_id'],$event_data['appointment_type_id'],$event_data['event_id'],$wallet_balance, 'debit'));
