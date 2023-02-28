@@ -1352,9 +1352,9 @@ class Patients extends My_Controller
     public function getAccountDetails()
     { 
         $client_id = $_GET['client_id'];
-        $details['page_title'] = 'Clients';
-        $details['active_class'] = 'patient';
-        $details['client_id'] = $client_id;
+        $data['page_title'] = 'Clients';
+        $data['active_class'] = 'patient';
+        $data['client_id'] = $client_id;
 
         // $this->db->select('event_transaction.*, 
         //                     events.id as events_id, 
@@ -1390,20 +1390,22 @@ class Patients extends My_Controller
         $this->db->where('client_wallet_transaction.client_id', $client_id);
         // $this->db->group_by('client_wallet_transaction.appointment_type_id');        
         $accountData = $this->db->get();
-        $details['accountData'] = $accountData->result();
+        $data['accountData'] = $accountData->result();
         $this->db->select('client_balance_summary.*,appointment_type.id as appointment_type_id,appointment_type.appointment_name');
         $this->db->from('client_balance_summary');
         $this->db->join('appointment_type', 'appointment_type.id = client_balance_summary.appointment_type_id');
         $this->db->where('client_balance_summary.client_id', $client_id);
-        $data = $this->db->get();
-        $details['appointment_type_balance_details'] = $data->result();
+        $details = $this->db->get();
+        $data['appointment_type_balance_details'] = $details->result();
         
 
         $appointment_types = "SELECT * FROM appointment_type";
         $result = $this->db->query($appointment_types)->result();	
-		$details['appointment_type'] = $result;        
+		$data['appointment_type'] = $result;        
 
-        $this->load->view('admin/panel/account_details', ['data' => $details]);
+        $data['data'] = $data;
+        // $this->load->view('admin/panel/account_details', ['data' => $data]);
+        $this->load->view('admin/panel/account_details', $data);
     }
 
     public function addAppointmentBalance(){

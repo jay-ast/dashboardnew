@@ -2,25 +2,17 @@
 <html>
     <head>
         <title><?php echo $page_title; ?></title>
-
-        <link rel="icon" 
-              type="image/png" 
-              href="<?php echo base_url('assets/fav.ico'); ?>">
+        <link rel="icon" type="image/png" href="<?php echo base_url('assets/fav.ico'); ?>">
         <!-- Meta -->
         <meta charset="UTF-8" />
-<!--         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"> -->
-        		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />       
-
         <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/admin/module.admin.page.index.min.css'); ?>" />
         <!--<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/admin/module.admin.page.gallery_video.min.css'); ?>" />-->
-
-        <link rel="stylesheet" type="text/css"  href="<?php echo base_url('assets/custom/custom.css'); ?>" />
-
-
- 
+        <link rel="stylesheet" type="text/css"  href="<?php echo base_url('assets/custom/custom.css'); ?>" /> 
         <script src="<?php echo base_url('assets/components/library/jquery/jquery.min.js?v=v1.2.3'); ?>"></script>
         <script src="<?php echo base_url('assets/components/library/modernizr/modernizr.js?v=v1.2.3'); ?>"></script>
         <script src="<?php echo base_url('assets/components/library/jquery-ui/js/jquery-ui.min.js?v=v1.2.3'); ?>"></script>
@@ -29,8 +21,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-
-
+    </head>
     <body class="" id='test'>
     <?php if ($this->session->userdata('roleid') == '2') { ?>
         <div class="navbar navbar-fixed-top navbar-primary main" role="navigation">
