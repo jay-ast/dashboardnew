@@ -160,7 +160,7 @@ class Home extends My_Controller {
 				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
 				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
 				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
-				LEFT JOIN `client_balance_summary` ON `client_balance_summary`.`client_id` = `events`.`client_id`
+				LEFT JOIN `client_balance_summary` ON `client_balance_summary`.`client_id` = `events`.`client_id` AND `client_balance_summary`.`appointment_type_id` = `events`.`appointment_type`				
 				WHERE `events`.`parent_event_id` = $parent_id
 				GROUP BY `event_transaction`.`event_id`";
 		$data = $this->db->query($sql)->result();
