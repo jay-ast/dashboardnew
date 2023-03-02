@@ -47,7 +47,7 @@
             </div>
             <div class="top_text" style="margin-left: 350px;">
                 <h3>Synergy+</h3><br />
-                <p>
+                <p style="padding-bottom: 20px;">
                     California 704 Mission Avenue, San Rafael CA 94901.<br/>
                     Switzerland Golf Gerry Losone, via aloe Gerry 5, 6616 Losone.<br/>
                 </p>
@@ -92,9 +92,9 @@
             <?php 
                 if($balance < 0){
                     $balance = abs($balance);
-                   echo "<h3 style='color:red;'>Due Balance :- $balance </h3>";
+                   echo "<h3 style='color:red; margin-left:30px'>Due Balance :- $balance </h3>";
                 }else{
-                    echo "<h3 style='color:green'>Available Balance :- $balance  </h3>";
+                    echo "<h3 style='color:green; margin-left:30px'>Available Balance :- $balance  </h3>";
                 }
             ?>            
         </div>
