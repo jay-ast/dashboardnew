@@ -30,22 +30,24 @@
                         }
                         ?>
                     </div>
-                    <form method="get" action="<?= site_url("admin/patients/getAccountDetails")?>">                    
-                        <div class="col-md-6">
-                            <label>Select Date Range</label>
-                            <input type="hidden" name="client_id" class="client_id" value="<?php echo $data['client_id'] ?>" />
-                            <input type="date" name="start_date" class="start_date_filter" id="start_date_filter" />
-                            <input type="date" name="end_date" class="end_date_filter" id="end_date_filter" />
-                            <input type="submit" name="date_range_filter" class="btn btn-primary date_range_filter" value="Submit" id="date_range_filter" />
+                    <form method="get" action="<?= site_url("admin/patients/getAccountDetails")?>" class="col-md-6">                    
+                        <div class="col-md-12">
+                            <div class="row" style="display: flex; align-items: center; gap:5px;">
+                                <label>Select Date Range</label>
+                                <input style="width: 30%; " type="date" name="start_date" class="form-control start_date_filter" id="start_date_filter" />
+                                <input style="width: 30%; " type="date" name="end_date" class="form-control end_date_filter" id="end_date_filter" />
+                                <input type="submit" name="date_range_filter" class="btn btn-primary date_range_filter" value="Submit" id="date_range_filter" />
+                            </div>
                         </div>
+                        <input type="hidden" name="client_id" class="client_id" value="<?php echo $data['client_id'] ?>" />
                     </form>                    
                     <div class="col-md-2">
-                        <a class="btn btn-primary addAppintmentBalance mt-1" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
+                        <a class="btn btn-primary addAppintmentBalance" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
                     </div>
                     <table class="dynamicTable tableTools table table-striped checkboxs">
                         <thead>
                             <tr class=" text-center">
-                                <th></th>
+                                <th><input type="checkbox" name="invoice_checkbox_all" class="invoice_checkbox_all" id="invoice_checkbox_all" value="all" /> </th>
                                 <th>Date</th>
                                 <th>Appointment Type</th>
                                 <th>Cost</th>
@@ -219,6 +221,15 @@
             } else {
                 alert('Please Select Date');
             }
+        });
+
+        $(document).on('click', '#invoice_checkbox_all', function() {
+            if($(this).is(':checked')){
+                $('#myTable').find('.invoice_checkbox').prop('checked', true);
+            } else {
+                $('#myTable').find('.invoice_checkbox').prop('checked', false);
+            }
+            
         });
 
         $(document).on('click', '#generateInvoice', function() {
