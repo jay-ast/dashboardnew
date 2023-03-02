@@ -2,6 +2,7 @@
 <script src='<?php echo base_url(); ?>assets/js/moment.min.js'></script>
 <link href="<?php echo base_url(); ?>assets/css/bootstrap-datetimepicker.css" rel="stylesheet" />
 <script src="<?php echo base_url(); ?>assets/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
 
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Account Details</h1>
@@ -18,7 +19,7 @@
         <div class="widget widget-inverse">
             <div class="widget-body padding-bottom-none">
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-4">
                         <?php
                         foreach ($data['appointment_type_balance_details'] as $dt) {
                         ?>
@@ -29,12 +30,22 @@
                         }
                         ?>
                     </div>
+                    <form method="get" action="<?= site_url("admin/patients/getAccountDetails")?>">                    
+                        <div class="col-md-6">
+                            <label>Select Date Range</label>
+                            <input type="hidden" name="client_id" class="client_id" value="<?php echo $data['client_id'] ?>" />
+                            <input type="date" name="start_date" class="start_date_filter" id="start_date_filter" />
+                            <input type="date" name="end_date" class="end_date_filter" id="end_date_filter" />
+                            <input type="submit" name="date_range_filter" class="btn btn-primary date_range_filter" value="Submit" id="date_range_filter" />
+                        </div>
+                    </form>                    
                     <div class="col-md-2">
                         <a class="btn btn-primary addAppintmentBalance mt-1" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
                     </div>
                     <table class="dynamicTable tableTools table table-striped checkboxs">
                         <thead>
                             <tr class=" text-center">
+                                <th></th>
                                 <th>Date</th>
                                 <th>Appointment Type</th>
                                 <th>Cost</th>
@@ -50,7 +61,8 @@
                                     $balance = $balance - $data->price;
                             ?>
                                     <tr class="gradeX" id="">
-                                        <td><?php echo $dt->schedule_date ? formatDate($dt->schedule_date) : formatDate($dt->updated_at) ?></td>
+                                        <td><input type="checkbox" name="invoice_checkbox" class="invoice_checkbox" id="invoice_checkbox" value="<?php echo $dt->client_wallet_transaction_id ?>" /> </td>
+                                        <td><?php echo formatDate($dt->created_at) ?></td>
                                         <td><?php echo $dt->appointment_name ?></td>
                                         <td><?php echo $dt->used_balanced ?></td>
                                         <td><?php echo formatDate($dt->updated_at) ?></td>
@@ -70,7 +82,9 @@
                             ?>
                         </tbody>
                     </table>
-
+                    <div class="col-md-2 pull-right">
+                        <a class="btn btn-warning generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,7 +100,7 @@
             </div>
 
             <div class="modal-body modelform">
-            <div class="error"></div>
+                <div class="error"></div>
                 <div class="form-body clearfix col-md-12">
                     <div class="row margin-top-10">
                         <div class="form-group col-md-6">
@@ -137,6 +151,8 @@
 
         var base_url = '<?php echo base_url(); ?>';
 
+        // $('input[name="daterange"]').daterangepicker();
+
         $('.input-daterange input').each(function() {
             $(this).datetimepicker({
                 format: 'DD-MM-YYYY'
@@ -151,32 +167,90 @@
 
         $(document).on('click', '#add_appointment_balance', function() {
             if ($('#addBalance').find('#appointment_type').val() && $('#addBalance').find('#appointment_balance').val()) {
-                if($('#addBalance').find('#appointment_balance').val() >= 0){
+                if ($('#addBalance').find('#appointment_balance').val() >= 0) {
                     $.ajax({
-                    type: 'POST',
-                    url: base_url + 'admin/patients/addAppointmentBalance',
-                    data: {
-                        client_id: $('#addBalance').find('#clientid').val(),
-                        appointment_type: $('#addBalance').find('#appointment_type').val(),
-                        appointment_balance: $('#addBalance').find('#appointment_balance').val(),
-                    },
-                    success: function(result) {
-                        $('#addBalance').modal('toggle');
-                        window.location.reload();
-                    },
-                    complete: function() {},
-                    error: function(data) {
-                        console.log(data);
-                    }
+                        type: 'POST',
+                        url: base_url + 'admin/patients/addAppointmentBalance',
+                        data: {
+                            client_id: $('#addBalance').find('#clientid').val(),
+                            appointment_type: $('#addBalance').find('#appointment_type').val(),
+                            appointment_balance: $('#addBalance').find('#appointment_balance').val(),
+                        },
+                        success: function(result) {
+                            $('#addBalance').modal('toggle');
+                            window.location.reload();
+                        },
+                        complete: function() {},
+                        error: function(data) {
+                            console.log(data);
+                        }
                     })
-                }else{
+                } else {
                     $('#addBalance').find('.error').html('Balance cannot be nagative.');
                     return false;
                 }
-                
+
             } else {
                 $('#addBalance').find('.error').html('Appointment type and balance field are require.');
                 return false;
+            }
+        });
+
+        $(document).on('click', '#date_range_filter', function() {
+            var client_id = $('#addAppintmentBalance').data('clientid');
+            if ($('#start_date_filter').val() && $('#end_date_filter').val()) {
+                if ($('#end_date_filter').val() > $('#start_date_filter').val()) {
+                    $.ajax({
+                        type: 'POST',
+                        url: base_url + 'admin/patients/getAccountDetails/' + client_id,
+                        data: {
+                            start_date: $('#start_date_filter').val(),
+                            end_date: $('#end_date_filter').val(),
+                        },
+                        success: function(result) {},
+                        complete: function() {},
+                        error: function(data) {
+                            console.log(data);
+                        }
+                    })
+                } else {
+                    alert('End date must be grater than Start date');
+                }
+            } else {
+                alert('Please Select Date');
+            }
+        });
+
+        $(document).on('click', '#generateInvoice', function() {
+
+            var invoice_id = [];
+            $.each($("input[name='invoice_checkbox']:checked"), function() {
+                invoice_id.push($(this).val())
+            });
+
+            if (invoice_id) {
+                window.location.href = base_url + 'admin/patients/generateInvoice?invoice_id=' + invoice_id.join();
+                // $.ajax({
+                //     type: 'POST',
+                //     url: base_url + 'admin/patients/generateInvoice',
+                //     data: {
+                //         invoice_id: invoice_id
+                //     },
+                //     success: function(response) {
+                //         var blob = new Blob([response]);
+                //         console.log(blob);
+                // var link = document.createElement('a');
+                // link.href = window.URL.createObjectURL(blob);
+                // link.download = "test.pdf";
+                // link.click();
+
+
+                //     },
+                //     complete: function() {},
+                //     error: function(data) {
+                //         console.log(data);
+                //     }
+                // })
             }
         });
 

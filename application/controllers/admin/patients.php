@@ -7,6 +7,7 @@ class Patients extends My_Controller
     {
 
         parent::__construct();
+        $this->load->library('pdf');
         // ini_set('display_errors',1);
         //var_dump($this->session->userdata('roleid'));exit;
         if ($this->session->userdata('roleid') != 2) { // not a tharapist
@@ -1349,31 +1350,22 @@ class Patients extends My_Controller
         echo json_encode(array('status' => true, 'data' => $result));
     }
 
-    public function getAccountDetails()
-    { 
-        $client_id = $_GET['client_id'];
+    public function getAccountDetails($client_id = '')
+    {        
+        // var_dump($_GET);die;
+        $client_id = $_GET['client_id'] ?? $client_id;        
         $data['page_title'] = 'Clients';
         $data['active_class'] = 'patient';
         $data['client_id'] = $client_id;
 
-        // $this->db->select('event_transaction.*, 
-        //                     events.id as events_id, 
-        //                     events.client_id,
-        //                     events.schedule_date, 
-        //                     appointment_type.id as appointment_type_id, 
-        //                     appointment_type.appointment_name,
-        //                     users.id, 
-        //                     users.firstname,
-        //                     users.lastname,
-        //                 ');
-        // $this->db->from('event_transaction');
-        // $this->db->join('events', 'events.id = event_transaction.event_id', 'left');
-        // $this->db->join('users', 'users.id = events.client_id', 'left');        
-        // $this->db->join('appointment_type', 'appointment_type.id = event_transaction.appointment_id', 'left');
-        // $this->db->where('event_transaction.client_id', $client_id);
-        // $this->db->where('event_transaction.payment_status', 'paid');
-
-        $this->db->select('client_wallet_transaction.*,
+        $this->db->select('client_wallet_transaction.id as client_wallet_transaction_id,
+                            client_wallet_transaction.client_id as client_wallet_transaction_client_id ,
+                            client_wallet_transaction.appointment_type_id as client_wallet_transaction_appointment_type_id,
+                            client_wallet_transaction.event_id as client_wallet_transaction_event_id,
+                            client_wallet_transaction.used_balanced,
+                            client_wallet_transaction.transsaction_type,
+                            client_wallet_transaction.created_at,
+                            client_wallet_transaction.updated_at,
                             events.id as events_id, 
                             events.client_id,
                             events.schedule_date,                             
@@ -1387,24 +1379,31 @@ class Patients extends My_Controller
         $this->db->join('users', 'users.id = client_wallet_transaction.client_id', 'left');        
         $this->db->join('events', 'events.id = client_wallet_transaction.event_id', 'left');
         $this->db->join('appointment_type', 'appointment_type.id = client_wallet_transaction.appointment_type_id', 'left');
-        $this->db->where('client_wallet_transaction.client_id', $client_id);
-        // $this->db->group_by('client_wallet_transaction.appointment_type_id');        
+        $this->db->where('client_wallet_transaction.client_id', $client_id);        
+        
+        if(isset($_GET['start_date']) && $_GET['start_date'] != "")
+        {            
+            $this->db->where('client_wallet_transaction.created_at >= ',  $_GET['start_date']);                    
+        }
+
+        if(isset($_GET['end_date']) && $_GET['end_date'] != "")
+        {            
+            $this->db->where('client_wallet_transaction.created_at <= ',  $_GET['end_date']);
+        }
+        
         $accountData = $this->db->get();
-        $data['accountData'] = $accountData->result();
+        $data['accountData'] = $accountData->result();        
         $this->db->select('client_balance_summary.*,appointment_type.id as appointment_type_id,appointment_type.appointment_name');
         $this->db->from('client_balance_summary');
         $this->db->join('appointment_type', 'appointment_type.id = client_balance_summary.appointment_type_id');
-        $this->db->where('client_balance_summary.client_id', $client_id);
+        $this->db->where('client_balance_summary.client_id', $client_id);        
         $details = $this->db->get();
         $data['appointment_type_balance_details'] = $details->result();
         
-
         $appointment_types = "SELECT * FROM appointment_type";
         $result = $this->db->query($appointment_types)->result();	
 		$data['appointment_type'] = $result;        
-
         $data['data'] = $data;
-        // $this->load->view('admin/panel/account_details', ['data' => $data]);
         $this->load->view('admin/panel/account_details', $data);
     }
 
@@ -1431,5 +1430,23 @@ class Patients extends My_Controller
             $query = "INSERT INTO client_wallet_transaction(client_id, appointment_type_id, used_balanced, transsaction_type) VALUES (?,?,?,?)";
             $this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $_POST['appointment_balance'], 'credit'));
         }
+    }
+
+    public function generateInvoice()
+    {
+        $data = [];
+        $id_post = explode(',', $_GET['invoice_id']);
+        foreach($id_post as $ids){            
+            $this->db->select('client_wallet_transaction.*, appointment_type.id as appointment_type_id, appointment_type.appointment_name');
+            $this->db->from('client_wallet_transaction');
+            $this->db->join('appointment_type', 'appointment_type.id = client_wallet_transaction.appointment_type_id', 'left');
+            $this->db->where('client_wallet_transaction.id', $ids);
+            $sql = $this->db->get();
+            $sql = $sql->result();
+            $data[] = $sql[0];
+        }
+        
+        $html = $this->load->view('/admin/panel/viewPdfHtml', ['data' => $data], true);
+        $this->pdf->createPDF($html, 'mypdf', true);
     }
 }
