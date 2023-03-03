@@ -13,7 +13,7 @@ class Pdf
             $dompdf->loadHtml($html);
             $dompdf->setPaper($paper, $orientation);
             $dompdf->render();  
-            $dompdf->stream();
+            $dompdf->stream($filename);
         } catch (\Exception $e) {
             die($e->getMessage());
         }

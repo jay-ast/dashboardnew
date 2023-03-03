@@ -1447,6 +1447,7 @@ class Patients extends My_Controller
         }
         
         $html = $this->load->view('/admin/panel/viewPdfHtml', ['data' => $data], true);
-        $this->pdf->createPDF($html, 'mypdf', true);
+        $filename = "Invoice-". time();
+        $this->pdf->createPDF($html, $filename, true);
     }
 }

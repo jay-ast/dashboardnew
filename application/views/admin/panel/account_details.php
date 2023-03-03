@@ -31,7 +31,7 @@
                         foreach ($data['appointment_type_balance_details'] as $dt) {
                         ?>
                             <div class="col-md-2">
-                                <div class="card">
+                                <div class="card mb-1">
                                     <div class="card-body border bg-info py-2">
                                         <div class="text-center">
                                             <h4><?php echo $dt->appointment_name; ?></h4>
@@ -69,13 +69,15 @@
                                 <th><input type="checkbox" name="invoice_checkbox_all" class="invoice_checkbox_all" id="invoice_checkbox_all" value="all" /> </th>
                                 <th>Date</th>
                                 <th>Appointment Type</th>
-                                <th>Cost</th>
+                                <!-- <th>Cost</th> -->
                                 <th>Payment Applied</th>
-                                <th>Balance Cr/Dr</th>
+                                <th>Balance Credit</th>
+                                <th>Balance Debit</th>
                             </tr>
                         </thead>
                         <tbody id="myTable">
                             <?php
+                            $symbol = $this->config->item('currency_symbol');
                             $amt_details = [];
                             if (!empty($data['accountData'])) {
                                 foreach ($data['accountData'] as $dt) {
@@ -85,13 +87,15 @@
                                         <td><input type="checkbox" name="invoice_checkbox" class="invoice_checkbox" id="invoice_checkbox" value="<?php echo $dt->client_wallet_transaction_id ?>" /> </td>
                                         <td><?php echo formatDate($dt->created_at) ?></td>
                                         <td><?php echo $dt->appointment_name ?></td>
-                                        <td><?php echo $dt->used_balanced ?></td>
+                                        <!-- <td><?php // echo number_format($dt->used_balanced, 2, '.', ',') ?></td> -->
                                         <td><?php echo formatDate($dt->updated_at) ?></td>
                                         <?php
                                         if ($dt->transsaction_type == 'debit') {
-                                            echo "<td style='color:red'>$dt->used_balanced</td>";
+                                            echo "<td> ---- </td>";
+                                            echo "<td style='color:red'>" . $symbol .number_format($dt->used_balanced, 2, '.', ',')."</td>";
                                         } else {
-                                            echo "<td style='color:green'>$dt->used_balanced</td>";
+                                            echo "<td style='color:green'>". $symbol . number_format($dt->used_balanced, 2, '.', ',')."</td>";
+                                            echo "<td> ---- </td>";
                                         }
                                         ?>
                                     </tr>
