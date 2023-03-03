@@ -73,7 +73,7 @@
                                                 <?php echo $patient_name; ?>
                                             </a>
                                         </td> -->
-                                        <td><?php echo $userdatalist['email'] . " (" . $userdatalist['password'] . ")"; ?></td>
+                                        <td><?php echo $userdatalist['email']; ?></td>
                                         <td><?php echo $userdatalist['phone']; ?></td>
                                         <td class="center">
 
@@ -778,7 +778,7 @@
         $("#nameSearch").keyup(function() {
             $.ajax({
                 type: 'POST',
-                url: '/admin/patients/index_search',
+                url:  base_url + 'admin/patients/index_search',
                 data: {
                     fullname: $("#nameSearch").val(),
                     email: $("#emailSearch").val()
@@ -796,34 +796,39 @@
                     })
 
 
-                    patients.forEach(function(patient) {
-                        $("#myTable").append(`<tr class="gradeX testing" id="patient-` + patient.id + `">      
+                    if(patients){
+                        patients.forEach(function(patient) {
+                        $("#myTable").append(`
+                            <tr class="gradeX testing" id="patient-` + patient.id + `">
+                                <td>
+                                    <a data-toggle="modal" href="#clientPortal" data-patientid="` + patient.id + `" class="clientPortalDetails">` + patient.myfullname + `</a>  
+                                </td>
+                                <td>` + patient.email + `</td>
+                                <td>` + patient.phone + `</td>                                       
+                                <td class="center">                                        	                        
+	                                <a href="mailto:` + patient.email + `?Subject=Your%20Video%20Routine%20From%20Perfect%20Forms&body=To%20view%20your%20videos%3A%0A%0A1-%20Download%20our%20Perfect%20Forms%20app%20from%20App%20Store(IOS)%3A%20<?php echo APP_ITUNES_LINK ?>%20or%0A2-%20Download%20our%20Perfect%20Forms%20app%20from%20Google%20Play%20Store(Android)%3A%20<?php echo APP_PLAYSTORE_LINK ?>%20%0A3-%20Log%20into%20<?php echo APP_WEBAPP_LINK ?>%20from%20any%20device%20or%20computer.%0A%0AYour%20username%20and%20password%20are%3A%0AUsername%3A%20` + patient.email + `%0APassword%3A%20` + patient.password + `" target="_top">		                                        
+                                    <i class="fa fa-envelope" data-toggle="tooltip" title="Send e-mail"></i></a>  
+                    
+                                    <a class="deleteBtn" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `"data-action="delete" data-toggle="modal" href="#deleteWarning" >
+                                    <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
 
-                                        <td><a data-toggle="modal" href="#clientPortal" 
-                                               data-patientid="` + patient.id + `"                                                           
-                                               class="clientPortalDetails">
-                                                   ` + patient.myfullname + `
-                                            </a>  
-                                        </td>
-                                        <td>` + patient.logininformation + `</td>
-                                        <td>` + patient.phone + `</td>                                       
-                                        <td class="center">
-                                         
-	                                            
-	                                             <a href="mailto:` + patient.email + `?Subject=Your%20Video%20Routine%20From%20Perfect%20Forms&body=To%20view%20your%20videos%3A%0A%0A1-%20Download%20our%20Perfect%20Forms%20app%20from%20App%20Store(IOS)%3A%20<?php echo APP_ITUNES_LINK ?>%20or%0A2-%20Download%20our%20Perfect%20Forms%20app%20from%20Google%20Play%20Store(Android)%3A%20<?php echo APP_PLAYSTORE_LINK ?>%20%0A3-%20Log%20into%20<?php echo APP_WEBAPP_LINK ?>%20from%20any%20device%20or%20computer.%0A%0AYour%20username%20and%20password%20are%3A%0AUsername%3A%20` + patient.email + `%0APassword%3A%20` + patient.password + `" target="_top">
-		                                             
-	                                            
-	                                            
-	                                            
-	                                            
-                                                <i class="fa fa-envelope" data-toggle="tooltip" title="Send e-mail"></i></a>  
-                                            <a class="deleteBtn" data-patientid="` + patient.id + `" 
-                                               data-patientname="` + patient.myfullname + `"
-                                               data-action="delete" data-toggle="modal" href="#deleteWarning" >
-                                                <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a></td>
-                                    </tr>`)
-                    });
+                                    <a class="scheduleDetails" href="#schedulePortal" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="schedule" data-toggle="modal">
+                                    <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>                                            
 
+                                    <a class="" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="notes" data-toggle="modal" id="noteDetails" href="#notePortal">
+                                    <i class="glyphicon glyphicon-list-alt" data-toggle="tooltip" title="Notes"></i></a>                                            
+
+                                    <a class="routineDetails" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="routine" data-toggle="modal" id="routineDetails" href="#routinePortal">
+                                    <i class="glyphicon glyphicon-tasks" data-toggle="tooltip" title="Routine"></i></a>
+
+                                    <a class="accountDetails" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="account" data-toggle="modal" id="accountDetails" href="<?php echo base_url('admin/patients/getAccountDetails?client_id=');?>`+patient.id+`">
+                                    <i class="glyphicon glyphicon-book" data-toggle="tooltip" title="Account"></i></a>
+                                </td>
+                            </tr>`)
+                        });
+                    }else{
+                        $("#myTable").append(`<tr class="gradeX testing"><td class="center">No Record Found</td></tr>`);
+                    }                
                 }
             });
         })
