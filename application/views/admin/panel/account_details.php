@@ -18,20 +18,39 @@
         </div>
         <div class="widget widget-inverse">
             <div class="widget-body padding-bottom-none">
+                <?php
+                if (!empty($data['appointment_type_balance_details'])) {
+                ?>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-12">
+                        <p>Existing Balance with the client by Appointment Type: </p>    
+                    </div>
+                </div>
+                    <div class="row">
                         <?php
                         foreach ($data['appointment_type_balance_details'] as $dt) {
                         ?>
-                            <div class="p-3 border bg-light">
-                                <h4><?php echo $dt->appointment_name . ': ' . $dt->appointment_balance ?></h4>
+                            <div class="col-md-2">
+                                <div class="card">
+                                    <div class="card-body border bg-info py-2">
+                                        <div class="text-center">
+                                            <h4><?php echo $dt->appointment_name; ?></h4>
+                                            <h2><?php echo $dt->appointment_balance; ?></h2>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         <?php
                         }
                         ?>
                     </div>
-                    <form method="get" action="<?= site_url("admin/patients/getAccountDetails")?>" class="col-md-6">                    
-                        <div class="col-md-12">
+                <?php
+                }
+                ?>
+                <hr>
+                <div class="row">
+                    <form method="get" action="<?= site_url("admin/patients/getAccountDetails") ?>" class="col-md-6">
+                        <div class="col-md-12 mb-2">
                             <div class="row" style="display: flex; align-items: center; gap:5px;">
                                 <label>Select Date Range</label>
                                 <input style="width: 30%; " type="date" name="start_date" class="form-control start_date_filter" id="start_date_filter" />
@@ -40,7 +59,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="client_id" class="client_id" value="<?php echo $data['client_id'] ?>" />
-                    </form>                    
+                    </form>
                     <div class="col-md-2">
                         <a class="btn btn-primary addAppintmentBalance" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
                     </div>
@@ -224,12 +243,12 @@
         });
 
         $(document).on('click', '#invoice_checkbox_all', function() {
-            if($(this).is(':checked')){
+            if ($(this).is(':checked')) {
                 $('#myTable').find('.invoice_checkbox').prop('checked', true);
             } else {
                 $('#myTable').find('.invoice_checkbox').prop('checked', false);
             }
-            
+
         });
 
         $(document).on('click', '#generateInvoice', function() {
