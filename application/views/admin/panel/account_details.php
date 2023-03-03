@@ -104,7 +104,7 @@
                         </tbody>
                     </table>
                     <div class="col-md-2 pull-right">
-                        <a class="btn btn-warning generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
+                        <a class="btn btn-primary generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
                     </div>
                 </div>
             </div>
