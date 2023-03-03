@@ -92,11 +92,11 @@
                         <td><?php echo formatDate($dt->updated_at) ?></td>
                         <?php
                         if ($dt->transsaction_type == 'debit') {
-                            echo "<td> ---- </td>";
+                            echo "<td></td>";
                             echo "<td style='color:red'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
                         } else {
                             echo "<td style='color:green'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
-                            echo "<td> ---- </td>";
+                            echo "<td></td>";
                         }
                         ?>
                     </tr>
