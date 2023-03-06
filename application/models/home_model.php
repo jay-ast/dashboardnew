@@ -191,7 +191,7 @@ class Home_Model extends CI_Model
 		$query = "UPDATE event_transaction SET client_id = ?, appointment_id = ?, provider_id = ?, price = ? WHERE event_id = ?";
 		$this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price'], $_POST['id']));
 		// $subject = 'Your scheduled meeting has been updated on'. ' ' . $schedule_date. '.';
-		$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $schedule_date . '.';
+		$subject = 'Your appointment has been scheduled on' . ' ' . $schedule_date . '.';
 
 		if ($_POST['notify_mail'] == 'true') {
 			$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
@@ -274,11 +274,19 @@ class Home_Model extends CI_Model
 	        $query = "SELECT * FROM `users` WHERE `id` = '" . $c_ids . "'";
 			$data = $this->db->query($query)->result();
 			$msg_data = null;
+
+			$query = "SELECT * FROM `appointment_type` WHERE `id` = '" . $_POST['appointment_type'] . "' ";
+			$appointment_type_data = $this->db->query($query)->result();
+			$appointment_name = '';
+			foreach($appointment_type_data as $appointment){
+				$appointment_name = $appointment->appointment_name;				
+			}
             
             foreach($data as $client_data){
                 $client_msg_data = [];
 				$client_msg_data['details'] = $details;
 				$client_msg_data['client_data'] = $client_data;
+				$client_msg_data['appointmentment_type'] = $appointment_name;
 				$msg_data = $this->load->view('emails/english_mail_templete', ['client_msg_data' => $client_msg_data], true);
 				$from_email = $this->session->userdata('email');
 				$to_email = $client_data->email;

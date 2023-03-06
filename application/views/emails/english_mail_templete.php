@@ -1,7 +1,7 @@
 <div>
     <h4>Dear <?php echo $client_msg_data['client_data']->firstname . ' ' . $client_msg_data['client_data']->lastname . ',' ?></h4>
     <br/>
-    <p> Your <?php echo ' '. ucwords(str_replace('_', ' ',$client_msg_data['details']['appointment_type'])). ' ' ?>
+    <p> Your <?php echo ' '. ucwords(str_replace('_', ' ',$client_msg_data['appointmentment_type'])). ' ' ?>
         appointment is scheduled with <?php echo ' ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') ?>
         <br/><br/>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Appointment Date : <?php echo $client_msg_data['details']['schedule_date'] ?>
