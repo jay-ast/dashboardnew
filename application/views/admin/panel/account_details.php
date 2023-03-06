@@ -273,9 +273,9 @@
             $.each($("input[name='invoice_checkbox']:checked"), function() {
                 invoice_id.push($(this).val())
             });
-            
+
             if (invoice_id) {
-                window.location.href = base_url + 'admin/patients/generateExcel?invoice_id=' + invoice_id.join();                
+                window.location.href = base_url + 'admin/patients/createXLS?invoice_id=' + invoice_id.join();                
             }
         });
     });

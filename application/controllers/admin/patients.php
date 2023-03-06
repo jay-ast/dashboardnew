@@ -19,6 +19,9 @@ class Patients extends My_Controller
                 redirect('/admin/companies');
             }
         }
+
+        // ini_set('display_errors', 1);
+        // error_reporting(E_ALL);
     }
 
     public function index()
@@ -1449,5 +1452,52 @@ class Patients extends My_Controller
         $html = $this->load->view('/admin/panel/viewPdfHtml', ['data' => $data], true);
         $filename = "Invoice-". time();
         $this->pdf->createPDF($html, $filename, true);
+    }
+
+    public function createXLS() 
+    {  
+        
+        $data = [];
+        $id_post =  explode(',', $_GET['invoice_id']);
+
+        foreach($id_post as $ids){            
+            $this->db->select('client_wallet_transaction.*, appointment_type.id as appointment_type_id, appointment_type.appointment_name');
+            $this->db->from('client_wallet_transaction');
+            $this->db->join('appointment_type', 'appointment_type.id = client_wallet_transaction.appointment_type_id', 'left');
+            $this->db->where('client_wallet_transaction.id', $ids);
+            $sql = $this->db->get();
+            $sql = $sql->result();
+            $data[] = $sql[0];
+        }
+        
+        $this->load->library('excel');
+        $excel = new PHPExcel();                
+        $excel->setActiveSheetIndex(0);        
+        $excel->getActiveSheet()->SetCellValue('A1', 'Date of Service');
+        $excel->getActiveSheet()->SetCellValue('B1', 'Type of Service');
+        $excel->getActiveSheet()->SetCellValue('C1', 'Payments Received');
+        $excel->getActiveSheet()->SetCellValue('D1', 'Credit');
+        $excel->getActiveSheet()->SetCellValue('E1', 'Debit');
+
+        $rowCount = 2;
+        $symbol = '£';
+        foreach ($data as $val) 
+        {
+            $val = (array) $val;
+            $amount = $symbol.''.$val['used_balanced'];
+            $excel->getActiveSheet()->SetCellValue('A' . $rowCount, $val['created_at']);
+            $excel->getActiveSheet()->SetCellValue('B' . $rowCount, $val['appointment_name']);
+            $excel->getActiveSheet()->SetCellValue('C' . $rowCount, $amount);
+            $excel->getActiveSheet()->SetCellValue('D' . $rowCount, $val['transsaction_type'] == "credit" ? $val['transsaction_type'] : " ");
+            $excel->getActiveSheet()->SetCellValue('E' . $rowCount, $val['transsaction_type'] == "debit" ? $val['transsaction_type'] : " ");
+            $rowCount++;
+        }
+
+        $filename = 'Invoice-'.time().'.xlsx';
+        header('Content-Type: application/vnd.ms-excel'); 
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0'); 
+        $objWriter = PHPExcel_IOFactory::createWriter($excel, 'CSV');  
+        $objWriter->save('php://output');
     }
 }
