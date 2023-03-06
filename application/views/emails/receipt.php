@@ -1,7 +1,3 @@
-<?php 
-    echo "<pre>";
-    print_r($result);die;
-?>
 <html>
 <style>
     @font-face {
