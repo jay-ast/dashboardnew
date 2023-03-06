@@ -93,9 +93,9 @@
                         <?php
                         if ($dt->transsaction_type == 'debit') {
                             echo "<td></td>";
-                            echo "<td style='color:red'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
+                            echo "<td style='color:red; text-align:right'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
                         } else {
-                            echo "<td style='color:green'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
+                            echo "<td style='color:green; text-align:right'>" . $symbol . number_format($dt->used_balanced, 2, '.', ',') . "</td>";
                             echo "<td></td>";
                         }
                         ?>

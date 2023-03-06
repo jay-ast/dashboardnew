@@ -107,8 +107,9 @@
                             ?>
                         </tbody>
                     </table>
-                    <div class="col-md-2 pull-right">
+                    <div class="col-md-3 pull-right">
                         <a class="btn btn-primary generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
+                        <a class="btn btn-primary generateExcel my-1" id="generateExcel">Generate Excel</a>
                     </div>
                 </div>
             </div>
@@ -263,31 +264,20 @@
             });
 
             if (invoice_id) {
-                window.location.href = base_url + 'admin/patients/generateInvoice?invoice_id=' + invoice_id.join();
-                // $.ajax({
-                //     type: 'POST',
-                //     url: base_url + 'admin/patients/generateInvoice',
-                //     data: {
-                //         invoice_id: invoice_id
-                //     },
-                //     success: function(response) {
-                //         var blob = new Blob([response]);
-                //         console.log(blob);
-                // var link = document.createElement('a');
-                // link.href = window.URL.createObjectURL(blob);
-                // link.download = "test.pdf";
-                // link.click();
-
-
-                //     },
-                //     complete: function() {},
-                //     error: function(data) {
-                //         console.log(data);
-                //     }
-                // })
+                window.location.href = base_url + 'admin/patients/generateInvoice?invoice_id=' + invoice_id.join();                
             }
         });
 
+        $(document).on('click', '#generateExcel', function() {
+            var invoice_id = [];
+            $.each($("input[name='invoice_checkbox']:checked"), function() {
+                invoice_id.push($(this).val())
+            });
+            
+            if (invoice_id) {
+                window.location.href = base_url + 'admin/patients/generateExcel?invoice_id=' + invoice_id.join();                
+            }
+        });
     });
 </script>
 <style type="text/css">
