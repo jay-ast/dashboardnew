@@ -216,8 +216,8 @@
                         </div>
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="brief_note">Notify With Mail</label>
-                            <div class="col-md-4">
-                                <input type="checkbox" class="notify_mail" id="notify_mail" name="notify_mail" />
+                            <div class="col-md-4 notify_selected_mail">
+                                <!-- <input type="checkbox" class="notify_mail" id="notify_mail" name="notify_mail" /> -->
                             </div>
                         </div>
                     </form>
@@ -409,6 +409,17 @@
             });
         });
 
+        $(".clientSelect").change(function (item) {
+            var data = $(this).find('#client_id').val();
+            $('.notify_selected_mail').html('');
+            if(data){
+                $.each(data, function (index, val) {
+                    var selectedClientData = $('option[value="'+val+'"]').data();
+                    var name_cust = selectedClientData['clientname'];
+                $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + val + "'/>");                
+            })
+            }            
+        });
     });
 </script>
 <style type="text/css">

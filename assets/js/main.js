@@ -364,6 +364,12 @@ $(function () {
 
     // Handle Click on Add Button
     $('.modal').on('click', '#add-event', function (e) {
+
+        var nofity_client = [];
+        $.each($("input[name='notify_client_mail']:checked"), function(){
+                nofity_client.push($(this).val());
+        });
+
         var client_id = [];
         if(!Array.isArray($('#client_id').val())){
             client_id.push($('#client_id').val());
@@ -385,7 +391,7 @@ $(function () {
                             appointment_type: $('#appointment_type').val(),
                             repeating_weeks: $('#repeating_weeks').val(),
                             brief_note: $('#brief_note').val(),
-                            notify_mail: $('#notify_mail').prop('checked'),
+                            notify_mail: nofity_client,
                             meeting_duration: $('#meeting_duration_hours').val() + ':' + $('#meeting_duration_minutes').val(),
                             recurrence: $('#recurrence').val(),
                             price: $('#appointment_price').val(),
@@ -615,7 +621,7 @@ $(function () {
                 // $('#client_id').append("<option value=''>Select Client</option>");
                 $.each(clientData, function (key, value) {
                     $.each(value, function (k, v) {
-                        $('#client_id').append("<option value='" + v.id + "'>" + v.firstname + ' ' + v.lastname + "</option>");
+                        $('#client_id').append("<option value='" + v.id + "' data-clientname='" + v.firstname + ' ' + v.lastname + "'>" + v.firstname + ' ' + v.lastname + "</option>");
                     });
                 });
             },

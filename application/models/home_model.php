@@ -150,7 +150,7 @@ class Home_Model extends CI_Model
 		// Loop through all the selected-clients, and store the event information and pricing-details				
 		$event_parent_ids = [];
 		$parent_event_id = '';
-			foreach ($_POST['client_id'] as $client_id) {				
+			foreach ($_POST['client_id'] as $client_id) {
 				$event_dates = getAppointmentDates($_POST['schedule_date'], $_POST['repeating_weeks'], $_POST['recurrence']);					
 				foreach ($event_dates as $event_date) {
 					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)";
@@ -162,14 +162,14 @@ class Home_Model extends CI_Model
 					$query = "INSERT INTO event_transaction (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
 					$this->db->query($query, array($parent_event_id, $client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $payment_status));
 					$subject = 'Your' . ' ' . ucwords(str_replace('_', ' ', $_POST['appointment_type'])) . ' appointment has been scheduled on' . ' ' . $event_date . '.';
-					if ($_POST['notify_mail'] == 'true') {
-						$this->notifyWithMail($client_id, $_POST, $subject);
-					}
 				}
 			}
+			if ($_POST['notify_mail']) {
+			    $this->notifyWithMail($_POST['notify_mail'], $_POST, $subject);
+			}
 			foreach ($event_parent_ids as $event_date => $parent_event_id) {
-				$sql = "UPDATE events SET parent_event_id = ? WHERE schedule_date = ?";
-				$this->db->query($sql, array($parent_event_id, formatDate($event_date, "Y-m-d")));
+				$sql = "UPDATE events SET parent_event_id = ? WHERE schedule_date = ? AND appointment_type = ?";
+				$this->db->query($sql, array($parent_event_id, formatDate($event_date, "Y-m-d"), $_POST['appointment_type']));
 			}
 		return ($this->db->affected_rows() != 1) ? false : true;
 	}
@@ -268,76 +268,28 @@ class Home_Model extends CI_Model
 		}
 	}
 
-	public function notifyWithMail($client_id = '', $details = '', $subject = '')
-	{
-		$query = "SELECT * FROM `users` WHERE `id` = '" . $client_id . "'";
-		$data = $this->db->query($query)->result();
-		$msg_data = null;
-
-		foreach ($data as $client_data) {
-			$client_msg_data = [];
-			$client_msg_data['details'] = $details;
-			$client_msg_data['client_data'] = $client_data;
-			$msg_data = $this->load->view('emails/english_mail_templete', ['client_msg_data' => $client_msg_data], true);
-
-			// Regular Language Mail Templete
-			// $msg_data .= 'Dear ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
-			// $msg_data .= '<br/>';
-			// $msg_data .= 'Your ' . ucwords(str_replace('_', ' ', $details['appointment_type'])) . ' appointment is scheduled with ' 
-			// 			. $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') . '<br/><br/>';
-			// // ' on ' . $details['schedule_date'] . ' from ' . $details['start_time'] . ' to ' . $details['end_time'] . '.' . '<br/><br/>';
-			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Appointment date : ' . $details['schedule_date'] . '<br/>';
-			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time : ' . $details['start_time'] . '<br/>';
-
-			// $msg_data .= '<p>Please contact us at for appointment changes or cancellations 24 hours in advance to avoid being charged the cost of the session.</p>';			
-
-			// $msg_data .= '<p>In California: 704 Mission Avenue, San Rafael CA 94901.<br/>
-			// 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;415-924-2228 or <a href="mailto:synergy@synergyptpilates.com">synergy@synergyptpilates.com</a><br/>
-
-			//                          Switzerland: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
-			// 						 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+41 (0) 78 422 71 25 or <a href="mailto:zeina@synergyptpilates.com">zeina@synergyptpilates.com</a><br/><br/>
-			//                     </p>';
-			// $msg_data .= ' <br/>Thanks you and we look forward to seeing you very soon! <br/><br/>';
-
-			// Italian Mail Templete
-			// $msg_data .= ' In health and strength, <br/>
-			//                        Synergy+ team... <br/><br/>';
-
-			// $msg_data .= '<br/><br/>Gentile ' . $client_data->firstname . ' ' . $client_data->lastname . ", <br/>";
-			// $msg_data .= '<br/>';
-			// $msg_data .= 'Il suo appuntamento di ' . ucwords(str_replace('_', ' ', $details['appointment_type'])) . ' é confermato con ' 
-			// 								   . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname') . '<br/><br/>';
-
-			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Appointment date : ' . $details['schedule_date'] . '<br/>';
-			// $msg_data .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time : ' . $details['start_time'] . '<br/>';
-
-			// $msg_data .= '<p>Per favore ci contatti con 24 ore di anticipo per eventuali cambiamenti o per disdire l’appuntamento senza incorrere in pagamenti.</p>';
-			// 					   // $msg_data .= '<br/>';
-
-			// $msg_data .='<p>
-			// 				Svizzera: Golf Gerry Losone, via aloe Gerry 5, 6616 Losone <br/>
-			// 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numero di telefono/messaggio/WhatsApp: +41 (0) 78 422 71 25 or 
-			// 					Email : <a href="mailto:zeina@synergyptpilates.com">zeina@synergyptpilates.com</a><br/><br/>
-			// 				In California: 704 Mission Avenue, San Rafael CA 94901.<br/>
-			// 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone/text/WhatsApp: 415.924.2228 or Email :<a href="mailto:synergy@synergyptpilates.com">synergy@synergyptpilates.com</a><br/>
-			// 			</p>';
-			// $msg_data .= '<br/>Grazie e siamo lieti di vedervi presto!/ Vi aspettiamo presto! <br/><br/>';
-			// $msg_data .= 'In salute e forza, <br/>
-			// 			Zeina e Synergy+';
-
-			// }
-
-			$from_email = $this->session->userdata('email');
-			$to_email = $client_data->email;
-			$to = $to_email;
-			$body = $msg_data;
-			// Always set content-type when sending HTML email
-			$headers = "MIME-Version: 1.0" . "\r\n";
-			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-			// More headers
-			$headers .= 'From: <' . $from_email . '>' . "\r\n";
-			$result = my_email_send($to, $subject, "event", array('msg_data' => $body), 'support@perfect-forms.net');
-			return $result;
-		}
+	public function notifyWithMail($client_id = [], $details = '', $subject = '')
+	{	
+	    foreach($client_id as $c_ids){
+	        $query = "SELECT * FROM `users` WHERE `id` = '" . $c_ids . "'";
+			$data = $this->db->query($query)->result();
+			$msg_data = null;
+            
+            foreach($data as $client_data){
+                $client_msg_data = [];
+				$client_msg_data['details'] = $details;
+				$client_msg_data['client_data'] = $client_data;
+				$msg_data = $this->load->view('emails/english_mail_templete', ['client_msg_data' => $client_msg_data], true);
+				$from_email = $this->session->userdata('email');
+				$to_email = $client_data->email;
+				$to = $to_email;
+				$body = $msg_data;
+				var_dump($from_email, $to, $body);
+				$headers = "MIME-Version: 1.0" . "\r\n";
+				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				$headers .= 'From: <' . $from_email . '>' . "\r\n";
+				$result = my_email_send($to, $subject, "event", array('msg_data' => $body), 'support@perfect-forms.net');
+            }
+	    }
 	}
 }
