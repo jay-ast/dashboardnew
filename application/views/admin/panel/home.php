@@ -164,7 +164,7 @@
                                     <?php
                                     foreach ($appointment_type as $types) {
                                     ?>
-                                        <option value="<?php echo $types->id ?>"><?php echo $types->appointment_name ?></option>
+                                        <option value="<?php echo $types->id ?>" data-appointment_type="<?php echo $types->appointment_name ?>"><?php echo $types->appointment_name ?></option>
                                     <?php
                                     }
                                     ?>

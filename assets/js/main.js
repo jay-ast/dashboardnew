@@ -389,6 +389,7 @@ $(function () {
                             start_time: $('#start_time').val(),
                             end_time: $('#end_time').val(),
                             appointment_type: $('#appointment_type').val(),
+                            appointment_name: $('#appointment_type').data('appointment_name'),
                             repeating_weeks: $('#repeating_weeks').val(),
                             brief_note: $('#brief_note').val(),
                             notify_mail: nofity_client,
