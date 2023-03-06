@@ -410,15 +410,22 @@
         });
 
         $(".clientSelect").change(function (item) {
-            var data = $(this).find('#client_id').val();
+            var data = $(this).find('#client_id').val();            
             $('.notify_selected_mail').html('');
             if(data){
-                $.each(data, function (index, val) {
-                    var selectedClientData = $('option[value="'+val+'"]').data();
+                if(Array.isArray(data))
+                {
+                    $.each(data, function (index, val) {
+                        var selectedClientData = $('option[value="'+val+'"]').data();
+                        var name_cust = selectedClientData['clientname'];
+                        $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + val + "'/>");                
+                    })
+                }else{
+                    var selectedClientData = $('option[value="'+data+'"]').data();
                     var name_cust = selectedClientData['clientname'];
-                $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + val + "'/>");                
-            })
-            }            
+                    $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + data + "'/>"); 
+                }
+            }
         });
     });
 </script>
