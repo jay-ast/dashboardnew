@@ -57,13 +57,13 @@
                                 <label>Select Date Range</label>
                                 <input style="width: 30%; " type="date" name="start_date" class="form-control start_date_filter" id="start_date_filter" />
                                 <input style="width: 30%; " type="date" name="end_date" class="form-control end_date_filter" id="end_date_filter" />
-                                <input type="submit" name="date_range_filter" class="btn btn-primary date_range_filter" value="Submit" id="date_range_filter" />
+                                <input type="submit" name="date_range_filter" class="btn btn-design date_range_filter" value="Submit" id="date_range_filter" />
                             </div>
                         </div>
                         <input type="hidden" name="client_id" class="client_id" value="<?php echo $data['client_id'] ?>" />
                     </form>
                     <div class="col-md-2">
-                        <a class="btn btn-primary addAppintmentBalance" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
+                        <a class="btn btn-design addAppintmentBalance" id="addAppintmentBalance" data-toggle="modal" href="#addBalance" data-clientid="<?php echo $data['client_id'] ?>">Add Balance</a>
                     </div>
                     <table class="dynamicTable tableTools table table-striped checkboxs">
                         <thead>
@@ -109,8 +109,8 @@
                         </tbody>
                     </table>
                     <div class="col-md-3 pull-right">
-                        <a class="btn btn-primary generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
-                        <a class="btn btn-primary generateExcel my-1" id="generateExcel">Generate Excel</a>
+                        <a class="btn btn-design generateInvoice my-1" id="generateInvoice">Generate Invoice</a>
+                        <a class="btn btn-design generateExcel my-1" id="generateExcel">Generate Excel</a>
                     </div>
                 </div>
             </div>
@@ -312,13 +312,13 @@
         opacity: 1;
     }
 
-    .btn-primary {
+    .btn-design {
         background: #0395E2;
         border-color: #0395E2;
         color: #fff;
     }
 
-    .btn-primary:hover {
+    .btn-design:hover {
         background: none;
         color: black;
         border-color: black;
