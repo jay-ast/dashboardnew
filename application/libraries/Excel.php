@@ -9,7 +9,10 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
  *  ======================================= 
  */
 
-require_once APPPATH . "../../third_party/PHPExcel/Classes/PHPExcel.php";
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// echo APPPATH;
+require_once __DIR__ . "../../third_party/PHPExcel/Classes/PHPExcel.php";
 
 class Excel extends PHPExcel {
     public function __construct() {
