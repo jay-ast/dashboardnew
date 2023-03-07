@@ -337,15 +337,14 @@ class Appointment extends My_Controller
         $from_email = $this->session->userdata('email');
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";			            
-        $headers .= 'From: <' . $from_email . '>' . "\r\n";
-
+        $headers .= 'From: <' . $from_email . '>' . "\r\n";        
         foreach ($_POST['event_data'] as $event_data) {            
             $logged_user_id = $this->session->userdata('userid');
             $data = "SELECT * from event_transaction WHERE event_id = '" . $event_data['event_id'] . "' ";
-            $result = $this->db->query($data)->result();
+            $result = $this->db->query($data)->result();            
             if (!empty($result)) {
                 foreach($result as $res){
-                    if($event_data['use_wallet'] == "true"){                        
+                    if($event_data['use_wallet'] == "true"){
                         $this->db->select('client_balance_summary.*');
                         $this->db->from('client_balance_summary');
                         $this->db->where('client_id', $event_data['client_id']);
@@ -364,6 +363,18 @@ class Appointment extends My_Controller
 
                                 $query = "INSERT INTO client_wallet_transaction(client_id, appointment_type_id, event_id,used_balanced, transsaction_type) VALUES (?,?,?,?,?)";
                                 $this->db->query($query, array($event_data['client_id'],$event_data['appointment_type_id'],$event_data['event_id'],$res->price, 'debit'));
+
+                                $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
+                                $this->db->from('event_transaction');                    
+                                $this->db->join('appointment_type','appointment_type.id = event_transaction.appointment_id','left');
+                                $this->db->join('users', 'users.id = event_transaction.client_id','left');
+                                $this->db->where('event_transaction.event_id', $event_data['event_id']);
+                                $appoitment_type = $this->db->get();
+                                $result = $appoitment_type->result();
+                                $useremail = $result[0]->email;     
+                                $body = $this->load->view('emails/receipt', ['result' => $result], true);                            			                    
+			                    $to = $useremail;
+                                $result = my_email_send($to, "Payment Receipt", "receipt", array('msg_data' => $body), 'support@perfect-forms.net');
                                 
                             }else{                                
                                 $wallet_balance = $val->appointment_balance;
@@ -380,26 +391,38 @@ class Appointment extends My_Controller
 
                                 $balance = 0;
                                 $sql = "UPDATE client_balance_summary SET appointment_balance = ? WHERE id = ?";
-                                $this->db->query($sql, array($balance, $val->id));                                
+                                $this->db->query($sql, array($balance, $val->id));      
+                                
+                                $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
+                                $this->db->from('event_transaction');                    
+                                $this->db->join('appointment_type','appointment_type.id = event_transaction.appointment_id','left');
+                                $this->db->join('users', 'users.id = event_transaction.client_id','left');
+                                $this->db->where('event_transaction.event_id', $event_data['event_id']);
+                                $appoitment_type = $this->db->get();
+                                $result = $appoitment_type->result();
+                                $useremail = $result[0]->email;     
+                                $body = $this->load->view('emails/receipt', ['result' => $result], true);                            			                    
+			                    $to = $useremail;
+                                $result = my_email_send($to, "Payment Receipt", "receipt", array('msg_data' => $body), 'support@perfect-forms.net');
+
                             }
                         }
                     }else{
                         $sql = "UPDATE event_transaction SET `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
                         $this->db->query($sql, array('paid','Mastercard' ,$event_data['event_id']));       
-                    }
 
-                    $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
-                    $this->db->from('event_transaction');                    
-                    $this->db->join('appointment_type','appointment_type.id = event_transaction.appointment_id','left');
-                    $this->db->join('users', 'users.id = event_transaction.client_id','left');
-                    $this->db->where('event_transaction.event_id', $event_data['event_id']);
-                    $appoitment_type = $this->db->get();
-                    $result = $appoitment_type->result();
-                    $useremail = $result[0]->email;     
-                    $body = $this->load->view('emails/receipt', ['result' => $result], true);                            			                    
-			        $to = $useremail;
-                    $result = my_email_send($to, "Payment Receipt", "receipt", array('msg_data' => $body), 'support@perfect-forms.net');
-                    return $result;                    
+                        $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
+                        $this->db->from('event_transaction');                    
+                        $this->db->join('appointment_type','appointment_type.id = event_transaction.appointment_id','left');
+                        $this->db->join('users', 'users.id = event_transaction.client_id','left');
+                        $this->db->where('event_transaction.event_id', $event_data['event_id']);
+                        $appoitment_type = $this->db->get();
+                        $result = $appoitment_type->result();
+                        $useremail = $result[0]->email;     
+                        $body = $this->load->view('emails/receipt', ['result' => $result], true);                            			                    
+			            $to = $useremail;
+                        $result = my_email_send($to, "Payment Receipt", "receipt", array('msg_data' => $body), 'support@perfect-forms.net');
+                    }                    
                 }                
             } else {
                 // $data = "SELECT  `events`.*,
