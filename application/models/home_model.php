@@ -19,8 +19,7 @@ class Home_Model extends CI_Model
 	 */
 
 	public function getEvents($id = null)
-	{
-		// $logged_user_id = $this->session->userdata('userid');
+	{		
 		$logged_user_role_id = $this->session->userdata('roleid');
 		if ($logged_user_role_id == 1) {
 			if ($id) {
@@ -37,8 +36,7 @@ class Home_Model extends CI_Model
 		foreach ($data as $res) {
 			$result['id'] = $res->id_event;
 			$result['client_id'] = $res->client_id;
-			$result['color'] = $res->color_code;
-			// $result['color'] = $types[$res->appointment_type];
+			$result['color'] = $res->color_code;			
 			$result['title'] = $res->firstname . " " . $res->lastname;
 			$result['start'] = $res->schedule_date . ' ' . $res->start_time;
 			$result['end'] = $res->schedule_date . ' ' . $res->end_time;
@@ -65,76 +63,21 @@ class Home_Model extends CI_Model
 
 	public function queryFunction($logged_user_id = '')
 	{
-		if ($logged_user_id) {
-			$sql = "SELECT `events`.`id` as `id_event`,
-    				`events`.`client_id`,
-    				`events`.`schedule_date`,
-     				`events`.`start_time`,
-					`events`.`end_time`,
-					`events`.`appointment_type`,
-					`events`.`weekly_repeating_options`,
-					`events`.`brief_note`,		
-					`events`.`meeting_duration`,
-					`events`.`recurrence`,
-					`events`.`created_by`,
-					`events`.`parent_event_id`,
-    				`users`.`id` as `user_id`,
-    				`users`.`email`,
-    				`users`.`firstname`,
-    				`users`.`lastname`,
-					`provider_user`.`firstname` as `provider_first_name`,
-                	`provider_user`.`lastname` as `provider_last_name`,
-					`appointment_type`.`id` as `appointment_type_id`,
-					`appointment_type`.`appointment_name`,
-					`appointment_type`.`color_code`,
-					`event_transaction`.`id` as `event_transaction_id`,
-					`event_transaction`.`event_id`,
-					`event_transaction`.`payment_status`,
-					`event_transaction`.`price`
-				FROM (`events`)				
-				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
-				WHERE `events`.`created_by` = $logged_user_id
-				GROUP BY `events`.`parent_event_id`";
-			// $data = $this->db->query($sql)->result();
-		} else {
-			$sql = "SELECT `events`.`id` as `id_event`,
-    				`events`.`client_id`,
-    				`events`.`schedule_date`,
-     				`events`.`start_time`,
-					`events`.`end_time`,
-					`events`.`appointment_type`,
-					`events`.`weekly_repeating_options`,
-					`events`.`brief_note`,		
-					`events`.`meeting_duration`,
-					`events`.`recurrence`,
-					`events`.`created_by`,
-					`events`.`parent_event_id`,
-    				`users`.`id`,
-    				`users`.`email`,
-    				`users`.`firstname`,
-    				`users`.`lastname`,
-					`provider_user`.`firstname` as `provider_first_name`,
-                	`provider_user`.`lastname` as `provider_last_name`,
-					`appointment_type`.`id`,
-					`appointment_type`.`appointment_name`,
-					`appointment_type`.`color_code`,
-					`event_transaction`.`id` as `event_transaction_id`,
-					`event_transaction`.`event_id`,
-					`event_transaction`.`payment_status`,
-					`event_transaction`.`price`
-				FROM (`events`)
-				LEFT JOIN `users` ON `users`.`id` = `events`.`client_id`
-				LEFT JOIN `users` as `provider_user` ON `provider_user`.`id` = `events`.`created_by`
-				LEFT JOIN `appointment_type` ON `appointment_type`.`id` = `events`.`appointment_type`
-				LEFT JOIN `event_transaction` ON `event_transaction`.`event_id` = `events`.`id`
-				GROUP BY `events`.`parent_event_id`";
-
-			// $data = $this->db->query($sql)->result();
+		$this->db->select('events.id as id_event,events.client_id,events.schedule_date,events.start_time,events.end_time,events.appointment_type,events.weekly_repeating_options,
+			events.brief_note,events.meeting_duration,events.recurrence,events.created_by,events.parent_event_id,users.id as user_id,users.email,users.firstname,users.lastname,
+			provider_user.firstname as provider_first_name,provider_user.lastname as provider_last_name,appointment_type.id as appointment_type_id,appointment_type.appointment_name,
+			appointment_type.color_code,event_transaction.id as event_transaction_id,event_transaction.event_id,event_transaction.payment_status,event_transaction.price');
+		$this->db->from('events');
+		$this->db->join('users', 'users.id = events.client_id', 'left');
+		$this->db->join('users as provider_user', 'provider_user.id = events.created_by', 'left');
+		$this->db->join('appointment_type','appointment_type.id = events.appointment_type', 'left');
+		$this->db->join('event_transaction','event_transaction.event_id = events.id', 'left');
+		if($logged_user_id){
+			$this->db->where('events.created_by', $logged_user_id);
 		}
-		$data = $this->db->query($sql)->result();
+		$this->db->group_by('events.parent_event_id');
+		$data = $this->db->get();
+        $data = $data->result();		
 		return $data;
 	}
 
@@ -145,9 +88,7 @@ class Home_Model extends CI_Model
 		$date = date_create($_POST['start_time']);
 		$start_time = date_format($date, "H:i:s");
 		$date = date_create($_POST['end_time']);
-		$end_time = date_format($date, "H:i:s");
-		// if  recurrence is set, get all the dates for the events
-		// Loop through all the selected-clients, and store the event information and pricing-details				
+		$end_time = date_format($date, "H:i:s");				
 		$event_parent_ids = [];
 		$parent_event_id = '';
 			foreach ($_POST['client_id'] as $client_id) {
@@ -207,65 +148,6 @@ class Home_Model extends CI_Model
 		$sql = "DELETE FROM events WHERE id = ?";
 		$this->db->query($sql, array($_GET['id']));
 		return ($this->db->affected_rows() != 1) ? false : true;
-	}
-
-	public function sendMail()
-	{
-		$start_date = date('Y-m-d H:i:s');
-		// $start_date = date('2022-11-30 10:36:00');
-		$end_date = date('Y-m-d H:i:s', strtotime($start_date) + (60 * 30));
-		// var_dump($start_date, $end_date);die;
-
-		$query = "SELECT `events`.`id`, `events`.`client_id`, `events`.`schedule_date`,`users`.`id`, `users`.`email`, 
-					`users`.`firstname`, `users`.`lastname` FROM (`events`) 
-					LEFT JOIN `users` ON `users`.`id`=`events`.`client_id`
-					WHERE schedule_date BETWEEN '" . $start_date . "' AND '" . $end_date . "'";
-
-		$data = $this->db->query($query)->result();
-		$msg_data = null;
-		if (!empty($data)) {
-			foreach ($data as $client_data) {
-				$msg_data .= 'Client Name : ' . $client_data->firstname . ' ' . $client_data->lastname . ' Date and Time : ' . $client_data->schedule_date . '<br/>';
-
-				$from_email = "developers.shabbir+1@arsenaltech.com";
-				$to_email = $client_data->email;
-
-				//Load email library 
-				$this->load->library('email');
-
-				$this->email->from($from_email, 'Test mail');
-				$this->email->to($to_email);
-				$this->email->subject('Notify For Schedule Meeting');
-				$this->email->message('Your meeting have schedule at ' . $client_data->schedule_date . ' With ' . $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname'));
-
-				//Send mail
-				if ($this->email->send()) {
-					$this->session->set_flashdata("email_sent", "Email sent successfully.");
-				} else {
-					$this->session->set_flashdata("email_sent", "Error in sending Email.");
-					//    $this->load->view('email_form'); 
-				}
-			}
-
-			$from_email = "developers.shabbir+1@arsenaltech.com";
-			$to_email = "zeina@synergyptpilates.com";
-
-			//Load email library 
-			$this->load->library('email');
-
-			$this->email->from($from_email, 'Test mail');
-			$this->email->to($to_email);
-			$this->email->subject('Notify For Schedule Meeting with Client');
-			$this->email->message('Your meeting have schedule with ' . $msg_data);
-
-			//Send mail
-			if ($this->email->send()) {
-				$this->session->set_flashdata("email_sent", "Email sent successfully.");
-			} else {
-				$this->session->set_flashdata("email_sent", "Error in sending Email.");
-				//    $this->load->view('email_form'); 
-			}
-		}
 	}
 
 	public function notifyWithMail($client_id = [], $details = '', $subject = '')
