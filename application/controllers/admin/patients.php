@@ -1485,7 +1485,7 @@ class Patients extends My_Controller
         {
             $val = (array) $val;
             $amount = $symbol.''.$val['used_balanced'];
-            $excel->getActiveSheet()->SetCellValue('A' . $rowCount, $val['created_at']);
+            $excel->getActiveSheet()->SetCellValue('A' . $rowCount, formatDate($val['created_at']));
             $excel->getActiveSheet()->SetCellValue('B' . $rowCount, $val['appointment_name']);
             $excel->getActiveSheet()->SetCellValue('C' . $rowCount, $amount);
             $excel->getActiveSheet()->SetCellValue('D' . $rowCount, $val['transsaction_type'] == "credit" ? $val['transsaction_type'] : " ");

@@ -3,7 +3,9 @@
 <link href="<?php echo base_url(); ?>assets/css/bootstrap-datetimepicker.css" rel="stylesheet" />
 <script src="<?php echo base_url(); ?>assets/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
-
+<?php 
+    $symbol = $this->config->item('currency_symbol');
+?>
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Account Details</h1>
     <div class="innerAll spacing-x2">
@@ -35,7 +37,7 @@
                                     <div class="card-body border bg-info py-2">
                                         <div class="text-center">
                                             <h4><?php echo $dt->appointment_name; ?></h4>
-                                            <h2><?php echo $dt->appointment_balance; ?></h2>
+                                            <h2><?php echo $symbol. ' ' .$dt->appointment_balance; ?></h2>
                                         </div>
                                     </div>
                                 </div>
@@ -76,8 +78,7 @@
                             </tr>
                         </thead>
                         <tbody id="myTable">
-                            <?php
-                            $symbol = $this->config->item('currency_symbol');
+                            <?php                            
                             $amt_details = [];
                             if (!empty($data['accountData'])) {
                                 foreach ($data['accountData'] as $dt) {
@@ -92,9 +93,9 @@
                                         <?php
                                         if ($dt->transsaction_type == 'debit') {
                                             echo "<td></td>";
-                                            echo "<td style='color:red'>" . $symbol .number_format($dt->used_balanced, 2, '.', ',')."</td>";
+                                            echo "<td style='color:red'>" . $symbol . ' ' .number_format($dt->used_balanced, 2, '.', ',')."</td>";
                                         } else {
-                                            echo "<td style='color:green'>". $symbol . number_format($dt->used_balanced, 2, '.', ',')."</td>";
+                                            echo "<td style='color:green'>". $symbol . ' ' .number_format($dt->used_balanced, 2, '.', ',')."</td>";
                                             echo "<td></td>";
                                         }
                                         ?>

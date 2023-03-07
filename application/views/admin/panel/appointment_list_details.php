@@ -1,4 +1,7 @@
-<?php include_once 'header.php'; ?>
+<?php 
+    include_once 'header.php';
+    $symbol = $this->config->item('currency_symbol');
+?>
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Appointments Types</h1>
     <div class="innerAll spacing-x2">
@@ -30,7 +33,7 @@
                                         <td>
                                             <span style="height: 30px; width: 50%; display: block; background-color: <?php echo $color ?>"></span>
                                         </td>
-                                        <td><?php echo $appointment_list->appointment_price ?></td>
+                                        <td><?php echo $symbol . ' ' . $appointment_list->appointment_price ?></td>
                                         <td>
                                             <a class="editBtn" data-typeid="<?php echo $appointment_list->id; ?>" data-appointmantname="<?php echo $appointment_list->appointment_name; ?>" data-action="edit" data-toggle="modal" href="#createAppointmentType">
                                                 <i class="glyphicon glyphicon-edit" data-toggle="tooltip" title="Edit Appointment Type"></i></a>

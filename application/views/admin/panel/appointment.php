@@ -1,4 +1,7 @@
-<?php include_once 'header.php'; ?>
+<?php 
+    include_once 'header.php'; 
+    $symbol = $this->config->item('currency_symbol');
+?>
 <div id="content">
     <h1 class="bg-white content-heading border-bottom">Appointments</h1>
     <div class="innerAll spacing-x2">
@@ -63,7 +66,7 @@
                                         <td><?php echo $start_time . '-' . $end_time ?></td>                                                                                
                                         <td><?php echo $event_list->brief_note ?></td>
                                         <td><?php echo $event_list->provider_first_name . ' ' .  $event_list->provider_last_name ?></td>
-                                        <td><?php echo $event_list->appointment_price ?></td>                                        
+                                        <td><?php echo $symbol . ' ' . $event_list->appointment_price ?></td>                                        
                                         <?php 
                                             if($event_list->payment_status == "paid"){
                                         ?>  

@@ -1,3 +1,6 @@
+<?php 
+    $symbol = $this->config->item('currency_symbol');
+?>
 <div class="modal-dialog ">
     <div class="modal-content ">
         <div class="modal-header">
@@ -16,7 +19,7 @@
                         <p class="appointment_provider_name mb-1">Provider Name :- <?php echo $data[0]->provider_first_name . ' ' . $data[0]->provider_last_name ?></p>
                         <p class="appointment_date_time">Appointment Date :- <?php echo formatDate($data[0]->schedule_date) ?></p>
                         <p class="appointment_type">Appointment Type : <?php echo $data[0]->appointment_name ?></p>
-                        <p class="appointment_rate">Appointment Rate : <?php echo $data[0]->price ?></p>
+                        <p class="appointment_rate">Appointment Rate : <?php echo $symbol . ' ' . $data[0]->price ?></p>
                     </div>
                 </div>
             </div>
@@ -42,12 +45,12 @@
 
                         <div class="appoinment_transaction_details_<?php echo $dt->client_id; ?> hide">
                             <label>Received Amount: </label>
-                            <input type="text" class="appointment_fees" data-appointmentfees="<?php echo $dt->client_id; ?>" value="<?php echo $dt->price ?>" readonly></input><br>
-                            <span class="wallet_balance" data-walletbalance="<?php echo $dt->client_id; ?>">Wallet Balance: <?php echo $dt->appointment_balance ? $dt->appointment_balance: '0' ?></span><br>
+                            <input type="text" class="appointment_fees" data-appointmentfees="<?php echo $dt->client_id; ?>" value="<?php echo $symbol. ' ' . $dt->price ?>" readonly></input><br>
+                            <span class="wallet_balance" data-walletbalance="<?php echo $dt->client_id; ?>">Wallet Balance: <?php echo $dt->appointment_balance ? $symbol. ' ' . $dt->appointment_balance: '£ 0' ?></span><br>
                             <?php 
                                 if($dt->appointment_balance > 0){
                             ?>
-                                <input type="checkbox" name="use_wallet" class="wallet_balance_used" data-appointmentprice="<?php echo $dt->price; ?>" data-clientid="<?php echo $dt->client_id ?>" value="<?php echo $dt->appointment_balance ? $dt->appointment_balance: '0' ?>"/>
+                                <input type="checkbox" name="use_wallet" class="wallet_balance_used" data-appointmentprice="<?php echo $dt->price; ?>" data-clientid="<?php echo $dt->client_id ?>" value="<?php echo $dt->appointment_balance ? $dt->appointment_balance: '£ 0' ?>"/>
                                 <span class="appointment_wallet">Use Wallet</span><br>
                             <?php        
                                 }
