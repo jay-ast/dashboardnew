@@ -74,6 +74,10 @@
                                     </div>
                                 </div>
                             <?php } ?>
+                            
+                            <div class="row margin-top-10">
+                                <input type="hidden" name="notes_id" value="<?php echo $notes_id ?>" class="notes_id" id="notes_id"/>
+                            </div>
 
                             <div data-id="111111" class="row margin-top-10">
                                 <div class="form-group col-md-2">
@@ -995,7 +999,7 @@
                         form.append("routineId", $("#exerciseid").val());
 
                         var settings = {
-                            "url": "/api/users/checkExerciseName",
+                            "url": base_url + "api/users/checkExerciseName",
                             "method": "POST",
                             "timeout": 0,
                             "headers": {
@@ -1145,7 +1149,7 @@
                         form.append("routineId", $("#exerciseid").val());
 
                         var settings = {
-                            "url": "api/users/checkExerciseName",
+                            "url":  base_url + "api/users/checkExerciseName",
                             "method": "POST",
                             "timeout": 0,
                             "headers": {},

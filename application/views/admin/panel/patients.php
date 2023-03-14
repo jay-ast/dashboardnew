@@ -80,9 +80,6 @@
                                             <a href="mailto:<?php echo $userdatalist['email']; ?>?Subject=Your%20Video%20Routine%20From%20Perfect%20Forms&body=To%20view%20your%20videos%3A%0A%0A1-%20Download%20our%20Perfect%20Forms%20app%20from%20App%20Store(IOS)%3A%20<?php echo APP_ITUNES_LINK ?>%20or%0A2-%20Download%20our%20Perfect%20Forms%20app%20from%20Google%20Play%20Store(Android)%3A%20<?php echo APP_PLAYSTORE_LINK ?>%20%0A3-%20Log%20into%20<?php echo APP_WEBAPP_LINK ?>%20from%20any%20device%20or%20computer.%0A%0AYour%20username%20and%20password%20are%3A%0AUsername%3A%20<?php echo urlencode($userdatalist['email']) ?>%0APassword%3A%20<?php echo urlencode($userdatalist['password']) ?>" target="_top">
                                             <i class="fa fa-envelope" data-toggle="tooltip" title="Send Mail"></i></a>
                                             
-                                            <a class="deleteBtn" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
-                                            <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
-
                                             <a class="scheduleDetails" href="#schedulePortal" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="schedule" data-toggle="modal">
                                             <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>                                            
 
@@ -94,6 +91,9 @@
 
                                             <a class="accountDetails" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="account" data-toggle="modal" id="accountDetails" href="<?php echo base_url('admin/patients/getAccountDetails?client_id=' . $userdatalist['id']); ?>">
                                             <i class="glyphicon glyphicon-book" data-toggle="tooltip" title="Account"></i></a>
+
+                                            <a class="deleteBtn" data-patientid="<?php echo $userdatalist['id']; ?>" data-patientname="<?php echo $patient_name; ?>" data-action="delete" data-toggle="modal" href="#deleteWarning">
+                                            <i class="glyphicon glyphicon-trash" style="color: red;" data-toggle="tooltip" title="Delete User"></i></a>
                                             
                                         </td>
                                     </tr>
@@ -526,16 +526,25 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Create New Note</h4>
-                </div>
-
+                </div>                
                 <div class="modal-body modelform">
                     <div class="error"></div>
+                    <?php echo form_open(base_url('admin/patients/updateRoutine'), array("class" => "notesForm")); ?>
                     <div class="form-body clearfix col-md-12">
                         <div class="row margin-top-10">
                             <div class="form-group col-md-6">
                                 <input type="hidden" class="form-control patientid" name="patientid" value="">
                             </div>
                         </div>
+                        <div class="row margin-top-10 col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Use Previous</label>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <input type="checkbox" class="user_previous" id="user_previous" name="user_previous"/>
+                            </div>    
+                        </div>
+
                         <div class="col-md-12 userdetail">
                             <div class="row margin-top-10 userdetails col-md-12">
                                 <div class="form-group col-md-4">
@@ -583,14 +592,17 @@
 
                             <div class="row margin-top-10 userdetails col-md-12">
                                 <label class="col-md-4 control-label" for="exercise">Select Exercise</label>
-                                <div class="col-md-4 clientSelect">
+                                <div class="col-md-5 clientSelect">
                                     <select class="form-control exercise_data" id="exercise_data" name="exercise_data[]" multiple>                                                                       
                                     </select>
-                                </div>                            
+                                </div>                                
+                                <div class="col-md-1">
+                                    <button style="margin-left: 3px;" type="submit" class="btn btn-success notesnewroutine" id="notesnewroutine">Create New Routine</button>
+                                </div>                                
                             </div>
                         </div>
                     </div>
-
+                    <?php echo form_close(); ?>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
@@ -807,10 +819,7 @@
                                 <td>` + patient.phone + `</td>                                       
                                 <td class="center">                                        	                        
 	                                <a href="mailto:` + patient.email + `?Subject=Your%20Video%20Routine%20From%20Perfect%20Forms&body=To%20view%20your%20videos%3A%0A%0A1-%20Download%20our%20Perfect%20Forms%20app%20from%20App%20Store(IOS)%3A%20<?php echo APP_ITUNES_LINK ?>%20or%0A2-%20Download%20our%20Perfect%20Forms%20app%20from%20Google%20Play%20Store(Android)%3A%20<?php echo APP_PLAYSTORE_LINK ?>%20%0A3-%20Log%20into%20<?php echo APP_WEBAPP_LINK ?>%20from%20any%20device%20or%20computer.%0A%0AYour%20username%20and%20password%20are%3A%0AUsername%3A%20` + patient.email + `%0APassword%3A%20` + patient.password + `" target="_top">		                                        
-                                    <i class="fa fa-envelope" data-toggle="tooltip" title="Send e-mail"></i></a>  
-                    
-                                    <a class="deleteBtn" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `"data-action="delete" data-toggle="modal" href="#deleteWarning" >
-                                    <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="Delete User"></i></a>
+                                    <i class="fa fa-envelope" data-toggle="tooltip" title="Send e-mail"></i></a>                                      
 
                                     <a class="scheduleDetails" href="#schedulePortal" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="schedule" data-toggle="modal">
                                     <i class="glyphicon glyphicon-calendar" data-toggle="tooltip" title="Schedule"></i></a>                                            
@@ -823,6 +832,9 @@
 
                                     <a class="accountDetails" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `" data-action="account" data-toggle="modal" id="accountDetails" href="<?php echo base_url('admin/patients/getAccountDetails?client_id=');?>`+patient.id+`">
                                     <i class="glyphicon glyphicon-book" data-toggle="tooltip" title="Account"></i></a>
+
+                                    <a class="deleteBtn" data-patientid="` + patient.id + `" data-patientname="` + patient.myfullname + `"data-action="delete" data-toggle="modal" href="#deleteWarning" >
+                                    <i class="glyphicon glyphicon-trash" style="color: red;" data-toggle="tooltip" title="Delete User"></i></a>
                                 </td>
                             </tr>`)
                         });
@@ -1417,6 +1429,9 @@
             $('#plan').val('');
             $('#notePortal').modal('toggle');
             var patientid = $(this).attr('data-clientid');
+            $('#createNote').find('.patientid').val(patientid);
+            $('.notesForm').attr('action', base_url + 'admin/exercises/addClientExerciseWithNotes/' + patientid)
+            // $('#createNote').find('#notesnewroutine').attr('href', base_url + 'admin/exercises/addClientExerciseWithNotes/' + patientid);
             $.ajax({
                 type: 'POST',
                 url: base_url + 'admin/patients/getPatientDetails/' + patientid,
@@ -1582,6 +1597,72 @@
                 })            
         });
         
+        $(document).on('click', '#user_previous', function() { 
+            var client_id = $("#newNotes").attr('data-clientid');                
+            // $('#createNote').find('#notesnewroutine').attr('href', base_url + 'admin/exercises/addClientExerciseWithNotes/' + client_id);
+            if($(this).is(':checked')){                
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'admin/patients/getNotesData',
+                    data: {
+                        client_id:client_id            
+                    },
+                    success: function(result) {
+                        var notesData = JSON.parse(result);                        
+                        $.each(notesData['data'], function (index, val) {                             
+                            $('#createNote').find('#note_title').val(val.note_title);
+                            $('#createNote').find('#subjective').val(val.subjective);
+                            $('#createNote').find('#objective').val(val.objective);
+                            $('#createNote').find('#assessment').val(val.assessment);
+                            $('#createNote').find('#plan').val(val.plan);
+                            $.each(val.exercies_id.split(","), function(i, v){                    
+                                $('#createNote').find('#exercise_data>option[value='+v+']').attr('selected', true);                                
+                            });
+                            // $('#createNote').find('#notesnewroutine').attr('href', base_url + 'admin/exercises/addClientExerciseWithNotes/' + client_id);
+
+                        })
+                    },
+                    complete: function() {},
+                    error: function(data) {
+                        console.log(data);
+                    }
+                })
+            }else{
+                $('#createNote').find('#note_title').val('');
+                $('#createNote').find('#subjective').val('');
+                $('#createNote').find('#objective').val('');
+                $('#createNote').find('#assessment').val('');
+                $('#createNote').find('#plan').val('');
+            }
+        });        
+
+        $(document).on('click', '#notesnewroutine', function(){
+            var client_id = $("#createNote").find('.patientid').val();   
+            $('#notesnewroutine').val('save');
+            $('.notesForm').attr('action', base_url + 'admin/exercises/addClientExerciseWithNotes/' + client_id);
+            // if ($('#note_title').val() && $('#subjective').val() && $('#objective').val() && $('#assessment').val() && $('#plan').val()) {     
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: base_url + 'admin/exercises/addClientExerciseWithNotes/' + client_id,
+            //         data :{
+            //             client_id:$('#createNote').find('#patientid').val(),
+            //             note_title:$('#createNote').find('#note_title').val(),
+            //             subjective:$('#createNote').find('#subjective').val(),
+            //             objective:$('#createNote').find('#objective').val(),
+            //             assessment:$('#createNote').find('#assessment').val(),
+            //             plan:$('#createNote').find('#plan').val(),
+            //             exercies_id: $('#exercise_data').val(),
+            //         },
+            //         success: function(result) {},
+            //         complete: function() {},
+            //         error: function(data) {
+            //             console.log(data);
+            //         }
+            //     })
+            // }else{
+
+            // }    
+        });
     });
 </script>
 <style type="text/css">

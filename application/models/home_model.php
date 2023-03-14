@@ -117,7 +117,6 @@ class Home_Model extends CI_Model
 
 	public function updateEvent()
 	{
-		// var_dump($_POST);die;	
 		$logged_user_id = $this->session->userdata('userid');
 		$date = date_create($_POST['schedule_date']);
 		$schedule_date = date_format($date, "Y/m/d");
@@ -126,17 +125,40 @@ class Home_Model extends CI_Model
 		$date = date_create($_POST['end_time']);
 		$end_time = date_format($date, "H:i:s");
 
-		$sql = "UPDATE events SET client_id = ?, schedule_date = ?, start_time = ?, end_time = ? ,appointment_type = ? ,brief_note = ? ,meeting_duration = ? ,recurrence = ? WHERE id = ?";
-		$this->db->query($sql, array($_POST['client_id'], $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $_POST['id']));
+		$sql = "SELECT * FROM events WHERE parent_event_id = '" . $_POST['parent_event_id'] . "' ";
+        $result = $this->db->query($sql)->result();
+		foreach($result as $data){			
+			foreach($_POST['client_id'] as $client_id){							
+				if($data->client_id == $client_id){
+					$sql = "UPDATE events SET client_id = ?, schedule_date = ?, start_time = ?, end_time = ? ,appointment_type = ? ,brief_note = ? ,meeting_duration = ? ,recurrence = ? WHERE id = ?";
+					$this->db->query($sql, array($client_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $_POST['id']));
+	
+					$query = "UPDATE event_transaction SET client_id = ?, appointment_id = ?, provider_id = ?, price = ? WHERE event_id = ?";
+					$this->db->query($query, array($client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], $_POST['id']));
+	
+					$subject = 'Your appointment has been scheduled on' . ' ' . $schedule_date . '.';
+	
+					if ($_POST['notify_mail'] == 'true') {
+						$this->notifyWithMail($client_id, $_POST, $subject);
+					}
+				}else{
+					$sql = "INSERT INTO events (client_id,schedule_date,start_time,end_time,appointment_type,weekly_repeating_options, brief_note, meeting_duration, recurrence, created_by, parent_event_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+					$this->db->query($sql, array($client_id, $schedule_date, $start_time, $end_time, $_POST['appointment_type'], $_POST['repeating_weeks'], $_POST['brief_note'], $_POST['meeting_duration'], $_POST['recurrence'], $logged_user_id, $_POST['parent_event_id']));
+					$parent_event_id = $this->db->insert_id();
 
-		$query = "UPDATE event_transaction SET client_id = ?, appointment_id = ?, provider_id = ?, price = ? WHERE event_id = ?";
-		$this->db->query($query, array($_POST['client_id'], $_POST['appointment_type'], $logged_user_id, $_POST['price'], $_POST['id']));
-		// $subject = 'Your scheduled meeting has been updated on'. ' ' . $schedule_date. '.';
-		$subject = 'Your appointment has been scheduled on' . ' ' . $schedule_date . '.';
+					$query = "INSERT INTO event_transaction (event_id, client_id, appointment_id, provider_id, price, payment_status) VALUES (?,?,?,?,?,?)";
+					$this->db->query($query, array($parent_event_id, $client_id, $_POST['appointment_type'], $logged_user_id, $_POST['price'], 'pending'));
 
-		if ($_POST['notify_mail'] == 'true') {
-			$this->notifyWithMail($_POST['client_id'], $_POST, $subject);
-		}
+					$subject = 'Your appointment has been scheduled on' . ' ' . $schedule_date . '.';
+	
+					if ($_POST['notify_mail'] == 'true') {
+						$this->notifyWithMail($client_id, $_POST, $subject);
+					}
+				}
+				
+			}
+		}		
+		// $subject = 'Your scheduled meeting has been updated on'. ' ' . $schedule_date. '.';		
 
 		return ($this->db->affected_rows() != 1) ? false : true;
 	}

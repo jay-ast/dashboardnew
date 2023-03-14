@@ -352,17 +352,17 @@ class Appointment extends My_Controller
                         $data = $this->db->get();
                         $data = $data->result();
                         foreach($data as $val){                                                            
-                            if($val->appointment_balance > $res->price){                                                          
-                                $balance = $val->appointment_balance - $res->price;
+                            if($val->appointment_balance > $event_data['received_amount']){                                                          
+                                $balance = $val->appointment_balance - $event_data['received_amount'];
                             
-                                $sql = "UPDATE event_transaction SET `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
-                                $this->db->query($sql, array('paid', 'wallet' ,$event_data['event_id']));             
+                                $sql = "UPDATE event_transaction SET `price` = ?, `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
+                                $this->db->query($sql, array($event_data['received_amount'],'paid', 'wallet' ,$event_data['event_id']));             
 
                                 $sql = "UPDATE client_balance_summary SET appointment_balance = ? WHERE id = ?";
                                 $this->db->query($sql, array($balance, $val->id));
 
                                 $query = "INSERT INTO client_wallet_transaction(client_id, appointment_type_id, event_id,used_balanced, transsaction_type) VALUES (?,?,?,?,?)";
-                                $this->db->query($query, array($event_data['client_id'],$event_data['appointment_type_id'],$event_data['event_id'],$res->price, 'debit'));
+                                $this->db->query($query, array($event_data['client_id'],$event_data['appointment_type_id'],$event_data['event_id'],$event_data['received_amount'], 'debit'));
 
                                 $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
                                 $this->db->from('event_transaction');                    
@@ -378,7 +378,7 @@ class Appointment extends My_Controller
                                 
                             }else{                                
                                 $wallet_balance = $val->appointment_balance;
-                                $direct_payment = $res->price - $val->appointment_balance;
+                                $direct_payment = $event_data['received_amount'] - $val->appointment_balance;
                                 
                                 $sql = "UPDATE event_transaction SET `payment_status` = ?, `price` = ?, `amount_type` = ? WHERE event_id = ?";
                                 $this->db->query($sql, array('paid', $wallet_balance ,'wallet' ,$event_data['event_id']));             
@@ -408,8 +408,8 @@ class Appointment extends My_Controller
                             }
                         }
                     }else{
-                        $sql = "UPDATE event_transaction SET `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
-                        $this->db->query($sql, array('paid','Mastercard' ,$event_data['event_id']));       
+                        $sql = "UPDATE event_transaction SET `price` = ?, `payment_status` = ?, `amount_type` = ? WHERE event_id = ?";
+                        $this->db->query($sql, array($event_data['received_amount'],'paid','Mastercard' ,$event_data['event_id']));       
 
                         $this->db->select('event_transaction.*,appointment_type.id as appointment_type_id, appointment_type.appointment_name, users.id as user_id,users.firstname,users.lastname,users.email');
                         $this->db->from('event_transaction');                    

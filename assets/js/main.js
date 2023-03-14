@@ -208,7 +208,8 @@ $(function () {
                 $('.event-tooltip').remove();
             },
             // Handle Existing Event Click
-            eventClick: function (calEvent, jsEvent, view) {                
+            eventClick: function (calEvent, jsEvent, view) {  
+                currentEvent = calEvent;              
                 // var $appointmentConfirmationModal = $('#appointment-confirmation-modal');            
                 // $appointmentConfirmationModal.modal('show');                
                 $('#appointment-confirmation-modal').modal('toggle');
@@ -225,7 +226,7 @@ $(function () {
             setModel = 'add'
         }
         setTimeout(function () {
-            let default_recurrence = 'no_fixed_time';
+            let default_recurrence = 'none';
             $("#recurrence").val(default_recurrence).trigger('change');
         }, 500);
         $('#notify_mail').prop('checked', true);
@@ -240,10 +241,34 @@ $(function () {
         $('.modal-title').html(data.title);
         $('.modal-footer button:not(".btn-default")').remove();
         if (client_id) {
-            setTimeout(function () {
-                $('#client_id').val(client_id).trigger("change");
-                getClientDetails(client_id);
-            }, 2000);
+            if(client_id.length == 1){
+                setTimeout(function () {
+                    $('#client_id').val(client_id).trigger("change");
+                    getClientDetails(client_id);
+                }, 2000);
+            }else{
+                $('#group_client').prop('checked', true)
+                $('.client_id').off('change');
+                $('.selectpicker').select2('destroy');
+                $('.email_div').prop('hidden', true);
+                $('.phone_div').prop('hidden', true);
+                $('#client_id').removeClass('client_id');
+                $('#btnUpdateClient').addClass('hide');
+                $('.selectpicker').select2({
+                    multiple: true
+                });
+                
+                // selected_client_ids = Object.values(client_id);
+                // console.log('client_id', selected_client_ids);
+                // $('#client_id').select2('val',['123 test test 123','aaa bbbccc','aaa test']);
+
+                // $.each(client_id, function(i, v){                    
+                //     console.log('JIUdhgfj', v);
+                //     // $('option[value="'+v+'"]').attr('selected', true)
+                //     $('#client_id>option[value='+ v +']').attr('selected', true);
+                // });
+
+            }            
 
         } else {
             setTimeout(function () {
@@ -421,12 +446,19 @@ $(function () {
 
     // Handle click on Update Button
     $('.modal').on('click', '#update-event', function (e) {
+        var client_id = [];
+        if(!Array.isArray($('#client_id').val())){
+            client_id.push($('#client_id').val());
+        }else{
+            client_id = $('#client_id').val();
+        }
+
         if ($('#client_id').val()) {
             if ($('#appointment_type').val()) {
                 // if ($('#start_time').val() < $('#end_time').val()) {
                     $.post(base_url + 'admin/home/updateEvent', {
-                        id: currentEvent._id,
-                        client_id: $('#client_id').val(),
+                        parent_event_id: currentEvent.parent_event_id,
+                        client_id: client_id,
                         schedule_date: $('#schedule_date').val(),
                         start_time: $('#start_time').val(),
                         end_time: $('#end_time').val(),
@@ -808,7 +840,8 @@ $(function () {
                         event_id :  $(this).val(),
                         use_wallet : $(this).siblings('.appoinment_transaction_details_'+$(this).attr('data-clientid')).find('.wallet_balance_used').is(':checked'),
                         appointment_type_id: $(this).data('appointmentypeid'),
-                        client_id: $(this).data('clientid')
+                        client_id: $(this).data('clientid'),
+                        received_amount: $(this).siblings('.appoinment_transaction_details_'+$(this).attr('data-clientid')).find('.appointment_fees').val()
                 };
                 event_data.push(arr);
             });            
@@ -833,7 +866,29 @@ $(function () {
                 alert('You need to select Atleast One Client for Checkout.')
             }    
         });
-    }        
+    } 
+    
+    function loadModifyAppointment(){
+        $("#modifyAppointment").click(function (item) {   
+            $('#appointment-confirmation-modal').modal('toggle');
+            var client_ids = [];
+            $.each($("input[name='client_checkout']"), function(){                
+                client_ids.push($(this).data('clientid'));
+            }); 
+
+            modal({
+                buttons: {
+                    update: {
+                        id: 'update-event',
+                        css: 'btn-success',
+                        label: 'Update'
+                    }
+                },
+                title: 'Edit Event',
+                event: currentEvent
+            }, 'event-modal', client_ids);                    
+        });
+    }
 
     $("#btnCreateAppointment").click(function (item) {
         
@@ -1033,7 +1088,8 @@ $(function () {
             success: function (actionResponse) {
                 // var eventData = JSON.parse(actionResponse);   
                 $('#appointment-confirmation-modal').append(actionResponse);                
-                loadbtnCheckout();                
+                loadbtnCheckout();
+                loadModifyAppointment();            
             },
             error: function (data) {
                 console.log(data);

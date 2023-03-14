@@ -66,7 +66,7 @@
                                 <input type="radio" name="single" id="group_client" value="group_client" />
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="col-md-4 control-label" for="client_id">Client Name</label>
                             <div class="col-md-4 clientSelect">
                                 <select class="form-control selectpicker client_id" id="client_id" name="client_id[]">
@@ -76,7 +76,7 @@
                             <div class="col-md-4" id="update-client-info">
                                 <a class="btn btn-primary btnUpdateClient hide" data-toggle="modal" href="#client-modal" id="btnUpdateClient" style="max-width: 130px"> <i class="fa fa-edit"></i>Update Client</a>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="client-details"> -->
                         <!-- <div class="form-group">
@@ -116,7 +116,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="meeting_duration">Meeting Duration</label>
+                            <label class="col-md-4 control-label" for="meeting_duration"></label>
                             <div class="col-md-2">
                                 <lable>Hours </lable>
                                 <select class="form-control meeting_duration_hours" id="meeting_duration_hours" name="meeting_duration_hours">
@@ -215,9 +215,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="brief_note">Notify With Mail</label>
-                            <div class="col-md-4 notify_selected_mail">
-                                <!-- <input type="checkbox" class="notify_mail" id="notify_mail" name="notify_mail" /> -->
+                            <label class="col-md-4 control-label" for="client_id">Client Name</label>
+                            <div class="col-md-4 clientSelect">
+                                <select class="form-control selectpicker client_id" id="client_id" name="client_id[]">
+                                </select>
+                            </div>
+
+                            <div class="col-md-4" id="update-client-info">
+                                <a class="btn btn-primary btnUpdateClient hide" data-toggle="modal" href="#client-modal" id="btnUpdateClient" style="max-width: 130px"> <i class="fa fa-edit"></i>Update Client</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 notify_selected_mail control-label" for="brief_note">Clients:</label>
+                            <div class="col-md-4">
+                                <label>Notify With Mail</label>
+                                <input type="checkbox" class="notify_mail" id="notify_mail" name="notify_mail" />
+
+                                <label>Cancel</label>
+                                <input type="checkbox" class="cancel_notify_mail" id="cancel_notify_mail" name="cancel_notify_mail" />
                             </div>
                         </div>
                     </form>
@@ -411,19 +427,20 @@
 
         $(".clientSelect").change(function (item) {
             var data = $(this).find('#client_id').val();            
-            $('.notify_selected_mail').html('');
+            $('.notify_selected_mail').html('Clients:');
+            var name_cust = [];
             if(data){
                 if(Array.isArray(data))
                 {
                     $.each(data, function (index, val) {
                         var selectedClientData = $('option[value="'+val+'"]').data();
-                        var name_cust = selectedClientData['clientname'];
-                        $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + val + "'/>");                
+                        name_cust.push(selectedClientData['clientname']);
                     })
+                    $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust.toString() +  "</lable>");
                 }else{
                     var selectedClientData = $('option[value="'+data+'"]').data();
                     var name_cust = selectedClientData['clientname'];
-                    $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable><input type='checkbox' class='notify_client_mail' id='notify_client_mail' name='notify_client_mail' value='" + data + "'/>"); 
+                    $('.notify_selected_mail').append("<lable style='padding:3px;'>" + name_cust +  "</lable>"); 
                 }
             }
         });

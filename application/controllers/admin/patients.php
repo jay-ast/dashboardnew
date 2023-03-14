@@ -1479,15 +1479,13 @@ class Patients extends My_Controller
         $excel->getActiveSheet()->SetCellValue('D1', 'Credit');
         $excel->getActiveSheet()->SetCellValue('E1', 'Debit');
 
-        $rowCount = 2;
-        $symbol = '£';
+        $rowCount = 2;        
         foreach ($data as $val) 
         {
-            $val = (array) $val;
-            $amount = $symbol.''.$val['used_balanced'];
+            $val = (array) $val;            
             $excel->getActiveSheet()->SetCellValue('A' . $rowCount, formatDate($val['created_at']));
             $excel->getActiveSheet()->SetCellValue('B' . $rowCount, $val['appointment_name']);
-            $excel->getActiveSheet()->SetCellValue('C' . $rowCount, $amount);
+            $excel->getActiveSheet()->SetCellValue('C' . $rowCount, $val['used_balanced']);
             $excel->getActiveSheet()->SetCellValue('D' . $rowCount, $val['transsaction_type'] == "credit" ? $val['transsaction_type'] : " ");
             $excel->getActiveSheet()->SetCellValue('E' . $rowCount, $val['transsaction_type'] == "debit" ? $val['transsaction_type'] : " ");
             $rowCount++;
@@ -1499,5 +1497,33 @@ class Patients extends My_Controller
         header('Cache-Control: max-age=0'); 
         $objWriter = PHPExcel_IOFactory::createWriter($excel, 'CSV');  
         $objWriter->save('php://output');
+    }
+
+    public function getNotesData(){        
+
+        $notes_data = "SELECT * FROM notes WHERE `client_id` = '" . $_POST['client_id'] .  "' ORDER BY created_date DESC LIMIT 1";
+        $notes_data = $this->db->query($notes_data)->result();
+
+        echo json_encode(array('status' => true, 'data' => $notes_data));
+    }
+
+    public function editnotes($note_id = ''){
+        $notes_data = "SELECT * FROM notes WHERE `id` = '" . $note_id .  "'";
+        $data['notes_data'] = $this->db->query($notes_data)->result();
+
+        $this->db->select('exercise.*,exercisefolder_exercise.exercisefolder_id as folderid,exercisefolder_exercise.insert_at as insertdate');
+		$this->db->from('exercise_folder');
+		$this->db->join('exercisefolder_exercise', 'exercisefolder_exercise.exercisefolder_id=exercise_folder.id', 'left');
+		$this->db->join('exercise', 'exercise.id=exercisefolder_exercise.exercise_id', 'left');
+		$this->db->where('exercise.isdeleted', 0);			
+		$this->db->where('exercise_folder.client_id', 0);
+		$this->db->where('exercise_folder.company_id', $this->session->userdata('companyid'));
+		$this->db->group_by('exercise.id,folderid,insertdate');
+		$this->db->order_by('exercise.name', 'ASC');
+		$getEx = $this->db->get();
+        $data['generalexercies'] = $getEx->result();
+
+        $this->load->view('admin/panel/edit_notes', ['notes_data' => $data]);
+
     }
 }
