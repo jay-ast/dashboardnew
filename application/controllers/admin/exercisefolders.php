@@ -373,5 +373,74 @@ $data['companyVideoFolderId']=$companyVideoFolderId;
         
     }
 
+    public function printExercises($folderid='')
+    {        
+        $folder = new Exercise_folder();
+        $folder->where('company_id', $this->session->userdata('companyid'));
+        $folder->where('id', $folderid);
+        $folder->get();
+        if ($folder->exists()) {
+            foreach ($folder as $gtv) {
+                $data['folderdetails'] = $gtv->show_result();
+            }
+        }
+        else {
+            my_alert_message("danger", "Opps there is some error please try again later");
+            redirect($_SERVER['HTTP_REFERER']);
+        }
+        $data['isgeneral']=(isset($data['folderdetails']['folder_type'])&&$data['folderdetails']['folder_type']==0)?true:false;
+
+		$this->db->select('exercise.*,exercisefolder_exercise.insert_at as insertdate');
+		$this->db->from('exercisefolder_exercise');
+		$this->db->join('exercise', 'exercise.id=exercisefolder_exercise.exercise_id', 'left');
+		$this->db->join('exercise_folder', 'exercise_folder.id=exercisefolder_exercise.exercisefolder_id', 'left');                
+		$this->db->where('exercisefolder_exercise.company_id', $this->session->userdata('companyid'));
+		$this->db->where('exercisefolder_exercise.exercisefolder_id', $folderid);
+		if (!empty($_POST['video_name'])) {
+			$data['video_name'] = $_POST['video_name'];
+			$this->db->where("(exercise.name LIKE  '%".$data['video_name']."%') AND 1=",1);
+		}
+			
+        $this->db->where('exercise.isdeleted', 0);
+        $this->db->order_by('exercise.name', 'asc');
+               
+        $getEXVID = $this->db->get();          
+        if ($getEXVID->num_rows() > 0) {
+            foreach ($getEXVID->result() as $geVID) {
+                $foldervideos = new Exercise_videos();
+                $foldervideos->where('exercise_id', $geVID->id);
+                $fvideocount=$foldervideos->count();
+                
+                $this->db->select('videos.id,videos.title');
+                $this->db->from('videos');
+                $this->db->join('exercise_videos', 'exercise_videos.videos_id=videos.id', 'left');
+                $this->db->where('exercise_videos.exercise_id', $geVID->id);
+                $this->db->where('videos.isdeleted', 0);
+                $this->db->where('exercise_videos.isdeleted', 0);
+                $this->db->order_by('exercise_videos.order', 'ASC');
+                $getEXVID = $this->db->get();                
+                $details = [];
+                if ($getEXVID->num_rows() > 0) {                    
+                    foreach ($getEXVID->result() as $vname) {                        
+                        $details[] = ['name' => $vname->title, 'img' => ''];
+                    }
+                }
+                
+                // echo "<pre>";print_r($details);exit;
+                $temp = array(
+                    'id' => $geVID->id,
+                    'title' => $geVID->title,                           
+                    'name' => $geVID->name,
+                    'numberofvideo'=>$fvideocount,
+                    'nameofvideo'=>$details,
+                    'insertdate'=>date('m-d-Y',strtotime($geVID->insertdate))
+                );
+                $data['exercise_name'][] = $temp;
+            }
+        }
+        $data['folderid']=$folderid;        
+        $this->load->view('admin/panel/print_exercises_details', $data);
+    }
+
     
 }

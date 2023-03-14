@@ -105,6 +105,7 @@
                                             <a data-objectid="<?php echo $folderdata['id']; ?>" 
                                                data-objectname="<?php echo $folderdata['folder_name']; ?>"
                                                data-action="active"  class="deleteBtn danger"> <i class="glyphicon glyphicon-trash " data-toggle="tooltip" title="" data-original-title="Delete Folder"></i> </a>
+                                            <a href="<?php echo base_url('admin/exercisefolders/printExercises').'/'.$folderdata['id'] ?>" target="_blank" data-folderid="<?php echo $folderdata['id'] ?>"><i class="glyphicon glyphicon-print" data-toggle="tooltip" title="" data-original-title="Print Exercise"></i></a>
                                              
                                             </td>
                                     </tr>
